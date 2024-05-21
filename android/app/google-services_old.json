@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "176877027751",
+    "project_id": "property-rental-eccaf",
+    "storage_bucket": "property-rental-eccaf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176877027751:android:283805ca90227411ad3682",
+        "android_client_info": {
+          "package_name": "com.rental.property_rental_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBD-eZbXevI6RP2y1H-UeYX7A_EypOj3_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

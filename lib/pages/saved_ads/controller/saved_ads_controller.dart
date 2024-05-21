@@ -1,0 +1,85 @@
+import 'package:get/get.dart';
+import 'package:property_rental_app/pages/search_screen/model/search_model.dart';
+
+class SavedAdsController extends GetxController {
+
+
+
+  final List<SearchModel> propertiesList = [
+    SearchModel(
+      image: 'assets/images/property_image_2.png',
+      verified: false,
+      isFavourite: true.obs,
+      propertyName: 'Treeline apartment',
+      paymentMethod: 'KSH',
+      cash: 27000,
+      address: 'Nairobi,GITARU, OFF NAIROBI-NAKURU HIGHWAY',
+      totalBedroom: 2,
+      availableBedrooms: 1,
+      buttonText: 'See details',
+      status: 'all',
+    ),
+    SearchModel(
+      image: 'assets/images/property_image_4.png',
+      verified: false,
+      isFavourite: true.obs,
+      propertyName: 'Treeline apartment',
+      paymentMethod: 'KSH',
+      cash: 27000,
+      address: 'Nairobi,GITARU, OFF NAIROBI-NAKURU HIGHWAY',
+      totalBedroom: 2,
+      availableBedrooms: 1,
+      buttonText: 'See details',
+      status: 'rent',
+    ),
+    SearchModel(
+      image: 'assets/images/property_image_2.png',
+      verified: false,
+      isFavourite: true.obs,
+      propertyName: 'Treeline apartment',
+      paymentMethod: 'KSH',
+      cash: 27000,
+      address: 'Nairobi,GITARU, OFF NAIROBI-NAKURU HIGHWAY',
+      totalBedroom: 2,
+      availableBedrooms: 1,
+      buttonText: 'Buy this property',
+      status: 'sale',
+    ),   SearchModel(
+      image: 'assets/images/property_image_2.png',
+      verified: false,
+      isFavourite: true.obs,
+      propertyName: 'Treeline apartment',
+      paymentMethod: 'KSH',
+      cash: 27000,
+      address: 'Nairobi,GITARU, OFF NAIROBI-NAKURU HIGHWAY',
+      totalBedroom: 2,
+      availableBedrooms: 1,
+      buttonText: 'Buy this property',
+      status: 'sale',
+    ),   SearchModel(
+      image: 'assets/images/property_image_2.png',
+      verified: false,
+      isFavourite: true.obs,
+      propertyName: 'Treeline apartment',
+      paymentMethod: 'KSH',
+      cash: 27000,
+      address: 'Nairobi,GITARU, OFF NAIROBI-NAKURU HIGHWAY',
+      totalBedroom: 2,
+      availableBedrooms: 1,
+      buttonText: 'Buy this property',
+      status: 'sale',
+    ),   SearchModel(
+      image: 'assets/images/property_image_2.png',
+      verified: false,
+      isFavourite: true.obs,
+      propertyName: 'Treeline apartment',
+      paymentMethod: 'KSH',
+      cash: 27000,
+      address: 'Nairobi,GITARU, OFF NAIROBI-NAKURU HIGHWAY',
+      totalBedroom: 2,
+      availableBedrooms: 1,
+      buttonText: 'Buy this property',
+      status: 'sale',
+    ),
+  ];
+}

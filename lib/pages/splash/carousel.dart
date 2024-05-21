@@ -1,0 +1,140 @@
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
+import 'package:property_rental_app/common_widgets/custom_button.dart';
+import 'package:property_rental_app/constants/app_colors.dart';
+import 'package:property_rental_app/pages/auth/login/login_screen.dart';
+import 'package:property_rental_app/pages/bottom_nav_bar/controller/bottom_bar_controller.dart';
+import 'package:property_rental_app/pages/bottom_nav_bar/user_bottom_nav_bar.dart';
+import 'package:property_rental_app/pages/home/controller/home_controller.dart';
+import 'package:property_rental_app/pages/splash/splash_controller.dart';
+import 'package:property_rental_app/pages/start_new_ads/start_new_ads.dart';
+
+class CaroselSlider extends StatelessWidget {
+  CaroselSlider({
+    super.key,
+  });
+
+  final controller = Get.put(SplashController());
+  // final controller = Get.put(HomeController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Colors.white,
+        body: Obx(
+          () => Column(
+            children: [
+              const SizedBox(
+                height: 40,
+              ),
+              CarouselSlider(
+                options: CarouselOptions(
+                  clipBehavior: Clip.hardEdge,
+                  padEnds: true,
+                  aspectRatio: 16 / 9,
+                  height: Get.height * 0.8,
+                  autoPlayCurve: Curves.easeIn,
+                  enlargeFactor: 0.0,
+                  enlargeCenterPage: true,
+                  autoPlay: true,
+                  viewportFraction: 0.9,
+                  enableInfiniteScroll: false,
+                  initialPage: controller.buySaleRentIndex.value,
+                  onPageChanged: (index, dynamic) {
+                    controller.buySaleRentIndex.value = index;
+                  },
+                  scrollDirection: Axis.horizontal,
+                ),
+                items: controller.buySaleRentList.map(
+                  (buySaleRentMap) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: Column(
+                        // mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            // height: 322,
+                            width: Get.width,
+                            decoration: BoxDecoration(
+                                color: whiteColor,
+                                //   color: Colors.yellow,
+                                borderRadius: BorderRadius.circular(16)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(
+                                  height: 24,
+                                ),
+                                SizedBox(
+                                    height: Get.height * 0.5,
+                                    // width: 140,
+                                    child:
+                                        Image.asset(buySaleRentMap['image'])),
+                                const SizedBox(height: 16),
+                                Center(
+                                  child: Text(
+                                    buySaleRentMap['title'],
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w800,
+                                      color: primaryColor,
+                                      fontFamily: 'Avenir',
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 24,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ).toList(),
+              ),
+              Center(
+                child: PageViewDotIndicator(
+                  currentItem: controller.buySaleRentIndex.value,
+                  count: controller.buySaleRentList.length,
+                  unselectedColor: lightGreyD9,
+                  selectedColor: primaryColor,
+                  size: const Size(40, 6),
+                  unselectedSize: const Size(22, 6),
+                  duration: const Duration(milliseconds: 200),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  padding: EdgeInsets.zero,
+                  alignment: Alignment.center,
+                  fadeEdges: false,
+                  boxShape: BoxShape.rectangle,
+                  //defaults to circle
+                  borderRadius: BorderRadius.circular(50),
+                  //only for rectangle shape
+                  onItemClicked: (index) {
+                    controller.buySaleRentIndex.value = index;
+                  },
+                ),
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: CustomButton(
+                    text: 'Next ',
+                    height: 44,
+                    width: Get.width,
+                    onPressed: () async {
+                      Get.offAll(() => LoginScreen());
+                    }),
+              ),
+            ],
+          ),
+        ));
+  }
+}

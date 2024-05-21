@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "176877027751",
+    "project_id": "property-rental-eccaf",
+    "storage_bucket": "property-rental-eccaf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176877027751:android:283805ca90227411ad3682",
+        "android_client_info": {
+          "package_name": "com.rental.property_rental_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176877027751-s6ursa171rh78sdrsqns18382cem7cvo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rental.property_rental_app",
+            "certificate_hash": "3c125f6ffe94e3464a9a2939a98570ba36ace737"
+          }
+        },
+        {
+          "client_id": "176877027751-q1hebk8lev0ip6kpob61pfhob70luf3d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBD-eZbXevI6RP2y1H-UeYX7A_EypOj3_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176877027751-q1hebk8lev0ip6kpob61pfhob70luf3d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
