@@ -78,6 +78,43 @@ class UploadPropertyImages extends StatelessWidget {
                       padding: const EdgeInsets.all(5),
                       borderPadding: const EdgeInsets.all(4),
                       child: CustomButton(
+                          backgroundColor: const Color(0xFFEFE6E6),
+                          width: Get.width,
+                          fontWeight: FontWeight.w500,
+                          textColor: blackColor3B,
+                          text: 'Take photos from camera',
+                          isPrefixIcon: true,
+                          isBorder: false,
+                          prefixIcon: Image.asset('assets/icons/camera.png'),
+                          onPressed: () async {
+                            Uint8List? selectedImages =
+                            await getImage(ImageSource.camera);
+                            if (selectedImages != null &&
+                                selectedImages.isNotEmpty) {
+                              // for (var image in selectedImages) {
+                              listingModel!.listingImageMemories
+                                  .add(selectedImages.obs);
+
+                              debugPrint(
+                                  '${listingModel!.listingImageMemories.value.length} length pf list=========');
+                            }
+                          }),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: DottedBorder(
+                      dashPattern: [4, 4],
+                      strokeWidth: 0.5,
+                      color: primaryColor,
+                      borderType: BorderType.RRect,
+                      radius: const Radius.circular(5),
+                      strokeCap: StrokeCap.round,
+                      padding: const EdgeInsets.all(5),
+                      borderPadding: const EdgeInsets.all(4),
+                      child: CustomButton(
                         backgroundColor: const Color(0xFFEFE6E6),
                         width: Get.width,
                         textColor: blackColor3B,
@@ -101,6 +138,7 @@ class UploadPropertyImages extends StatelessWidget {
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 20),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(5),
@@ -137,42 +175,7 @@ class UploadPropertyImages extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: DottedBorder(
-                      dashPattern: [4, 4],
-                      strokeWidth: 0.5,
-                      color: primaryColor,
-                      borderType: BorderType.RRect,
-                      radius: const Radius.circular(5),
-                      strokeCap: StrokeCap.round,
-                      padding: const EdgeInsets.all(5),
-                      borderPadding: const EdgeInsets.all(4),
-                      child: CustomButton(
-                          backgroundColor: const Color(0xFFEFE6E6),
-                          width: Get.width,
-                          fontWeight: FontWeight.w500,
-                          textColor: blackColor3B,
-                          text: 'Take photos from camera',
-                          isPrefixIcon: true,
-                          isBorder: false,
-                          prefixIcon: Image.asset('assets/icons/camera.png'),
-                          onPressed: () async {
-                            Uint8List? selectedImages =
-                                await getImage(ImageSource.camera);
-                            if (selectedImages != null &&
-                                selectedImages.isNotEmpty) {
-                              // for (var image in selectedImages) {
-                              listingModel!.listingImageMemories
-                                  .add(selectedImages.obs);
 
-                              debugPrint(
-                                  '${listingModel!.listingImageMemories.value.length} length pf list=========');
-                            }
-                          }),
-                    ),
-                  ),
                   const SizedBox(height: 20),
                   Obx(
                       () => /*listingModel!.listingImageMemories.value.isNotEmpty

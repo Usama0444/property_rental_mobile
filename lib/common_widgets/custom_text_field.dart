@@ -123,7 +123,7 @@ class CustomTextField extends StatelessWidget {
         contentPadding:
             const EdgeInsets.only(top: 16, left: 17, bottom: 0, right: 16),
         suffixIcon: suffixIcon,
-        prefixIcon: prefixIcon,
+        prefixIcon: prefixIcon,errorMaxLines: 2,
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
             borderSide: BorderSide(color: borderColor ?? greyBorderColor)),

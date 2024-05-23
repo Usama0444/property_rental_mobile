@@ -68,7 +68,7 @@ isConfirmPasswordValid(String value, String password) {
   } else if (value.length < 8) {
     return "Password should be greater than 8.";
   } else if (value != password) {
-    return "Password doesn't match!";
+    return "Password doesn't match! Please ensure both passwords are identical.";
   }
   return null;
 }

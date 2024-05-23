@@ -46,7 +46,7 @@ class _LandingPageState extends State<LandingPage> {
             ),
           ),
           const Text(
-            'MSL Homes',
+            'Realtime Estates Ltd',
             style: TextStyle(
               fontSize: 26 ,
               fontWeight: FontWeight.w900,

@@ -191,7 +191,7 @@ class SignUp extends StatelessWidget {
                           ),
                           validator: (value) {
                             return isConfirmPasswordValid(
-                                value!, controller.userModel.password.text);
+                                value!, controller.passwordController.text);
                           },
                         ),
                       ),
@@ -203,6 +203,8 @@ class SignUp extends StatelessWidget {
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
                             controller.createAccount();
+
+                            debugPrint('done');
                             // Get.to(() => BottomNavBar());
                           }
                         },
