@@ -64,7 +64,7 @@ class RentBuyButton extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   controller.propertyTypeButton.value = 1;
-                  controller.propertyType2.value='Sold';
+                  controller.propertyType2.value='For Sale';
 
                 },
                 child: Container(

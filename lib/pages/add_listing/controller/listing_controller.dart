@@ -59,6 +59,7 @@ class EnterPropertyDetailsController extends GetxController {
         listingModel.town.text +
         ", " +
         listingModel.countryName.value;
+        // 'Kenya';
     return address.trim();
   }
 
@@ -189,7 +190,7 @@ class EnterPropertyDetailsController extends GetxController {
 
   final List<Map<String, dynamic>> propertyList = [
     {'icon': 'assets/icons/rent_icon.png', 'title': 'Rent'},
-    {'icon': 'assets/icons/sold_icon.png', 'title': 'Sold'},
+    {'icon': 'assets/icons/sold_icon.png', 'title': 'For Sale'},
   ];
 }
 

@@ -126,7 +126,7 @@ class BuyRentWidget extends StatelessWidget {
                                         print('123344');
 
                                         controller.propertyStatus.value =
-                                            'Sold';
+                                            'For Sale';
                                         Get.to(BottomNavBar());
                                         Get.find<BottomNavController>()
                                             .tabIndex

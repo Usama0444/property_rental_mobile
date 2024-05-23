@@ -150,7 +150,7 @@ filterBottomSheet() {
                                   : greyBorderColor,
                               borderRadius: 6,
                               onPressed: () {
-                                controller.buyRentValue.value = 'Sold';
+                                controller.buyRentValue.value = 'For Sale';
 
                                 controller.isBuyRent.value = 1;
                               }),

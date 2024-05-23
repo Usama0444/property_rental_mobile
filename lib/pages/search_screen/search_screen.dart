@@ -145,7 +145,7 @@ class SearchScreen extends StatelessWidget {
               () => Text(
                 controller.propertyStatus.value == 'all'
                     ? 'Buy and sell your properties'
-                    : controller.propertyStatus.value == 'Sold'
+                    : controller.propertyStatus.value == 'For Sale'
                         ? "Properties for sale"
                         : "Available properties for rent",
                 style: const TextStyle(

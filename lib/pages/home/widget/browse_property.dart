@@ -66,7 +66,7 @@ class BrowsProperty extends StatelessWidget {
         print('fsf');
         query = FirebaseFirestore.instance
                 .collection('listings')
-                .where('listingRole', isEqualTo: 'Sold')
+                .where('listingRole', isEqualTo: 'For Sale')
                 .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
             as Query<Map<String, dynamic>>;
       }
@@ -205,8 +205,8 @@ class BrowsProperty extends StatelessWidget {
                             enableInfiniteScroll: true,
                             initialPage: controller.initialPage.value,
                             onPageChanged: (index, dynamic) {
-                              print(index);
-                              print('1111111111111111111');
+                              // print(index);
+                              // print('1111111111111111111');
                               controller.initialPage.value = index;
                             },
                             scrollDirection: Axis.horizontal,
