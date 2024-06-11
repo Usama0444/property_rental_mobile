@@ -4,6 +4,7 @@ import 'package:property_rental_app/pages/auth/login/login_screen.dart';
 
 import '../../main.dart';
 import '../bottom_nav_bar/user_bottom_nav_bar.dart';
+import 'carousel.dart';
 import 'landing_page.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -16,7 +17,8 @@ class SplashScreen extends StatelessWidget {
       if (currentUser != null) {
         Get.off(() => BottomNavBar());
       } else {
-        Get.off(() => LandingPage());
+        Get.off(() => CaroselSlider());
+        // Get.off(() => LandingPage());
       }
 
       // currentUser != null ? BottomNavBar() : LandingPage()

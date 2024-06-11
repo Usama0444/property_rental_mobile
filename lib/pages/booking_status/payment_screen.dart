@@ -15,13 +15,19 @@ import '../../common_widgets/custom_text_field.dart';
 class PaymentScreen extends StatelessWidget {
   PaymentScreen(
       {super.key,
-      required this.listingModel,
-      required this.totalAmount,
-      required this.listingID});
+        required this.listingModel,
+        required this.totalAmount,
+        required this.extraAmount,
+        required this.days,
+        required this.rentAmount,
+        required this.listingID});
   final controller = Get.put(BookingsController());
   final AddListingModel listingModel;
   final String totalAmount;
+  final String extraAmount;
+  final String rentAmount;
   final String listingID;
+  final int days;
 
   @override
   Widget build(BuildContext context) {
@@ -37,192 +43,207 @@ class PaymentScreen extends StatelessWidget {
           ),
           Expanded(
             child: SingleChildScrollView(
-              child:StreamBuilder(
-
-                stream: FirebaseFirestore.instance.collection('listings').doc(listingID).snapshots(),builder: (context, snapshot) {
-
-                if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return const SizedBox();
-                }
-                if (snapshot.hasError) {
-                  print(snapshot.error.toString());
-                }
-                if (!snapshot.data!.exists) {
-                  return const Text('Data does\'nt exist');
-                }
-                AddListingModel listingModel =
-                AddListingModel.fromDocumentSnapshot(
-                    snapshot.data as DocumentSnapshot<
-                        Map<String, dynamic>>);
-                return  Column(
-                  children: [
-                    const SizedBox(height: 34),
-                    Padding(
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('listings')
+                      .doc(listingID)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox();
+                    }
+                    if (snapshot.hasError) {
+                      print(snapshot.error.toString());
+                    }
+                    if (!snapshot.data!.exists) {
+                      return const Text('Data does\'nt exist');
+                    }
+                    AddListingModel listingModel =
+                    AddListingModel.fromDocumentSnapshot(snapshot.data
+                    as DocumentSnapshot<Map<String, dynamic>>);
+                    return Padding(
                       padding: const EdgeInsets.only(left: 28, right: 24),
-                      child: Row(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Payment Method",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: textColor8080,
-                                  fontFamily: 'Avenir',
-                                ),
-                              ),
-                              SizedBox(height: 24),
-                              // Text(
-                              //   "Total",
-                              //   style: TextStyle(
-                              //     fontWeight: FontWeight.w600,
-                              //     fontSize: 14,
-                              //     color: textColor8080,
-                              //     fontFamily: 'Avenir',
-                              //   ),
-                              // ),    SizedBox(height: 24),
-                              Text(
-                                "Indicate Payment Amount",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: textColor8080,
-                                  fontFamily: 'Avenir',
-                                ),
-                              ),
-                              SizedBox(height: 24),Text(
-                                "Rent Amount",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: textColor8080,
-                                  fontFamily: 'Avenir',
-                                ),
-                              ),    SizedBox(height: 24),
-                              Text(
-                                "Total",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: textColor8080,
-                                  fontFamily: 'Avenir',
-                                ),
-                              ),
-                            ],
+                          const SizedBox(height: 34),
+                          PaymentRow(
+                            text: 'Mpesa',
+                            title: 'Payment Method',
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              const Text(
-                                "Mpesa",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: textColor8080,
-                                  fontFamily: 'Avenir',
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                               Text(
-                                "Ksh ${listingModel.extraPay.text}",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: textColor8080,
-                                  fontFamily: 'Avenir',
-                                ),
-                              ),
-                              const SizedBox(height: 24),
+                          Divider(thickness: 0.2),
+                          const SizedBox(height: 12),
 
-                              Text(
-                                "Ksh ${listingModel.payment.text}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: textColor8080,
-                                  fontFamily: 'Avenir',
-                                ),
-                              ),     const SizedBox(height: 24),
-
-                              Text(
-                                "Ksh ${totalAmount.toString()}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: textColor8080,
-                                  fontFamily: 'Avenir',
-                                ),
-                              ),
-                            ],
+                          PaymentRow(
+                            text: 'Ksh ${rentAmount.toString()}',
+                            title: 'Rent Amount',
                           ),
+                          Divider(thickness: 0.2),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Extra Payments',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              // color: textColor8080,
+                              fontFamily: 'Avenir',
+                            ),
+                          ),
+
+                          listingModel.indicatePayList.length != 0
+                              ? Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Column(
+                              children: List.generate(
+                                listingModel.indicatePayList.length,
+                                    (index) => Container(
+                                  color:
+                                  // index.isEven ?
+                                  whiteColor,
+                                  // : const Color(0xFFF3F3F3),
+                                  padding: const EdgeInsets.symmetric(
+                                    // horizontal: 12,
+                                    vertical: 0,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        listingModel.indicatePayList[index]
+                                            .extraName.text,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: textColor8080,
+                                          fontSize: 14,
+                                          fontFamily: 'Avenir',
+                                        ),
+                                      ),
+                                      Text(
+                                        '$days * ${listingModel.indicatePayList[index].extraCost.text}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: textColor.withOpacity(0.7),
+                                          fontSize: 14,
+                                          fontFamily: 'Avenir',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                              : SizedBox(),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          PaymentRow(
+                            text: 'Ksh ${extraAmount.toString()}',
+                            title: '',
+                          ),
+
+                          Divider(thickness: 0.2),
+                          const SizedBox(height: 12),
+                          PaymentRow(
+                            text: 'Ksh ${totalAmount.toString()}',
+                            title: "Total",
+                          ),
+                          Divider(thickness: 0.2),
+                          const SizedBox(height: 18),
+
+
+                          Form(
+                            key: key,
+                            child: Column(
+                              children: [
+                                const Text(
+                                  'Kindly input your Mpesa number to pay for booking.',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: blackColor3B,
+                                    fontSize: 16,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                CustomTextField(
+                                  hintText: '+91 637 765 786',
+                                  fillColor: whiteColor,
+                                  borderRadius: 8,
+                                  hintColor: textColor66,
+                                  keyboardType: TextInputType.phone,
+                                  controller: controller.bookingMdl.mPesa,
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return "Enter your mpesa no.";
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 66),
+                          CustomButton(
+                              text: 'Next',
+                              height: 44,
+                              width: Get.width,
+                              onPressed: () {
+                                if (key.currentState!.validate()) {
+                                  controller.bookingMdl.totalPayment = totalAmount;
+                                  controller.rentBooking(
+                                      listingModel,
+                                      listingModel.sellerID,
+                                      listingID,
+                                      totalAmount);
+                                  // Get.to(() =>  BookingStatus(listingModel:listingModel));
+                                  // Get.find<BottomNavController>().tabIndex.value = 0;
+                                }
+                              }),
                         ],
                       ),
-                    ),
-                    const SizedBox(
-                      height: 24,
-                    ),
-                    Form(
-                      key: key,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          children: [
-                            const Text(
-                              'Kindly input your Mpesa number to pay for booking.',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: blackColor3B,
-                                fontSize: 16,
-                                fontFamily: 'Avenir',
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            CustomTextField(
-                              hintText: '+91 637 765 786',
-                              fillColor: whiteColor,
-                              borderRadius: 8,
-                              hintColor: textColor66,
-                              keyboardType: TextInputType.phone,
-                              controller: controller.bookingMdl.mPesa,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Enter your mpesa no.";
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 66),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: CustomButton(
-                          text: 'Next',
-                          height: 44,
-                          width: Get.width,
-                          onPressed: () {
-                            if (key.currentState!.validate()) {
-                              controller.bookingMdl.totalPayment = totalAmount;
-                              controller.rentBooking(listingModel,
-                                  listingModel.sellerID, listingID, totalAmount);
-                              // Get.to(() =>  BookingStatus(listingModel:listingModel));
-                              // Get.find<BottomNavController>().tabIndex.value = 0;
-                            }
-                          }),
-                    ),
-                  ],
-                );
-              },)
-            ),
+                    );
+                  },
+                )),
           )
         ],
       ),
+    );
+  }
+}
+
+class PaymentRow extends StatelessWidget {
+  const PaymentRow({super.key, required this.title, required this.text});
+  final String title;
+  final String text;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+            // color: textColor8080,
+            fontFamily: 'Avenir',
+          ),
+        ),
+        Text(
+          text,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+            color: textColor8080,
+            fontFamily: 'Avenir',
+          ),
+        ),
+      ],
     );
   }
 }

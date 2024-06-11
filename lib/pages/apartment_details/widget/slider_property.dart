@@ -225,7 +225,7 @@ class RecommendedProperties extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
-                                    'KSH ${listingModel.cost.text}',
+                                    'KSH ${listingModel.payment.text}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,

@@ -44,7 +44,8 @@ class BookingsController extends GetxController {
         .collection('users')
         .doc(sellerID)
         .get();
-    UserModel uModel = UserModel.fromDocumentSnapshot(
+
+      UserModel uModel = UserModel.fromDocumentSnapshot(
         userdata as DocumentSnapshot<Map<String, dynamic>>);
     currentUser = await checkUserData();
     print(currentUserDataModel!.value.userName);

@@ -40,7 +40,6 @@ class ApartmentDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     // updateUserToken();
     print(listingId);
 
@@ -230,453 +229,378 @@ class ApartmentDetails extends StatelessWidget {
               ),
 
               /// image and slider listview...
-              Container(
-                child: Column(
-                  children: [
-                    Obx(() => GestureDetector(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  contentPadding: EdgeInsets.zero,
-                                  // insetPadding:  EdgeInsets.symmetric(
-                                  //     horizontal: 12, vertical: listingModel
-                                  //     .listingImages.length>=2?32:2),
-                                  insetPadding: EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical:
-                                          listingModel.listingImages.length >= 2
-                                              ? 32
-                                              : 200),
-                                  backgroundColor: Colors.red,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(6)),
-                                  content: Container(
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
 
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(6),
-                                        topRight: Radius.circular(6),
-                                      ),
-                                    ),
-
-                                    constraints: BoxConstraints(
-                                      // minHeight: 52,
-                                      // maxHeight: Get.height,
-                                      maxWidth: Get.width,
-                                      minWidth: Get.width,
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () => Get.back(),
-                                          child: Container(
-                                            width: Get.width,
-                                            height: 48,
-                                            decoration: const BoxDecoration(
-                                              color: blackColor3B,
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(6),
-                                                topRight: Radius.circular(6),
-                                              ),
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20, vertical: 12),
-                                            child: Image.asset(
-                                              'assets/icons/close-circle.png',
-                                              alignment: Alignment.centerRight,
-                                              height: 24,
-                                              width: 24,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: ListView.builder(
-                                              shrinkWrap: true,
-                                              padding: EdgeInsets.zero,
-                                              itemCount: listingModel
-                                                  .listingImages.length,
-                                              itemBuilder: (context, index) {
-                                                return Column(
-                                                  children: [
-                                                    Image.network(
-                                                      listingModel
-                                                          .listingImages[index]
-                                                          .value,
-                                                      width: Get.width,
-                                                      height: 246,
-                                                      fit: BoxFit.cover,
-                                                      errorBuilder: (context,
-                                                          error, stackTrace) {
-                                                        return PlayVideo(
-                                                          path: listingModel
-                                                              .listingImages[
-                                                                  index]
-                                                              .value,
-                                                        );
-                                                      },
-                                                    ),
-                                                    Container(
-                                                      height: 8,
-                                                      width: Get.width,
-                                                      color: whiteColor,
-                                                    ),
-                                                  ],
-                                                );
-                                              }),
-                                        ),
-                                        Container(
-                                          width: Get.width,
-                                          height: 8,
-                                          decoration: const BoxDecoration(
-                                            color: whiteColor,
-                                            borderRadius: BorderRadius.only(
-                                              bottomLeft: Radius.circular(6),
-                                              bottomRight: Radius.circular(6),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: Stack(
-                            children: [
-                              Image.network(
-                                ////////////
-                                apartmentDetailsController.isSelected.value ==
-                                        true
-                                    ? apartmentDetailsController
-                                                .isSelectedImage.value ==
-                                            ''
-                                        ? listingModel.listingImages[0].value
-                                        : apartmentDetailsController
-                                            .isSelectedImage.value
-                                    : listingModel.listingImages[0].value,
-                                width: Get.width,
-                                height: 246,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return FutureBuilder(
-                                    future: videoThumbnail(
-                                        urlForThumbnail:
-                                            apartmentDetailsController
-                                                        .isSelectedImage
-                                                        .value ==
-                                                    ''
-                                                ? listingModel
-                                                    .listingImages[0].value
-                                                : apartmentDetailsController
-                                                    .isSelectedImage.value),
-                                    builder: (context, snapshot) {
-                                      print(snapshot.data.toString());
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return SizedBox(
-                                            width: Get.width,
-                                            height: 246,
-                                            child: const Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                              color: primaryColor,
-                                            )));
-                                      }
-                                      if (snapshot.hasError) {
-                                        print(snapshot.error.toString());
-                                        print('error');
-                                      }
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.done) {
-                                        return SizedBox(
-                                            width: Get.width,
-                                            height: 246,
-                                            child: Image.file(
-                                              File(snapshot.data.toString()),
-                                              width: Get.width,
-                                              height: 246,
-                                              fit: BoxFit.cover,
-                                            ));
-                                      } else {
-                                        return const SizedBox(
-                                            width: 80,
-                                            height: 55,
-                                            child: Center(child: SizedBox()));
-                                      }
-                                    },
-                                  );
-                                },
-                              ),
-                              Positioned(
-                                bottom: 8,
-                                left: 12,
-                                child: Container(
-                                  height: 22,
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 3, horizontal: 6),
-                                  decoration: BoxDecoration(
-                                    color: primaryColor,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      '${apartmentDetailsController.index.value + 1} / ${listingModel.listingImages.length}',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        color: whiteColor,
-                                        fontSize: 12,
-                                        fontFamily: 'Avenir',
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        )),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: SizedBox(
-                        height: 55,
-                        child: ListView.builder(
-                          itemCount: listingModel.listingImages.length,
+              SizedBox(
+                  height: listingModel.listingImages.length == 1
+                      ? 255
+                      : Get.height * 0.6,
+                  child: Stack(
+                    children: [
+                      ListView.builder(
+                          primary: false,
                           shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
+                          padding: EdgeInsets.zero,
+                          itemCount: listingModel.listingImages.length,
                           itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                apartmentDetailsController.isSelected.value =
-                                    true;
-                                apartmentDetailsController
-                                        .isSelectedImage.value =
-                                    listingModel.listingImages[index]
-                                        .toString();
+                            return Column(
+                              children: [
+                                Image.network(
+                                  listingModel.listingImages[index].value,
+                                  width: Get.width,
+                                  height: 246,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return PlayVideo(
+                                      path: listingModel
+                                          .listingImages[index].value,
+                                    );
+                                  },
+                                ),
+                                Container(
+                                  height: index== listingModel.listingImages.length?30: 8,
+                                  width: Get.width,
+                                  color: whiteColor,
+                                ),
+                              ],
+                            );
+                          }),
+                      Positioned(
+                          bottom: 0,
+                          child: Container(
+                            margin: EdgeInsets.only(top: 5),
+                            decoration: BoxDecoration(
+                                color: whiteColor,
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(100),
+                                    topRight: Radius.circular(100))),
+                            // color: Colors.orange,
+                            height: 25,
+                            width: Get.width,
+                            // child: Icon(Icons.expand_less,color:Colors.grey.withOpacity(0.5) ,fill:0.2 ,size: 40,),
+                            child: Center(
+                                child: Image.asset(
+                              'assets/images/arrow up.png',
+                              color: Colors.grey.withOpacity(0.5),
+                              height: 14,
+                              width: 44,
+                              fit: BoxFit.cover,
+                            )),
+                          ))
+                    ],
+                  )),
 
-                                apartmentDetailsController.index.value = index;
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                        color: const Color(0xFF6C757D),
-                                        width: 1),
-                                  ),
-                                  child: Image.network(
-                                    listingModel.listingImages[index].value,
-                                    width: 80,
-                                    height: 55,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return FutureBuilder(
-                                        future: videoThumbnail(
-                                            urlForThumbnail: listingModel
-                                                .listingImages[index].value),
-                                        builder: (context, snapshot) {
-                                          print(snapshot.data.toString());
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return const SizedBox(
-                                                width: 80,
-                                                height: 55,
-                                                child: Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                  color: primaryColor,
-                                                )));
-                                          }
-                                          if (snapshot.hasError) {
-                                            print(snapshot.error.toString());
-                                            print('error');
-                                          }
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.done) {
-                                            return SizedBox(
-                                                width: 80,
-                                                height: 55,
-                                                child: Image.file(
-                                                  File(
-                                                      snapshot.data.toString()),
-                                                  fit: BoxFit.cover,
-                                                  width: 80,
-                                                  height: 55,
-                                                ));
-                                          } else {
-                                            return const SizedBox(
-                                                width: 80,
-                                                height: 55,
-                                                child:
-                                                    Center(child: SizedBox()));
-                                          }
-                                        },
-                                      );
-                                    },
+              Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: [
+                          Text(
+                            listingModel.propertyName.text,
+                            // 'KSH 2350/Night',
+                            style: const TextStyle(
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.w800,
+                              color: blackColor3B,
+                              fontSize: 20,
+                              fontFamily: 'Avenir',
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: skyColor,
+                                borderRadius: BorderRadius.circular(26)),
+                            padding: const EdgeInsets.only(
+                                left: 8, right: 12, top: 4, bottom: 4),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/icons/verified_icon.png',
+                                  height: 16,
+                                  width: 16,
+                                ),
+                                const Text(
+                                  'Verified',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: blueLightColor,
+                                    fontSize: 12,
+                                    fontFamily: 'Avenir',
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    Text(
-                      listingModel.propertyName.text,
-                      // 'KSH 2350/Night',
-                      style: const TextStyle(
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.w800,
-                        color: blackColor3B,
-                        fontSize: 20,
-                        fontFamily: 'Avenir',
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: skyColor,
-                          borderRadius: BorderRadius.circular(26)),
-                      padding: const EdgeInsets.only(
-                          left: 8, right: 12, top: 4, bottom: 4),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            'assets/icons/verified_icon.png',
-                            height: 16,
-                            width: 16,
-                          ),
-                          const Text(
-                            'Verified',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: blueLightColor,
-                              fontSize: 12,
-                              fontFamily: 'Avenir',
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 6),
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: CustomButton(
-              //       text: listingModel.listingRole.value != 'Rent'
-              //           ? 'Book a Tour'
-              //           : 'Book Now',
-              //       height: 44,
-              //       width: 133,
-              //       onPressed: () {
-              //         listingModel.listingRole.value != 'Rent'
-              //             ? reservationBottomSheet(listingModel.sellerID)
-              //             : reservationCheckInBottomSheet();
-              //       }),
-              // ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  listingModel.propertyType.value,
-                  // 'Treeline apartment',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: blackColor,
-                    fontFamily: 'Avenir',
-                  ),
-                ),
-              ),
-              const SizedBox(height: 6),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      'assets/icons/location_icon.png',
-                      height: 16,
-                      width: 16,
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Expanded(
+                    const SizedBox(height: 6),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: CustomButton(
+                    //       text: listingModel.listingRole.value != 'Rent'
+                    //           ? 'Book a Tour'
+                    //           : 'Book Now',
+                    //       height: 44,
+                    //       width: 133,
+                    //       onPressed: () {
+                    //         listingModel.listingRole.value != 'Rent'
+                    //             ? reservationBottomSheet(listingModel.sellerID)
+                    //             : reservationCheckInBottomSheet();
+                    //       }),
+                    // ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
-                        listingModel.street.text +
-                            ", " +
-                            listingModel.town.text +
-                            ", " +
-                            listingModel.countryName.value,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        // 'Nairobi,GITARU, OFF NAIROBI-N..',
+                        listingModel.propertyType.value,
+                        // 'Treeline apartment',
                         style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
                           color: blackColor,
                           fontFamily: 'Avenir',
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
+                    const SizedBox(height: 6),
 
-              /// Divider...
-              const SizedBox(height: 16),
-              const Divider(
-                color: greyBorderColor,
-                height: 1,
-              ),
-
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Highlights',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: blackColor3B,
-                          fontSize: 20,
-                          fontFamily: 'Avenir',
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/icons/location_icon.png',
+                            height: 16,
+                            width: 16,
+                          ),
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Expanded(
+                            child: Text(
+                              listingModel.street.text +
+                                  ", " +
+                                  listingModel.town.text +
+                                  ", " +
+                                  listingModel.countryName.value,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              // 'Nairobi,GITARU, OFF NAIROBI-N..',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: blackColor,
+                                fontFamily: 'Avenir',
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 12),
-                      Container(
-                        color: const Color(0xFFF3F3F3),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 15,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+
+                    /// Divider...
+                    const SizedBox(height: 16),
+                    const Divider(
+                      color: greyBorderColor,
+                      height: 1,
+                    ),
+
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'No of rooms',
+                              'Highlights',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: blackColor3B,
+                                fontSize: 20,
+                                fontFamily: 'Avenir',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              color: const Color(0xFFF3F3F3),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 15,
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'No of rooms',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: blackColor3B,
+                                      fontSize: 16,
+                                      fontFamily: 'Avenir',
+                                    ),
+                                  ),
+                                  Text(
+                                    listingModel.selectedBedroom.last,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: blackColor3B,
+                                      fontSize: 16,
+                                      fontFamily: 'Avenir',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              children: List.generate(
+                                listingModel.facilities.length,
+                                (index) => Container(
+                                  color: index.isEven
+                                      ? whiteColor
+                                      : const Color(0xFFF3F3F3),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 15,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        listingModel.facilities[index],
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: blackColor3B,
+                                          fontSize: 16,
+                                          fontFamily: 'Avenir',
+                                        ),
+                                      ),
+                                      const Text(
+                                        'Yes',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: blackColor3B,
+                                          fontSize: 16,
+                                          fontFamily: 'Avenir',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+
+                            /// Tips for your safety widget....
+                            const TipsforSafety(),
+
+                            listingModel.indicatePayList.first.extraCost.text !=
+                                    ''
+                                ? Column(
+                                    children: List.generate(
+                                      listingModel.indicatePayList.length,
+                                      (index) => Container(
+                                        color:
+                                            // index.isEven ?
+                                            whiteColor,
+                                        // : const Color(0xFFF3F3F3),
+                                        padding: const EdgeInsets.symmetric(
+                                          // horizontal: 12,
+                                          vertical: 5,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const SizedBox(height: 32),
+                                            index == 0 &&
+                                                    listingModel
+                                                            .indicatePayList[
+                                                                index]
+                                                            .extraCost
+                                                            .text !=
+                                                        ''
+                                                ? const Text(
+                                                    'Extra Payment',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: blackColor3B,
+                                                      fontSize: 16,
+                                                      fontFamily: 'Avenir',
+                                                    ),
+                                                  )
+                                                : const SizedBox(),
+                                            const SizedBox(height: 4),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  listingModel
+                                                      .indicatePayList[index]
+                                                      .extraName
+                                                      .text,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: blackColor3B,
+                                                    fontSize: 16,
+                                                    fontFamily: 'Avenir',
+                                                  ),
+                                                ),
+                                                Text(
+                                                  ' KSH ${listingModel.indicatePayList[index].extraCost.text}',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: textColor
+                                                        .withOpacity(0.7),
+                                                    fontSize: 14,
+                                                    fontFamily: 'Avenir',
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : SizedBox(),
+
+                            // Text(
+                            //   listingModel.description.text,
+                            //   style: TextStyle(
+                            //     fontWeight: FontWeight.w600,
+                            //     color: textColor.withOpacity(0.7),
+                            //     fontSize: 14,
+                            //     fontFamily: 'Avenir',
+                            //   ),
+                            // ),
+                            SizedBox(
+                                height: listingModel.indicatePayList.length != 0
+                                    ? 32
+                                    : 0),
+
+                            const Text(
+                              'Description',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: blackColor3B,
@@ -684,462 +608,354 @@ class ApartmentDetails extends StatelessWidget {
                                 fontFamily: 'Avenir',
                               ),
                             ),
+                            const SizedBox(height: 4),
                             Text(
-                              listingModel.selectedBedroom.last,
-                              style: const TextStyle(
+                              listingModel.description.text,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: textColor.withOpacity(0.7),
+                                fontSize: 14,
+                                fontFamily: 'Avenir',
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            const Text(
+                              'Where will you be',
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: blackColor3B,
                                 fontSize: 16,
                                 fontFamily: 'Avenir',
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        children: List.generate(
-                          listingModel.facilities.length,
-                          (index) => Container(
-                            color: index.isEven
-                                ? whiteColor
-                                : const Color(0xFFF3F3F3),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 15,
+                            const SizedBox(height: 12),
+
+                            ///
+                            ///  Map portion...
+                            ///
+                            Container(
+                              height: 220,
+                              width: Get.width,
+                              decoration: BoxDecoration(
+                                color: whiteColor,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Obx(
+                                  () => apartmentDetailsController
+                                              .isLoading.value ==
+                                          false
+                                      ? const SizedBox()
+                                      : GoogleMap(
+                                          zoomGesturesEnabled: true,
+                                          scrollGesturesEnabled: true,
+                                          zoomControlsEnabled: false,
+                                          markers: apartmentDetailsController
+                                              .markers,
+                                          mapType: MapType.normal,
+                                          initialCameraPosition: CameraPosition(
+                                            target: LatLng(
+                                                listingModel.latitude,
+                                                listingModel.longitude),
+                                            zoom: 14,
+                                          ),
+                                          onMapCreated:
+                                              (GoogleMapController controller) {
+                                            apartmentDetailsController
+                                                .mapController
+                                                .complete(controller);
+                                          },
+                                        ),
+                                ),
+                              ),
                             ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+
+                            const SizedBox(height: 32),
+
+                            ///book widget
+                            Container(
+                                height: 78,
+                                decoration: BoxDecoration(
+                                  color: whiteColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        spreadRadius: 3,
+                                        blurRadius: 10)
+                                  ],
+                                ),
+                                width: Get.width,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 16, horizontal: 20),
+                                child: StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('listings')
+                                      .doc(listingId!)
+                                      .snapshots(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const SizedBox();
+                                    }
+                                    if (snapshot.hasError) {
+                                      print(snapshot.error.toString());
+                                    }
+                                    if (!snapshot.data!.exists) {
+                                      return const Text('Data does\'nt exist');
+                                    }
+                                    AddListingModel listingModel =
+                                        AddListingModel.fromDocumentSnapshot(
+                                            snapshot.data as DocumentSnapshot<
+                                                Map<String, dynamic>>);
+
+                                    return Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              listingModel.listingRole != 'Rent'
+                                                  ? 'KSH ${listingModel.payment.text}'
+                                                  : 'KSH ${listingModel.payment.text}/Night',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                color: blackColor3B,
+                                                fontSize: 16,
+                                                fontFamily: 'Avenir',
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 6,
+                                            ),
+                                            // listingModel.listingRole == 'Rent'
+                                            //     ?
+                                            StreamBuilder(
+                                                stream: FirebaseFirestore
+                                                    .instance
+                                                    .collection('feedbacks')
+                                                    .where('propertyID',
+                                                        isEqualTo: listingId!)
+                                                    .snapshots(),
+                                                builder: (context, snapshot2) {
+                                                  if (snapshot2
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return const SizedBox();
+                                                  }
+                                                  if (snapshot2.hasError) {
+                                                    print(snapshot2.error
+                                                        .toString());
+                                                  }
+                                                  // if (snapshot2.data!.docs.isEmpty) {
+                                                  //   return SizedBox();
+                                                  // }
+                                                  return Text(
+                                                    '${snapshot2.data!.docs.length == 0 ? 0 : snapshot2.data!.docs.length} Reviews',
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: blackColor3B,
+                                                      fontSize: 12,
+                                                      fontFamily: 'Avenir',
+                                                    ),
+                                                  );
+                                                })
+                                            // : Text(
+                                            //     isForSale == true
+                                            //         ? 'Click to add tour details'
+                                            //         : '13+ Reviews',
+                                            //     style: const TextStyle(
+                                            //       fontWeight: FontWeight.w700,
+                                            //       color: blackColor3B,
+                                            //       fontSize: 12,
+                                            //       fontFamily: 'Avenir',
+                                            //     ),
+                                            //   ),
+                                          ],
+                                        ),
+                                        comingFromMyAdd == false
+                                            ? CustomButton(
+                                                text:
+                                                    listingModel.listingRole !=
+                                                            'Rent'
+                                                        ? 'Book a Tour'
+                                                        : 'Book Now',
+                                                height: 44,
+                                                width: 133,
+                                                onPressed: () {
+                                                  print(listingModel.sellerID);
+                                                  print(listingModel
+                                                      .description.text);
+                                                  print('listingID');
+                                                  listingModel.listingRole !=
+                                                          'Rent'
+                                                      ? reservationBottomSheet(
+                                                          listingModel.sellerID,
+                                                          listingModel,
+                                                          listingId!)
+                                                      : reservationCheckInBottomSheet(
+                                                          listingModel:
+                                                              listingModel,
+                                                          listingID:
+                                                              listingId!);
+                                                })
+                                            : const SizedBox()
+                                      ],
+                                    );
+                                  },
+                                )),
+
+                            SizedBox(height: comingFromMyAdd != true ? 32 : 0),
+
+                            /// feedback widget...
+                            comingFromMyAdd != true
+                                ? FeedBackWidget(
+                                    propertyID: listingId!,
+                                    sellerID: listingModel.sellerID)
+                                : const SizedBox(),
+                            SizedBox(height: comingFromMyAdd != true ? 20 : 0),
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  listingModel.facilities[index],
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: blackColor3B,
-                                    fontSize: 16,
-                                    fontFamily: 'Avenir',
-                                  ),
-                                ),
-                                const Text(
-                                  'Yes',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: blackColor3B,
-                                    fontSize: 16,
-                                    fontFamily: 'Avenir',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      /// Tips for your safety widget....
-                      const TipsforSafety(),
-                      const SizedBox(height: 32),
-
-                      listingModel.indicatePayList.length !=0? const Text(
-                        'Extra Payment (indicate)',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: blackColor3B,
-                          fontSize: 16,
-                          fontFamily: 'Avenir',
-                        ),
-                      ):SizedBox(),
-                      const SizedBox(height: 4),
-                      Column(
-                        children: List.generate(
-                          listingModel.indicatePayList.length,
-                              (index) => Container(
-                            color:
-                            // index.isEven ?
-                            whiteColor,
-                                // : const Color(0xFFF3F3F3),
-                            padding: const EdgeInsets.symmetric(
-                              // horizontal: 12,
-                              vertical: 5,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  listingModel.indicatePayList[index].extraName.text,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: blackColor3B,
-                                    fontSize: 16,
-                                    fontFamily: 'Avenir',
-                                  ),
-                                ),
-                                 Text(
-                       ' KSH ${listingModel.indicatePayList[index].extraCost.text}',
-                                  style:  TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: textColor.withOpacity(0.7),
-                                    fontSize: 14,
-                                    fontFamily: 'Avenir',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Text(
-                      //   listingModel.description.text,
-                      //   style: TextStyle(
-                      //     fontWeight: FontWeight.w600,
-                      //     color: textColor.withOpacity(0.7),
-                      //     fontSize: 14,
-                      //     fontFamily: 'Avenir',
-                      //   ),
-                      // ),
-                       SizedBox(height: listingModel.indicatePayList.length !=0?32: 0),
-
-                      const Text(
-                        'Description',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: blackColor3B,
-                          fontSize: 16,
-                          fontFamily: 'Avenir',
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        listingModel.description.text,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: textColor.withOpacity(0.7),
-                          fontSize: 14,
-                          fontFamily: 'Avenir',
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      const Text(
-                        'Where will you be',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: blackColor3B,
-                          fontSize: 16,
-                          fontFamily: 'Avenir',
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      ///
-                      ///  Map portion...
-                      ///
-                      Container(
-                        height: 220,
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: whiteColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Obx(
-                            () => apartmentDetailsController.isLoading.value ==
-                                    false
-                                ? const SizedBox()
-                                : GoogleMap(
-                                    zoomGesturesEnabled: true,
-                                    scrollGesturesEnabled: true,
-                                    zoomControlsEnabled: false,
-                                    markers: apartmentDetailsController.markers,
-                                    mapType: MapType.normal,
-                                    initialCameraPosition: CameraPosition(
-                                      target: LatLng(listingModel.latitude,
-                                          listingModel.longitude),
-                                      zoom: 14,
-                                    ),
-                                    onMapCreated:
-                                        (GoogleMapController controller) {
-                                      apartmentDetailsController.mapController
-                                          .complete(controller);
-                                    },
-                                  ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      ///book widget
-                      Container(
-                          height: 78,
-                          decoration: BoxDecoration(
-                            color: whiteColor,
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  spreadRadius: 3,
-                                  blurRadius: 10)
-                            ],
-                          ),
-                          width: Get.width,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 16, horizontal: 20),
-                          child: StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('listings')
-                                .doc(listingId!)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const SizedBox();
-                              }
-                              if (snapshot.hasError) {
-                                print(snapshot.error.toString());
-                              }
-                              if (!snapshot.data!.exists) {
-                                return const Text('Data does\'nt exist');
-                              }
-                              AddListingModel listingModel =
-                                  AddListingModel.fromDocumentSnapshot(
-                                      snapshot.data as DocumentSnapshot<
-                                          Map<String, dynamic>>);
-
-                              return Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        listingModel.listingRole != 'Rent'
-                                            ? 'KSH ${listingModel.cost.text}'
-                                            : 'KSH ${listingModel.cost.text}/Night',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          color: blackColor3B,
-                                          fontSize: 16,
+                                comingFromMyAdd != true
+                                    ? const Text(
+                                        'Recommended Properties',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w800,
+                                          color: blackColor,
                                           fontFamily: 'Avenir',
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        height: 6,
-                                      ),
-                                      // listingModel.listingRole == 'Rent'
-                                      //     ?
-                                      StreamBuilder(
-                                              stream: FirebaseFirestore.instance
-                                                  .collection('feedbacks')
-                                                  .where('propertyID',
-                                                      isEqualTo: listingId!)
-                                                  .snapshots(),
-                                              builder: (context, snapshot2) {
-                                                if (snapshot2.connectionState ==
-                                                    ConnectionState.waiting) {
-                                                  return const SizedBox();
-                                                }
-                                                if (snapshot2.hasError) {
-                                                  print(snapshot2.error
-                                                      .toString());
-                                                }
-                                                // if (snapshot2.data!.docs.isEmpty) {
-                                                //   return SizedBox();
-                                                // }
-                                                return Text(
-                                                  '${snapshot2.data!.docs.length == 0 ? 0 : snapshot2.data!.docs.length} Reviews',
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.w700,
-                                                    color: blackColor3B,
-                                                    fontSize: 12,
-                                                    fontFamily: 'Avenir',
-                                                  ),
-                                                );
-                                              })
-                                          // : Text(
-                                          //     isForSale == true
-                                          //         ? 'Click to add tour details'
-                                          //         : '13+ Reviews',
-                                          //     style: const TextStyle(
-                                          //       fontWeight: FontWeight.w700,
-                                          //       color: blackColor3B,
-                                          //       fontSize: 12,
-                                          //       fontFamily: 'Avenir',
-                                          //     ),
-                                          //   ),
-                                    ],
-                                  ),
-                                  comingFromMyAdd == false
-                                      ? CustomButton(
-                                          text:
-                                              listingModel.listingRole != 'Rent'
-                                                  ? 'Book a Tour'
-                                                  : 'Book Now',
-                                          height: 44,
-                                          width: 133,
-                                          onPressed: () {
-                                            print(listingModel.sellerID);
-                                            print(
-                                                listingModel.description.text);
-                                            print('listingID');
-                                            listingModel.listingRole != 'Rent'
-                                                ? reservationBottomSheet(
-                                                    listingModel.sellerID,
-                                                    listingModel,
-                                                    listingId!)
-                                                : reservationCheckInBottomSheet(
-                                                    listingModel: listingModel,
-                                                    listingID: listingId!);
-                                          })
-                                      : const SizedBox()
-                                ],
-                              );
-                            },
-                          )),
-
-                      SizedBox(height: comingFromMyAdd != true ? 32 : 0),
-
-                      /// feedback widget...
-                      comingFromMyAdd != true
-                          ? FeedBackWidget(
-                              propertyID: listingId!,
-                              sellerID: listingModel.sellerID)
-                          : const SizedBox(),
-                      SizedBox(height: comingFromMyAdd != true ? 20 : 0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          comingFromMyAdd != true
-                              ? const Text(
-                                  'Recommended Properties',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w800,
-                                    color: blackColor,
-                                    fontFamily: 'Avenir',
-                                  ),
-                                )
-                              : const SizedBox(),
-                          // GestureDetector(
-                          //   onTap: () {
-                          //     Get.back();
-                          //   },
-                          //   child: Row(
-                          //     children: [
-                          //       const Text(
-                          //         'View All',
-                          //         style: TextStyle(
-                          //           fontSize: 16,
-                          //           fontWeight: FontWeight.w800,
-                          //           color: primaryColor,
-                          //           fontFamily: 'Avenir',
-                          //         ),
-                          //       ),
-                          //       const SizedBox(
-                          //         width: 4,
-                          //       ),
-                          //       Image.asset(
-                          //         'assets/icons/arrow_right.png',
-                          //         height: 16,
-                          //         width: 16,
-                          //       )
-                          //     ],
-                          //   ),
-                          // ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                    ]),
-              ),
-
-              /// property slider widget...
-
-              comingFromMyAdd != true
-                  ? RecommendedProperties()
-                  : const SizedBox(),
-
-              // const SizedBox(height: 24),
-              // Obx(
-              //   () => Center(
-              //     child: PageViewDotIndicator(
-              //       currentItem: apartmentDetailsController.initialIndex.value,
-              //       count: apartmentDetailsController.bedsittersList.length,
-              //       unselectedColor: lightGreyD9,
-              //       selectedColor: primaryColor,
-              //       size: const Size(40, 6),
-              //       unselectedSize: const Size(22, 6),
-              //       duration: const Duration(milliseconds: 200),
-              //       margin: const EdgeInsets.symmetric(horizontal: 4),
-              //       padding: EdgeInsets.zero,
-              //       alignment: Alignment.center,
-              //       fadeEdges: false,
-              //       boxShape: BoxShape.rectangle,
-              //       //defaults to circle
-              //       borderRadius: BorderRadius.circular(50),
-              //       //only for rectangle shape
-              //       onItemClicked: (index) {
-              //         apartmentDetailsController.initialIndex.value = index;
-              //       },
-              //     ),
-              //   ),
-              // ),
-              const SizedBox(height: 36),
-              const Center(
-                child: Text(
-                  "FAQs",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    color: primaryColor,
-                    fontFamily: 'Avenir',
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 6),
-
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text(
-                  'Answers to a few questions are given here.',
-                  // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: textColor,
-                    fontFamily: 'Avenir',
-                  ),
-                ),
-              ),
-              const SizedBox(height: 34),
-
-              ListView.builder(
-                itemCount: apartmentDetailsController.expansionList.length,
-                shrinkWrap: true,
-                primary: false,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: ExpansionWidget(
-                      title: apartmentDetailsController.expansionList[index]
-                          ['title'],
-                      subTitle: apartmentDetailsController.expansionList[index]
-                          ['subTitle'],
+                                      )
+                                    : const SizedBox(),
+                                // GestureDetector(
+                                //   onTap: () {
+                                //     Get.back();
+                                //   },
+                                //   child: Row(
+                                //     children: [
+                                //       const Text(
+                                //         'View All',
+                                //         style: TextStyle(
+                                //           fontSize: 16,
+                                //           fontWeight: FontWeight.w800,
+                                //           color: primaryColor,
+                                //           fontFamily: 'Avenir',
+                                //         ),
+                                //       ),
+                                //       const SizedBox(
+                                //         width: 4,
+                                //       ),
+                                //       Image.asset(
+                                //         'assets/icons/arrow_right.png',
+                                //         height: 16,
+                                //         width: 16,
+                                //       )
+                                //     ],
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                          ]),
                     ),
-                  );
-                },
-              ),
 
-              const SizedBox(
-                height: 34,
+                    /// property slider widget...
+
+                    comingFromMyAdd != true
+                        ? RecommendedProperties()
+                        : const SizedBox(),
+
+                    // const SizedBox(height: 24),
+                    // Obx(
+                    //   () => Center(
+                    //     child: PageViewDotIndicator(
+                    //       currentItem: apartmentDetailsController.initialIndex.value,
+                    //       count: apartmentDetailsController.bedsittersList.length,
+                    //       unselectedColor: lightGreyD9,
+                    //       selectedColor: primaryColor,
+                    //       size: const Size(40, 6),
+                    //       unselectedSize: const Size(22, 6),
+                    //       duration: const Duration(milliseconds: 200),
+                    //       margin: const EdgeInsets.symmetric(horizontal: 4),
+                    //       padding: EdgeInsets.zero,
+                    //       alignment: Alignment.center,
+                    //       fadeEdges: false,
+                    //       boxShape: BoxShape.rectangle,
+                    //       //defaults to circle
+                    //       borderRadius: BorderRadius.circular(50),
+                    //       //only for rectangle shape
+                    //       onItemClicked: (index) {
+                    //         apartmentDetailsController.initialIndex.value = index;
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    const SizedBox(height: 36),
+                    const Center(
+                      child: Text(
+                        "FAQs",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                          color: primaryColor,
+                          fontFamily: 'Avenir',
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Center(
+                        child: Text(
+                          'Answers to a few questions are given here.',
+                          // 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: textColor,
+                            fontFamily: 'Avenir',
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 34),
+
+                    ListView.builder(
+                      itemCount:
+                          apartmentDetailsController.expansionList.length,
+                      shrinkWrap: true,
+                      primary: false,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: ExpansionWidget(
+                            title: apartmentDetailsController
+                                .expansionList[index]['title'],
+                            subTitle: apartmentDetailsController
+                                .expansionList[index]['subTitle'],
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(
+                      height: 34,
+                    )
+                  ],
+                ),
               )
             ],
           );
@@ -1169,3 +985,301 @@ class ApartmentDetails extends StatelessWidget {
     }
   }
 }
+// Container(
+//   child: Column(
+//     children: [
+//       Obx(() => GestureDetector(
+//             onTap: () {
+//               showDialog(
+//                 context: context,
+//                 builder: (context) {
+//                   return AlertDialog(
+//                     contentPadding: EdgeInsets.zero,
+//                     // insetPadding:  EdgeInsets.symmetric(
+//                     //     horizontal: 12, vertical: listingModel
+//                     //     .listingImages.length>=2?32:2),
+//                     insetPadding: EdgeInsets.symmetric(
+//                         horizontal: 12,
+//                         vertical:
+//                             listingModel.listingImages.length >= 2
+//                                 ? 32
+//                                 : 200),
+//                     backgroundColor: Colors.red,
+//                     shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(6)),
+//                     content: Container(
+//                       decoration: const BoxDecoration(
+//                         color: Colors.white,
+//
+//                         borderRadius: BorderRadius.only(
+//                           topLeft: Radius.circular(6),
+//                           topRight: Radius.circular(6),
+//                         ),
+//                       ),
+//
+//                       constraints: BoxConstraints(
+//                         // minHeight: 52,
+//                         // maxHeight: Get.height,
+//                         maxWidth: Get.width,
+//                         minWidth: Get.width,
+//                       ),
+//                       child: Column(
+//                         children: [
+//                           GestureDetector(
+//                             onTap: () => Get.back(),
+//                             child: Container(
+//                               width: Get.width,
+//                               height: 48,
+//                               decoration: const BoxDecoration(
+//                                 color: blackColor3B,
+//                                 borderRadius: BorderRadius.only(
+//                                   topLeft: Radius.circular(6),
+//                                   topRight: Radius.circular(6),
+//                                 ),
+//                               ),
+//                               padding: const EdgeInsets.symmetric(
+//                                   horizontal: 20, vertical: 12),
+//                               child: Image.asset(
+//                                 'assets/icons/close-circle.png',
+//                                 alignment: Alignment.centerRight,
+//                                 height: 24,
+//                                 width: 24,
+//                               ),
+//                             ),
+//                           ),
+//                           Expanded(
+//                             child: ListView.builder(
+//                                 shrinkWrap: true,
+//                                 padding: EdgeInsets.zero,
+//                                 itemCount: listingModel
+//                                     .listingImages.length,
+//                                 itemBuilder: (context, index) {
+//                                   return Column(
+//                                     children: [
+//                                       Image.network(
+//                                         listingModel
+//                                             .listingImages[index]
+//                                             .value,
+//                                         width: Get.width,
+//                                         height: 246,
+//                                         fit: BoxFit.cover,
+//                                         errorBuilder: (context,
+//                                             error, stackTrace) {
+//                                           return PlayVideo(
+//                                             path: listingModel
+//                                                 .listingImages[
+//                                                     index]
+//                                                 .value,
+//                                           );
+//                                         },
+//                                       ),
+//                                       Container(
+//                                         height: 8,
+//                                         width: Get.width,
+//                                         color: whiteColor,
+//                                       ),
+//                                     ],
+//                                   );
+//                                 }),
+//                           ),
+//                           Container(
+//                             width: Get.width,
+//                             height: 8,
+//                             decoration: const BoxDecoration(
+//                               color: whiteColor,
+//                               borderRadius: BorderRadius.only(
+//                                 bottomLeft: Radius.circular(6),
+//                                 bottomRight: Radius.circular(6),
+//                               ),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   );
+//                 },
+//               );
+//             },
+//             child: Stack(
+//               children: [
+//                 Image.network(
+//                   ////////////
+//                   apartmentDetailsController.isSelected.value ==
+//                           true
+//                       ? apartmentDetailsController
+//                                   .isSelectedImage.value ==
+//                               ''
+//                           ? listingModel.listingImages[0].value
+//                           : apartmentDetailsController
+//                               .isSelectedImage.value
+//                       : listingModel.listingImages[0].value,
+//                   width: Get.width,
+//                   height: 246,
+//                   fit: BoxFit.cover,
+//                   errorBuilder: (context, error, stackTrace) {
+//                     return FutureBuilder(
+//                       future: videoThumbnail(
+//                           urlForThumbnail:
+//                               apartmentDetailsController
+//                                           .isSelectedImage
+//                                           .value ==
+//                                       ''
+//                                   ? listingModel
+//                                       .listingImages[0].value
+//                                   : apartmentDetailsController
+//                                       .isSelectedImage.value),
+//                       builder: (context, snapshot) {
+//                         print(snapshot.data.toString());
+//                         if (snapshot.connectionState ==
+//                             ConnectionState.waiting) {
+//                           return SizedBox(
+//                               width: Get.width,
+//                               height: 246,
+//                               child: const Center(
+//                                   child:
+//                                       CircularProgressIndicator(
+//                                 color: primaryColor,
+//                               )));
+//                         }
+//                         if (snapshot.hasError) {
+//                           print(snapshot.error.toString());
+//                           print('error');
+//                         }
+//                         if (snapshot.connectionState ==
+//                             ConnectionState.done) {
+//                           return SizedBox(
+//                               width: Get.width,
+//                               height: 246,
+//                               child: Image.file(
+//                                 File(snapshot.data.toString()),
+//                                 width: Get.width,
+//                                 height: 246,
+//                                 fit: BoxFit.cover,
+//                               ));
+//                         } else {
+//                           return const SizedBox(
+//                               width: 80,
+//                               height: 55,
+//                               child: Center(child: SizedBox()));
+//                         }
+//                       },
+//                     );
+//                   },
+//                 ),
+//                 Positioned(
+//                   bottom: 8,
+//                   left: 12,
+//                   child: Container(
+//                     height: 22,
+//                     padding: const EdgeInsets.symmetric(
+//                         vertical: 3, horizontal: 6),
+//                     decoration: BoxDecoration(
+//                       color: primaryColor,
+//                       borderRadius: BorderRadius.circular(5),
+//                     ),
+//                     child: Center(
+//                       child: Text(
+//                         '${apartmentDetailsController.index.value + 1} / ${listingModel.listingImages.length}',
+//                         style: const TextStyle(
+//                           fontWeight: FontWeight.w700,
+//                           color: whiteColor,
+//                           fontSize: 12,
+//                           fontFamily: 'Avenir',
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 )
+//               ],
+//             ),
+//           )),
+//       const SizedBox(height: 8),
+//       Padding(
+//         padding: const EdgeInsets.only(left: 16),
+//         child: SizedBox(
+//           height: 55,
+//           child: ListView.builder(
+//             itemCount: listingModel.listingImages.length,
+//             shrinkWrap: true,
+//             scrollDirection: Axis.horizontal,
+//             itemBuilder: (context, index) {
+//               return GestureDetector(
+//                 onTap: () {
+//                   apartmentDetailsController.isSelected.value =
+//                       true;
+//                   apartmentDetailsController
+//                           .isSelectedImage.value =
+//                       listingModel.listingImages[index]
+//                           .toString();
+//
+//                   apartmentDetailsController.index.value = index;
+//                 },
+//                 child: Padding(
+//                   padding: const EdgeInsets.only(right: 8),
+//                   child: Container(
+//                     decoration: BoxDecoration(
+//                       borderRadius: BorderRadius.circular(5),
+//                       border: Border.all(
+//                           color: const Color(0xFF6C757D),
+//                           width: 1),
+//                     ),
+//                     child: Image.network(
+//                       listingModel.listingImages[index].value,
+//                       width: 80,
+//                       height: 55,
+//                       fit: BoxFit.cover,
+//                       errorBuilder: (context, error, stackTrace) {
+//                         return FutureBuilder(
+//                           future: videoThumbnail(
+//                               urlForThumbnail: listingModel
+//                                   .listingImages[index].value),
+//                           builder: (context, snapshot) {
+//                             print(snapshot.data.toString());
+//                             if (snapshot.connectionState ==
+//                                 ConnectionState.waiting) {
+//                               return const SizedBox(
+//                                   width: 80,
+//                                   height: 55,
+//                                   child: Center(
+//                                       child:
+//                                           CircularProgressIndicator(
+//                                     color: primaryColor,
+//                                   )));
+//                             }
+//                             if (snapshot.hasError) {
+//                               print(snapshot.error.toString());
+//                               print('error');
+//                             }
+//                             if (snapshot.connectionState ==
+//                                 ConnectionState.done) {
+//                               return SizedBox(
+//                                   width: 80,
+//                                   height: 55,
+//                                   child: Image.file(
+//                                     File(
+//                                         snapshot.data.toString()),
+//                                     fit: BoxFit.cover,
+//                                     width: 80,
+//                                     height: 55,
+//                                   ));
+//                             } else {
+//                               return const SizedBox(
+//                                   width: 80,
+//                                   height: 55,
+//                                   child:
+//                                       Center(child: SizedBox()));
+//                             }
+//                           },
+//                         );
+//                       },
+//                     ),
+//                   ),
+//                 ),
+//               );
+//             },
+//           ),
+//         ),
+//       ),
+//     ],
+//   ),
+// ),

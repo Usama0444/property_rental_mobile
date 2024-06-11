@@ -193,35 +193,48 @@ class EnterPropertyDetails extends StatelessWidget {
                             title: 'Country',
                           ),
                           const SizedBox(height: 6),
-                          SizedBox(
-                            height: 50,
-                            width: Get.width,
-                            child: Obx(
-                              () => SearchDropDown(
-                                hintText: "Select country",
-                                controller: controller.countryController,
-                                dropdownItems: controller.countryList,
-                                selectedValue: listingModel.countryName.value,
-                                onChanged: (value) {
-                                  listingModel.countryName.value = value!;
-                                },
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 16),
-                            child: Text(
-                              'In which Country is it located?',
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: textColor,
-                                fontSize: 12,
-                                fontFamily: 'Avenir',
-                              ),
-                            ),
-                          ),
+                          CustomTextField(
+                              errorfontSize: 0,
+                              hintText: 'Kenya',
+                              enabled: false,
+                              // validator: (value) {
+                              //   if (value!.isEmpty) {
+                              //     return 'Please enter town.';
+                              //   }
+                              //   return null;
+                              // },
+                              borderRadius: 8,
+                              hintColor:blackColor3B,
+                              // hintColor: const Color(0xFF808080),
+                              controller:TextEditingController()),
+                          // SizedBox(
+                          //   height: 50,
+                          //   width: Get.width,
+                          //   child: Obx(
+                          //     () => SearchDropDown(
+                          //       hintText: "Select country",
+                          //       controller: controller.countryController,
+                          //       dropdownItems: controller.countryList,
+                          //       selectedValue: listingModel.countryName.value,
+                          //       onChanged: (value) {
+                          //         listingModel.countryName.value = value!;
+                          //       },
+                          //     ),
+                          //   ),
+                          // ),
+                          // const Padding(
+                          //   padding: EdgeInsets.only(left: 16),
+                          //   child: Text(
+                          //     'In which Country is it located?',
+                          //     textAlign: TextAlign.start,
+                          //     style: TextStyle(
+                          //       fontWeight: FontWeight.w500,
+                          //       color: textColor,
+                          //       fontSize: 12,
+                          //       fontFamily: 'Avenir',
+                          //     ),
+                          //   ),
+                          // ),
                           const SizedBox(height: 16),
                           const PropertyTitleRow(
                             title: 'Town',
@@ -279,7 +292,7 @@ class EnterPropertyDetails extends StatelessWidget {
                               errorfontSize: 0,
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Please enter town.';
+                                  return 'Please enter street.';
                                 }
                                 return null;
                               },
@@ -332,6 +345,15 @@ class EnterPropertyDetails extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 6, horizontal: 13),
                                     decoration: BoxDecoration(
+                                      color:listingModel
+                                          .selectedBedroom.isNotEmpty
+                                          ? listingModel.selectedBedroom
+                                          .last ==
+                                          controller
+                                              .bedroomsList[index]
+                                          ? primaryColor
+                                          : whiteColor
+                                          : whiteColor,
                                         border: Border.all(
                                           color: listingModel
                                                   .selectedBedroom.isNotEmpty
@@ -345,7 +367,14 @@ class EnterPropertyDetails extends StatelessWidget {
                                         ),
                                         borderRadius: BorderRadius.circular(6)),
                                     child: Text(
-                                      controller.bedroomsList[index],
+                                      controller.bedroomsList[index],style: TextStyle(color: listingModel
+                                        .selectedBedroom.isNotEmpty
+                                        ? listingModel.selectedBedroom
+                                        .last ==
+                                        controller
+                                            .bedroomsList[index]  ? whiteColor
+                                        : Colors.black
+                                        : Colors.black),
                                     ),
                                   ),
                                 ),
@@ -354,7 +383,7 @@ class EnterPropertyDetails extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           const PropertyTitleRow(
-                            title: 'Monthly Payment/Cost',
+                            title: 'Daily Payment/Cost',
                           ),
                           const SizedBox(height: 6),
                           CustomTextField(
@@ -408,8 +437,9 @@ class EnterPropertyDetails extends StatelessWidget {
                                           width: Get.width * 0.55,
                                           height: 40,
                                           child: CustomTextField(
-                                              hintText: '',
+                                              hintText: 'Internet fee',
                                               borderRadius: 8,
+                                              hintColor: Color(0xFF808080),
                                               // validator: (value) {
                                               //   if (value!.isEmpty) {
                                               //     return 'Please enter Cost.';
@@ -432,8 +462,9 @@ class EnterPropertyDetails extends StatelessWidget {
                                           width: Get.width * 0.2,
                                           height: 40,
                                           child: CustomTextField(
-                                              hintText: '',
+                                              hintText: '1000',
                                               borderRadius: 8,
+                                              hintColor: Color(0xFF808080),
                                               // validator: (value) {
                                               //   if (value!.isEmpty) {
                                               //     return 'Please enter Cost.';
@@ -599,8 +630,10 @@ class EnterPropertyDetails extends StatelessWidget {
                                   int indicatePaySum = 0;
                                   for (var item
                                       in listingModel.indicatePayList) {
-                                    indicatePaySum +=
-                                        int.parse(item.extraCost.text) ?? 0;
+                                    if (item.extraCost.text != '') {
+                                      indicatePaySum +=
+                                          int.parse(item.extraCost.text) ?? 0;
+                                    }
                                   }
 
                                   listingModel.extraPay.text =

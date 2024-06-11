@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'dart:typed_data';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,8 @@ class UploadPropertyImages extends StatelessWidget {
 
   final controller = Get.put(UploadPropertyImagesController());
   final RxBool data = true.obs;
+  final RxBool startVid = false.obs;
+  // final RxInt playingIndex = RxInt(-1);
   @override
   Widget build(BuildContext context) {
     // print(listingModel!.listingImages.length);
@@ -88,7 +91,7 @@ class UploadPropertyImages extends StatelessWidget {
                           prefixIcon: Image.asset('assets/icons/camera.png'),
                           onPressed: () async {
                             Uint8List? selectedImages =
-                            await getImage(ImageSource.camera);
+                                await getImage(ImageSource.camera);
                             if (selectedImages != null &&
                                 selectedImages.isNotEmpty) {
                               // for (var image in selectedImages) {
@@ -102,7 +105,6 @@ class UploadPropertyImages extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-
                   ClipRRect(
                     borderRadius: BorderRadius.circular(5),
                     child: DottedBorder(
@@ -138,7 +140,6 @@ class UploadPropertyImages extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(5),
@@ -175,7 +176,6 @@ class UploadPropertyImages extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
                   Obx(
                       () => /*listingModel!.listingImageMemories.value.isNotEmpty
@@ -369,7 +369,10 @@ class UploadPropertyImages extends StatelessWidget {
                                                                           .value);
                                                                       print(
                                                                           'inside else');
-                                                                      return _VideoPlay(
+                                                                      return _VideoPlayer(
+                                                                        /*index: index,*/
+                                                                        startVideo:
+                                                                            startVid,
                                                                         videoBytes: listingModel!
                                                                             .listingImageMemories[index]
                                                                             .value,
@@ -428,303 +431,6 @@ class UploadPropertyImages extends StatelessWidget {
                               : SizedBox()
                       // : SizedBox(),
                       ),
-
-                  // Obx(
-                  //   () => listingModel!.listingImageMemories.isNotEmpty
-                  //       ? Container(
-                  //           width: Get.width,
-                  //           decoration: BoxDecoration(
-                  //             borderRadius: BorderRadius.circular(12),
-                  //             color: const Color(0xFFF4F4F4),
-                  //             boxShadow: [
-                  //               BoxShadow(
-                  //                   color: Colors.black.withOpacity(0.1),
-                  //                   spreadRadius: 1,
-                  //                   blurRadius: 10)
-                  //             ],
-                  //           ),
-                  //           padding: const EdgeInsets.all(16),
-                  //           child: Column(
-                  //             crossAxisAlignment: CrossAxisAlignment.start,
-                  //             children: [
-                  //               Center(
-                  //                 child: Wrap(
-                  //                   alignment: WrapAlignment.center,
-                  //                   children: listingModel!.listingImageMemories
-                  //                       .map((imageMemory) {
-                  //                     return Obx(() => Padding(
-                  //                       padding: const EdgeInsets.only(
-                  //                           left: 5, right: 5.0, bottom: 8),
-                  //                       child: SizedBox(
-                  //                         width: Get.width * 0.37,
-                  //                         child: ClipRRect(
-                  //                           borderRadius:
-                  //                           BorderRadius.circular(10),
-                  //                           child: Image.memory(
-                  //                             imageMemory.value,
-                  //                             height: 115,
-                  //                             width: Get.width,
-                  //                             fit: BoxFit.cover,
-                  //                           ),
-                  //                         ),
-                  //                       ),
-                  //                     ));
-                  //                   }).toList(),
-                  //                 ),
-                  //
-                  //                 // Wrap(
-                  //                 //     alignment: WrapAlignment.center,
-                  //                 //     children: List.generate(
-                  //                 //     listingModel!.listingImageMemories.length,
-                  //                 //       (index) => Padding(
-                  //                 //         padding: const EdgeInsets.only(left: 5,
-                  //                 //             right: 5.0, bottom: 8),
-                  //                 //         child: Container(
-                  //                 //           width: Get.width * 0.37,
-                  //                 //           child: Stack(
-                  //                 //             children: [
-                  //                 //               Obx(() {
-                  //                 //                 return ClipRRect(
-                  //                 //                   borderRadius:
-                  //                 //                       BorderRadius.circular(10),
-                  //                 //                   child:
-                  //                 //
-                  //                 //                       // controller.imagePath1.value != ''
-                  //                 //                       //     ? controller.imagePath1.value
-                  //                 //                       //             .contains(".mp4")
-                  //                 //                       //         ? _VideoPlay(
-                  //                 //                       //             path: controller
-                  //                 //                       //                 .imagePath1.value)
-                  //                 //                       //         : Image.file(
-                  //                 //                       //             File(
-                  //                 //                       //               controller
-                  //                 //                       //                   .imagePath1
-                  //                 //                       //                   .value
-                  //                 //                       //                   .toString(),
-                  //                 //                       //             ),
-                  //                 //                       //             height: 115,
-                  //                 //                       //             width: Get.width,
-                  //                 //                       //             fit: BoxFit.cover,
-                  //                 //                       //           )
-                  //                 //
-                  //                 //                     listingModel!.listingImageMemories.isNotEmpty?
-                  //                 //                         Image.memory(listingModel!.listingImageMemories)
-                  //                 //                           : Image.asset(
-                  //                 //                               'assets/images/apartment_3.png',
-                  //                 //                               height: 115,
-                  //                 //                               width: Get.width,
-                  //                 //                               fit: BoxFit.cover,
-                  //                 //                             ),
-                  //                 //                 );
-                  //                 //               }),
-                  //                 //               Positioned(
-                  //                 //                 right: 8,
-                  //                 //                 top: 8,
-                  //                 //                 child: GestureDetector(
-                  //                 //                   onTap: () {
-                  //                 //                     controller.imagePath1.value = '';
-                  //                 //                   },
-                  //                 //                   child: Container(
-                  //                 //                     height: 24,
-                  //                 //                     width: 24,
-                  //                 //                     decoration: BoxDecoration(
-                  //                 //                         color: whiteColor,
-                  //                 //                         borderRadius:
-                  //                 //                             BorderRadius.circular(2)),
-                  //                 //                     padding: const EdgeInsets.all(4),
-                  //                 //                     child: Image.asset(
-                  //                 //                       'assets/icons/delete_3.png',
-                  //                 //                       height: 16,
-                  //                 //                       width: 16,
-                  //                 //                     ),
-                  //                 //                   ),
-                  //                 //                 ),
-                  //                 //               )
-                  //                 //             ],
-                  //                 //           ),
-                  //                 //         ),
-                  //                 //       ),
-                  //                 //     )
-                  //                 //     //     const SizedBox(width: 16),
-                  //                 //     //     Expanded(
-                  //                 //     //       child: Stack(
-                  //                 //     //         children: [
-                  //                 //     //           Obx(
-                  //                 //     //             () => ClipRRect(
-                  //                 //     //               borderRadius: BorderRadius.circular(10),
-                  //                 //     //               child: controller.imagePath2.value != ''
-                  //                 //     //                   ? controller.imagePath2.value
-                  //                 //     //                           .contains(".mp4")
-                  //                 //     //                       ? _VideoPlay(
-                  //                 //     //                           path: controller
-                  //                 //     //                               .imagePath2.value)
-                  //                 //     //                       : Image.file(
-                  //                 //     //                           File(
-                  //                 //     //                             controller.imagePath2.value
-                  //                 //     //                                 .toString(),
-                  //                 //     //                           ),
-                  //                 //     //                           height: 115,
-                  //                 //     //                           width: Get.width,
-                  //                 //     //                           fit: BoxFit.cover,
-                  //                 //     //                         )
-                  //                 //     //                   : Image.asset(
-                  //                 //     //                       'assets/images/apartment_3.png',
-                  //                 //     //                       height: 115,
-                  //                 //     //                       width: Get.width,
-                  //                 //     //                       fit: BoxFit.cover,
-                  //                 //     //                     ),
-                  //                 //     //             ),
-                  //                 //     //           ),
-                  //                 //     //           Positioned(
-                  //                 //     //             right: 8,
-                  //                 //     //             top: 8,
-                  //                 //     //             child: GestureDetector(
-                  //                 //     //               onTap: () {
-                  //                 //     //                 controller.imagePath2.value = '';
-                  //                 //     //               },
-                  //                 //     //               child: Container(
-                  //                 //     //                 height: 24,
-                  //                 //     //                 width: 24,
-                  //                 //     //                 decoration: BoxDecoration(
-                  //                 //     //                     color: whiteColor,
-                  //                 //     //                     borderRadius:
-                  //                 //     //                         BorderRadius.circular(2)),
-                  //                 //     //                 padding: const EdgeInsets.all(4),
-                  //                 //     //                 child: Image.asset(
-                  //                 //     //                   'assets/icons/delete_3.png',
-                  //                 //     //                   height: 16,
-                  //                 //     //                   width: 16,
-                  //                 //     //                 ),
-                  //                 //     //               ),
-                  //                 //     //             ),
-                  //                 //     //           )
-                  //                 //     //         ],
-                  //                 //     //       ),
-                  //                 //     //     ),
-                  //                 //     //   ],
-                  //                 //     // ),
-                  //                 //     // const SizedBox(height: 16),
-                  //                 //     // Row(
-                  //                 //     //   children: [
-                  //                 //     //     Expanded(
-                  //                 //     //       child: Stack(
-                  //                 //     //         children: [
-                  //                 //     //           Obx(
-                  //                 //     //             () => ClipRRect(
-                  //                 //     //               borderRadius: BorderRadius.circular(10),
-                  //                 //     //               child: controller.imagePath3.value != ''
-                  //                 //     //                   ? controller.imagePath3.value
-                  //                 //     //                           .contains(".mp4")
-                  //                 //     //                       ? _VideoPlay(
-                  //                 //     //                           path: controller
-                  //                 //     //                               .imagePath3.value)
-                  //                 //     //                       : Image.file(
-                  //                 //     //                           File(
-                  //                 //     //                             controller.imagePath3.value
-                  //                 //     //                                 .toString(),
-                  //                 //     //                           ),
-                  //                 //     //                           height: 115,
-                  //                 //     //                           width: Get.width,
-                  //                 //     //                           fit: BoxFit.cover,
-                  //                 //     //                         )
-                  //                 //     //                   : Image.asset(
-                  //                 //     //                       'assets/images/apartment_3.png',
-                  //                 //     //                       height: 115,
-                  //                 //     //                       width: Get.width,
-                  //                 //     //                       fit: BoxFit.cover,
-                  //                 //     //                     ),
-                  //                 //     //             ),
-                  //                 //     //           ),
-                  //                 //     //           Positioned(
-                  //                 //     //             right: 8,
-                  //                 //     //             top: 8,
-                  //                 //     //             child: GestureDetector(
-                  //                 //     //               onTap: () {
-                  //                 //     //                 controller.imagePath3.value = '';
-                  //                 //     //               },
-                  //                 //     //               child: Container(
-                  //                 //     //                 height: 24,
-                  //                 //     //                 width: 24,
-                  //                 //     //                 decoration: BoxDecoration(
-                  //                 //     //                     color: whiteColor,
-                  //                 //     //                     borderRadius:
-                  //                 //     //                         BorderRadius.circular(2)),
-                  //                 //     //                 padding: const EdgeInsets.all(4),
-                  //                 //     //                 child: Image.asset(
-                  //                 //     //                   'assets/icons/delete_3.png',
-                  //                 //     //                   height: 16,
-                  //                 //     //                   width: 16,
-                  //                 //     //                 ),
-                  //                 //     //               ),
-                  //                 //     //             ),
-                  //                 //     //           )
-                  //                 //     //         ],
-                  //                 //     //       ),
-                  //                 //     //     ),
-                  //                 //     //     const SizedBox(width: 16),
-                  //                 //     //     Expanded(
-                  //                 //     //       child: Stack(
-                  //                 //     //         children: [
-                  //                 //     //           Obx(
-                  //                 //     //             () => ClipRRect(
-                  //                 //     //               borderRadius: BorderRadius.circular(10),
-                  //                 //     //               child: controller.imagePath4.value != ''
-                  //                 //     //                   ? controller.imagePath4.value
-                  //                 //     //                           .contains(".mp4")
-                  //                 //     //                       ? _VideoPlay(
-                  //                 //     //                           path: controller
-                  //                 //     //                               .imagePath4.value)
-                  //                 //     //                       : Image.file(
-                  //                 //     //                           File(
-                  //                 //     //                             controller.imagePath4.value
-                  //                 //     //                                 .toString(),
-                  //                 //     //                           ),
-                  //                 //     //                           height: 115,
-                  //                 //     //                           width: Get.width,
-                  //                 //     //                           fit: BoxFit.cover,
-                  //                 //     //                         )
-                  //                 //     //                   : Image.asset(
-                  //                 //     //                       'assets/images/apartment_3.png',
-                  //                 //     //                       height: 115,
-                  //                 //     //                       width: Get.width,
-                  //                 //     //                       fit: BoxFit.cover,
-                  //                 //     //                     ),
-                  //                 //     //             ),
-                  //                 //     //           ),
-                  //                 //     //           Positioned(
-                  //                 //     //             right: 8,
-                  //                 //     //             top: 8,
-                  //                 //     //             child: GestureDetector(
-                  //                 //     //               onTap: () {
-                  //                 //     //                 controller.imagePath4.value = '';
-                  //                 //     //               },
-                  //                 //     //               child: Container(
-                  //                 //     //                 height: 24,
-                  //                 //     //                 width: 24,
-                  //                 //     //                 decoration: BoxDecoration(
-                  //                 //     //                     color: whiteColor,
-                  //                 //     //                     borderRadius:
-                  //                 //     //                         BorderRadius.circular(2)),
-                  //                 //     //                 padding: const EdgeInsets.all(4),
-                  //                 //     //                 child: Image.asset(
-                  //                 //     //                   'assets/icons/delete_3.png',
-                  //                 //     //                   height: 16,
-                  //                 //     //                   width: 16,
-                  //                 //     //                 ),
-                  //                 //     //               ),
-                  //                 //     //             ),
-                  //                 //     //           )
-                  //                 //     //         ],
-                  //                 //     //       ),
-                  //                 //     //     ),
-                  //                 //
-                  //                 //     ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         )
-                  //       : SizedBox(),
-                  // ),
                   const SizedBox(height: 34),
                 ],
               ),
@@ -755,6 +461,9 @@ class UploadPropertyImages extends StatelessWidget {
                       message: 'Please select atleast one image.',
                       button: true);
                 } else {
+                  print('acvdd');
+                  startVid.value = false;
+
                   Get.to(() => SelectFacilities(
                       listingId: listingId, listingModel: listingModel));
                 }
@@ -767,25 +476,33 @@ class UploadPropertyImages extends StatelessWidget {
   }
 }
 
-/// video player widget for Uint8List video
-class _VideoPlay extends StatefulWidget {
+class _VideoPlayer extends StatefulWidget {
   final Uint8List videoBytes;
+  final RxBool startVideo;
 
-  const _VideoPlay({
+  const _VideoPlayer({
     required this.videoBytes,
+    required this.startVideo,
   });
 
   @override
-  State<_VideoPlay> createState() => _VideoPlayState();
+  State<_VideoPlayer> createState() => _VideoPlayerState();
 }
 
-class _VideoPlayState extends State<_VideoPlay> {
+class _VideoPlayerState extends State<_VideoPlayer> {
   VideoPlayerController? _videoController;
+  RxBool isAssigned = false.obs;
 
   @override
   void initState() {
     super.initState();
     _initializeVideo();
+
+    // final file = File('${Directory.systemTemp.path}/video_temp.mp4');
+    // await file.writeAsBytes(widget.videoBytes);
+    // _videoController = VideoPlayerController.file(file);
+    // await _videoController!.initialize();
+    // _videoController!.setLooping(true);
   }
 
   @override
@@ -797,47 +514,265 @@ class _VideoPlayState extends State<_VideoPlay> {
   Future<void> _initializeVideo() async {
     final file = File('${Directory.systemTemp.path}/video_temp.mp4');
     await file.writeAsBytes(widget.videoBytes);
-    _videoController = VideoPlayerController.file(file);
-    await _videoController!.initialize();
-    _videoController!.setLooping(true);
-    setState(() {}); // rebuild widget once video is initialized
-    _videoController!.play();
+
+    // setState(() {
+    _videoController = VideoPlayerController.file(file)
+      ..initialize().then((value) {
+        _videoController!.setLooping(true);
+        isAssigned.value = true;
+
+      });
+    // }); // rebuild widget once video is initialized
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (_videoController != null) {
-          if (_videoController!.value.isPlaying) {
-            _videoController!.pause();
-          } else {
-            _videoController!.play();
-          }
-        }
-      },
-      child: Container(
-        height: 115,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: AspectRatio(
-            aspectRatio: _videoController != null
-                ? _videoController!.value.aspectRatio
-                : 16 / 9,
-            child: _videoController != null
-                ? VideoPlayer(_videoController!)
-                : Container(),
-          ),
-        ),
-      ),
-    );
+    print('hsjdvkyhsdf');
+
+    return Obx(() {
+      if (_videoController != null) {
+
+        print('hjsdv');
+        if (  widget.startVideo.value== false) {
+          _videoController!.pause();
+          widget.startVideo.value = false;
+        } else {
+          // widget.startVideo.value = true;
+        }}
+      return isAssigned.value == false
+          ? SizedBox(
+              height: 115,
+              width: MediaQuery.of(context).size.width,
+              child: Center(
+                  child: CircularProgressIndicator(
+                color: primaryColor,
+              )),
+            )
+          : GestureDetector(
+              onTap: () {
+                if (_videoController != null) {
+                  print('stop+++++++++++++++++++');
+                  if (_videoController!.value.isPlaying) {
+                    print('stop');
+                    widget.startVideo.value = false;
+                    _videoController!.pause();
+                  } else {
+                    widget.startVideo.value = true;
+                    _videoController!.play();
+                  }
+                }
+              },
+              child: Container(
+                height: 115,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: AspectRatio(
+                    aspectRatio: _videoController != null
+                        ? _videoController!.value.aspectRatio
+                        : 16 / 9,
+                    child: _videoController != null
+                        ? VideoPlayer(_videoController!)
+                        : Container(),
+                  ),
+                ),
+              ));
+    });
   }
 }
 
+//
+// class _VideoPlayer extends StatefulWidget {
+//   final Uint8List videoBytes;
+//   final RxBool startVideo;
+//   final int index; // Add index
+//   final VoidCallback onTap;
+//   const _VideoPlayer({
+//     required this.videoBytes,
+//     required this.startVideo, required this.onTap,
+//     required this.index, // Add index
+//   });
+//
+//   @override
+//   State<_VideoPlayer> createState() => _VideoPlayerState();
+// }
+//
+// class _VideoPlayerState extends State<_VideoPlayer> {
+//   // final playingIndex = RxInt(-1);
+//   VideoPlayerController? _videoController;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _initializeVideo();
+//     // ever(playingIndex, (_) => _updatePlayingState()); // Listen to playingIndex changes
+//   }
+//
+//   @override
+//   void dispose() {
+//     _videoController?.dispose();
+//     super.dispose();
+//   }
+//
+//   Future<void> _initializeVideo() async {
+//     final file = File('${Directory.systemTemp.path}/video_temp_${widget.index}.mp4'); // Use unique file name for each video
+//     await file.writeAsBytes(widget.videoBytes);
+//     _videoController = VideoPlayerController.file(file);
+//     await _videoController!.initialize();
+//     _videoController!.setLooping(true);
+//     setState(() {}); // rebuild widget once video is initialized
+//   }
+//
+//   // void _updatePlayingState() {
+//   //   if (_videoController != null) {
+//   //     if (playingIndex.value == widget.index) {
+//   //       _videoController!.play();
+//   //     } else {
+//   //       _videoController!.pause();
+//   //       // playingIndex.value = -1;
+//   //     }
+//   //   }
+//   // }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Obx(
+//           () {
+//         // if (_videoController != null) {
+//         //   _updatePlayingState();
+//         // }
+//         return GestureDetector(
+//           // onTap:widget.onTap,
+// onTap:(){
+//   if (_videoController != null) {
+//     if (_videoController!.value.isPlaying) {
+//       _videoController!.pause();
+//       widget.startVideo.value = false;
+//       // playingIndex.value = -1; // No video is playing
+//     } else {
+//       // playingIndex.value = widget.index; // Update playingIndex with the current index
+//       widget.startVideo.value = true;
+//     }
+//   }
+// },
+//
+//
+//           child: Stack(
+//             children: [
+//               Container(
+//                 height: 115,
+//                 width: MediaQuery.of(context).size.width,
+//                 decoration: BoxDecoration(
+//                   borderRadius: BorderRadius.circular(10),
+//                 ),
+//                 child: ClipRRect(
+//                   borderRadius: BorderRadius.circular(10),
+//                   child: AspectRatio(
+//                     aspectRatio: _videoController != null
+//                         ? _videoController!.value.aspectRatio
+//                         : 16 / 9,
+//                     child: _videoController != null
+//                         ? VideoPlayer(_videoController!,)
+//                         : Container(),
+//                   ),
+//                 ),
+//               ),
+//               Positioned(
+//                 top: 50,
+//                 left: 0,
+//                 right: 0,
+//                 child: !widget.startVideo.value
+//                     ?SizedBox() /*Center(
+//                   child: Icon(
+//                     Icons.play_arrow,
+//                     color: Colors.white,
+//                     size: 20,
+//                   ),
+//                 )*/
+//                     : SizedBox(),
+//               )
+//             ],
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
+
+//
+// class _VideoPlay extends StatefulWidget {
+//   final Uint8List videoBytes;
+//
+//   const _VideoPlay({
+//     required this.videoBytes,
+//   });
+//
+//   @override
+//   State<_VideoPlay> createState() => _VideoPlayState();
+// }
+//
+// class _VideoPlayState extends State<_VideoPlay> {
+//   VideoPlayerController? _videoController;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _initializeVideo();
+//   }
+//
+//   @override
+//   void dispose() {
+//     _videoController?.dispose();
+//     super.dispose();
+//   }
+//
+//   Future<void> _initializeVideo() async {
+//     final file = File('${Directory.systemTemp.path}/video_temp.mp4');
+//     await file.writeAsBytes(widget.videoBytes);
+//     _videoController = VideoPlayerController.file(file);
+//     await _videoController!.initialize();
+//     _videoController!.setLooping(true);
+//     setState(() {}); // rebuild widget once video is initialized
+//     _videoController!.play();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: () {
+//         if (_videoController != null) {
+//           if (_videoController!.value.isPlaying) {
+//             _videoController!.pause();
+//           } else {
+//             _videoController!.play();
+//           }
+//         }
+//       },
+//       child: Container(
+//         height: 115,
+//         width: MediaQuery.of(context).size.width,
+//         decoration: BoxDecoration(
+//           borderRadius: BorderRadius.circular(10),
+//         ),
+//         child: ClipRRect(
+//           borderRadius: BorderRadius.circular(10),
+//           child: AspectRatio(
+//             aspectRatio: _videoController != null
+//                 ? _videoController!.value.aspectRatio
+//                 : 16 / 9,
+//             child: _videoController != null
+//                 ? VideoPlayer(_videoController!)
+//                 : Container(),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+///////////////
 /// video player widget
 //
 // class _VideoPlay extends StatefulWidget {

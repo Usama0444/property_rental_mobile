@@ -414,23 +414,78 @@ reservationCheckInBottomSheet(
                       text: 'Done',
                       height: 44,
                       width: Get.width,
+                      // onPressed: () async {
+                      //
+                      //   if (controller.checkOutDate.value
+                      //           .isAfter(controller.checkInDate.value) ||
+                      //       controller.checkOutDate.value ==
+                      //           controller.checkInDate.value) {
+                      //     final daysDifference = controller.checkOutDate.value
+                      //             .difference(controller.checkInDate.value)
+                      //             .inDays +
+                      //         1;
+                      //
+                      //     final rentDays = daysDifference *
+                      //         int.parse(listingModel.cost.text);
+                      //
+                      //     final totalAmount =
+                      //         rentDays + int.parse(listingModel.extraPay.text);
+                      //     print(totalAmount.toString() + ' totalAmount');
+                      //     print(daysDifference.toString() + ' daysDifference');
+                      //
+                      //     // Convert selected dates to milliseconds
+                      //     int checkInDateMillis = controller
+                      //         .checkInDate.value.millisecondsSinceEpoch;
+                      //     int checkOutDateMillis = controller
+                      //         .checkOutDate.value.millisecondsSinceEpoch;
+                      //
+                      //     // Check for overlapping bookings
+                      //     bool isBookable = await checkBookingAvailability(
+                      //         checkInDateMillis, checkOutDateMillis);
+                      //
+                      //     // Get.to(() => const BookingStatus());
+                      //     if (isBookable) {
+                      //       Get.to(() => PaymentScreen(
+                      //           listingModel: listingModel,
+                      //           listingID: listingID,
+                      //           totalAmount: totalAmount.toString()));
+                      //     } else {
+                      //       loadingDialog(
+                      //           message:
+                      //               'The property is already booked for these days.',
+                      //           button: true);
+                      //     }
+                      //   } else {
+                      //     loadingDialog(
+                      //         message:
+                      //             'Please select a date after the check-in date.',
+                      //         button: true);
+                      //   }
+                      // },
                       onPressed: () async {
-
+                        final totalAmount;
+                        int extraPayTotal=0;
                         if (controller.checkOutDate.value
-                                .isAfter(controller.checkInDate.value) ||
+                            .isAfter(controller.checkInDate.value) ||
                             controller.checkOutDate.value ==
                                 controller.checkInDate.value) {
                           final daysDifference = controller.checkOutDate.value
-                                  .difference(controller.checkInDate.value)
-                                  .inDays +
+                              .difference(controller.checkInDate.value)
+                              .inDays +
                               1;
 
-                          final rentDays = daysDifference *
-                              int.parse(listingModel.cost.text);
+                          final rentTotalAmount = daysDifference *
+                              int.parse(listingModel.payment.text);
+                          if (listingModel.extraPay.text != '') {
+                            extraPayTotal = daysDifference *
+                                int.parse(listingModel.extraPay.text);
 
-                          final totalAmount =
-                              rentDays + int.parse(listingModel.extraPay.text);
-                          print(totalAmount.toString() + ' totalAmount');
+                            totalAmount = rentTotalAmount + extraPayTotal;
+                          } else {
+                            totalAmount = rentTotalAmount;
+                          }
+
+
                           print(daysDifference.toString() + ' daysDifference');
 
                           // Convert selected dates to milliseconds
@@ -448,17 +503,20 @@ reservationCheckInBottomSheet(
                             Get.to(() => PaymentScreen(
                                 listingModel: listingModel,
                                 listingID: listingID,
+                                days:daysDifference,
+                                extraAmount: extraPayTotal.toString(),
+                                rentAmount: rentTotalAmount.toString(),
                                 totalAmount: totalAmount.toString()));
                           } else {
                             loadingDialog(
                                 message:
-                                    'The property is already booked for these days.',
+                                'The property is already booked for these days.',
                                 button: true);
                           }
                         } else {
                           loadingDialog(
                               message:
-                                  'Please select a date after the check-in date.',
+                              'Please select a date after the check-in date.',
                               button: true);
                         }
                       },

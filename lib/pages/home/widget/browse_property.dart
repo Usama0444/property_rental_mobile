@@ -400,7 +400,7 @@ class PropertyData extends StatelessWidget {
             height: 6,
           ),
           Text(
-            'KSH  ${imageMap.cost.text}',
+            'KSH  ${imageMap.payment.text}',
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,

@@ -18,6 +18,7 @@ class CaroselSlider extends StatelessWidget {
   });
 
   final controller = Get.put(SplashController());
+  final CarouselController caroselController = CarouselController();
   // final controller = Get.put(HomeController());
 
   @override
@@ -31,16 +32,21 @@ class CaroselSlider extends StatelessWidget {
                 height: 40,
               ),
               CarouselSlider(
+                carouselController: caroselController,
                 options: CarouselOptions(
+                  animateToClosest: true,
+                  pageSnapping: true,
                   clipBehavior: Clip.hardEdge,
                   padEnds: true,
+                  reverse: false,
                   aspectRatio: 16 / 9,
                   height: Get.height * 0.8,
                   autoPlayCurve: Curves.easeIn,
                   enlargeFactor: 0.0,
                   enlargeCenterPage: true,
                   autoPlay: true,
-                  viewportFraction: 0.9,
+                  viewportFraction: 1.0,
+                  disableCenter: false,
                   enableInfiniteScroll: false,
                   initialPage: controller.buySaleRentIndex.value,
                   onPageChanged: (index, dynamic) {
@@ -50,51 +56,122 @@ class CaroselSlider extends StatelessWidget {
                 ),
                 items: controller.buySaleRentList.map(
                   (buySaleRentMap) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: Column(
-                        // mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            // height: 322,
+                    return controller.buySaleRentIndex.value == 0
+                        ? Container(
                             width: Get.width,
-                            decoration: BoxDecoration(
-                                color: whiteColor,
-                                //   color: Colors.yellow,
-                                borderRadius: BorderRadius.circular(16)),
+                            color: Colors.white,
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const SizedBox(
-                                  height: 24,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: Image.asset(
+                                    'assets/images/image for dtart.png',
+                                    height: Get.height * 0.6,
+                                    width: Get.width,
+                                    fit: BoxFit.fill,
+                                  ),
                                 ),
-                                SizedBox(
-                                    height: Get.height * 0.5,
-                                    // width: 140,
-                                    child:
-                                        Image.asset(buySaleRentMap['image'])),
-                                const SizedBox(height: 16),
-                                Center(
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                const Text(
+                                  'Welcome to',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w600,
+                                    // color:  primaryColor,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+                                const Text(
+                                  'Realtime Estates Ltd',
+                                  style: TextStyle(
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.w900,
+                                    color: primaryColor,
+                                    // fontWeight: FontWeight.bold,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 24),
                                   child: Text(
-                                    buySaleRentMap['title'],
+                                    'The best real estate application in Kenya to complete your life and family',
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.w800,
-                                      color: primaryColor,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
                                       fontFamily: 'Avenir',
                                     ),
                                   ),
                                 ),
                                 const SizedBox(
-                                  height: 24,
+                                  height: 18,
+                                ),
+                                // Padding(
+                                //   padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                //   child: CustomButton(
+                                //       text: 'Next',
+                                //       height: 44,
+                                //       width: Get.width,
+                                //       onPressed: () async {
+                                //         Get.to(() => CaroselSlider());
+                                //       }),
+                                // ),
+                              ],
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(right: 16),
+                            child: Column(
+                              // mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  // height: 322,
+                                  width: Get.width,
+                                  decoration: BoxDecoration(
+                                      color: whiteColor,
+                                      //   color: Colors.yellow,
+                                      borderRadius: BorderRadius.circular(16)),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(
+                                        height: 24,
+                                      ),
+                                      SizedBox(
+                                          height: Get.height * 0.5,
+                                          // width: 140,
+                                          child: Image.asset(
+                                              buySaleRentMap['image'])),
+                                      const SizedBox(height: 16),
+                                      Center(
+                                        child: Text(
+                                          buySaleRentMap['title'],
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.w800,
+                                            color: primaryColor,
+                                            fontFamily: 'Avenir',
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 24,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                    );
+                          );
                   },
                 ).toList(),
               ),
@@ -114,9 +191,11 @@ class CaroselSlider extends StatelessWidget {
                   boxShape: BoxShape.rectangle,
                   //defaults to circle
                   borderRadius: BorderRadius.circular(50),
+
                   //only for rectangle shape
                   onItemClicked: (index) {
                     controller.buySaleRentIndex.value = index;
+                    caroselController.animateToPage(index);
                   },
                 ),
               ),
@@ -126,12 +205,20 @@ class CaroselSlider extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: CustomButton(
-                    text: 'Next ',
-                    height: 44,
-                    width: Get.width,
-                    onPressed: () async {
+                  text: 'Next ',
+                  height: 44,
+                  width: Get.width,
+                  onPressed: () async {
+                    // Step 4: Navigate to the next carousel item or go to LoginScreen
+                    int nextIndex = controller.buySaleRentIndex.value + 1;
+                    if (nextIndex < controller.buySaleRentList.length) {
+                      caroselController.animateToPage(nextIndex);
+                      controller.buySaleRentIndex.value = nextIndex;
+                    } else {
                       Get.offAll(() => LoginScreen());
-                    }),
+                    }
+                  },
+                ),
               ),
             ],
           ),

@@ -268,7 +268,7 @@ class SearchPropertyWidget extends StatelessWidget {
                   height: 6,
                 ),
                 Text(
-                  "KSH ${searchModel!.cost.text.toString()}",
+                  "KSH ${searchModel!.payment.text.toString()}",
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     color: primaryColor,

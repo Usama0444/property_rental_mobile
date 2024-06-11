@@ -16,6 +16,11 @@ class SplashController extends GetxController {
 
   final List<Map<String, dynamic>> buySaleRentList = [
     {
+      "image": 'assets/images/landing img 2.png',
+      "title": 'Book a real estate quickly and easily with one click',
+
+    },
+    {
       "image": 'assets/images/landing img 1.png',
       "title": 'Thousand of the best real estate at affordable price',
 

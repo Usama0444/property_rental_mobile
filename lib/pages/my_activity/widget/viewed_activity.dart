@@ -107,7 +107,7 @@ class ViewedActivity extends StatelessWidget {
             height: 6,
           ),
           Text(
-            'KSH ${listingModel!.cost.text}',
+            'KSH ${listingModel!.payment.text}',
             style: TextStyle(
               decoration: TextDecoration.underline,
               fontWeight: FontWeight.w700,

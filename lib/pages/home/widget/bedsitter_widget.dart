@@ -117,7 +117,7 @@ class BedsittersWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'KSH ${listingModel.cost.text}',
+                    'KSH ${listingModel.payment.text}',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
