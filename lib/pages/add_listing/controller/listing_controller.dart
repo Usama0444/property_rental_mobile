@@ -93,9 +93,9 @@ class EnterPropertyDetailsController extends GetxController {
   }
 
   ///update listing function
-  Future<void> updateListing(listModel, listingId) async {
+  Future<void> updateListing(AddListingModel? listModel, listingId) async {
     loadingDialog(message: 'Please wait !!', loading: true);
-    var data = await listModel.toMap();
+    var data = await listModel!.toMap();
     await FirebaseFirestore.instance
         .collection('listings')
         .doc(listingId)

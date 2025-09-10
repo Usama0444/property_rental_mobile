@@ -45,7 +45,7 @@ class CreatingNewAds extends StatelessWidget {
                    Text(
                     'Welcome, ${currentUserDataModel!.value.userName.text}',
                     textAlign: TextAlign.start,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       color: blackColor3B,
                       fontSize: 20,
