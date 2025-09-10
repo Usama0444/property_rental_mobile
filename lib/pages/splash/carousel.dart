@@ -1,4 +1,5 @@
-import 'package:carousel_slider/carousel_options.dart';
+
+import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,11 +7,7 @@ import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:property_rental_app/common_widgets/custom_button.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
 import 'package:property_rental_app/pages/auth/login/login_screen.dart';
-import 'package:property_rental_app/pages/bottom_nav_bar/controller/bottom_bar_controller.dart';
-import 'package:property_rental_app/pages/bottom_nav_bar/user_bottom_nav_bar.dart';
-import 'package:property_rental_app/pages/home/controller/home_controller.dart';
 import 'package:property_rental_app/pages/splash/splash_controller.dart';
-import 'package:property_rental_app/pages/start_new_ads/start_new_ads.dart';
 
 class CaroselSlider extends StatelessWidget {
   CaroselSlider({
@@ -18,7 +15,7 @@ class CaroselSlider extends StatelessWidget {
   });
 
   final controller = Get.put(SplashController());
-  final CarouselController caroselController = CarouselController();
+  final CarouselSliderController caroselController = CarouselSliderController();
   // final controller = Get.put(HomeController());
 
   @override

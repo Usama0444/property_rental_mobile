@@ -6,12 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:property_rental_app/main_controller.dart';
-import 'package:property_rental_app/pages/auth/login/login_screen.dart';
-import 'package:property_rental_app/pages/bottom_nav_bar/user_bottom_nav_bar.dart';
-import 'package:property_rental_app/pages/splash/carousel.dart';
 import 'package:property_rental_app/universal_models/user_model.dart';
-
-import 'pages/splash/landing_page.dart';
 import 'pages/splash/splash_screen.dart';
 
 //android channel for notification

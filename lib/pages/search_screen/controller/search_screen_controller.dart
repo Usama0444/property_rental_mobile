@@ -13,7 +13,7 @@ import '../../../main.dart';
 class SearchScreenController extends GetxController {
   ViewedPropertyModel vpModel = ViewedPropertyModel.initialize();
   RxInt currentCarouselPage = 0.obs;
-  CarouselController carouselController = CarouselController();
+  CarouselSliderController carouselController = CarouselSliderController();
   final List<String> imgList = [
     'assets/images/dummy_profile.png',
     'assets/images/dummy_profile.png',
