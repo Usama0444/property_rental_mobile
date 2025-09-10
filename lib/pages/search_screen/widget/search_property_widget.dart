@@ -22,10 +22,10 @@ class SearchPropertyWidget extends StatelessWidget {
   AddListingModel? searchModel;
 
   final controller = Get.put(SearchScreenController());
-
+final CarouselSliderController carouselController = CarouselSliderController();
   @override
   Widget build(BuildContext context) {
-    final CarouselController carouselController = CarouselController();
+    
 
     RxInt currentCarouselPage = 0.obs;
     return GestureDetector(

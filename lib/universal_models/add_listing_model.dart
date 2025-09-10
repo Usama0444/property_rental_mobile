@@ -27,6 +27,10 @@ class AddListingModel {
   List<RxString> listingImages;
   RxList<Rx<Uint8List>> listingImageMemories;
   RxList<IndicatePayListModel> indicatePayList;
+  bool isRecommended;
+  bool isVerified;
+  bool isFeatured;
+  DateTime createdAt;
 
   //constructor
   AddListingModel({
@@ -49,6 +53,10 @@ class AddListingModel {
     required this.description,
     required this.street,
     required this.facilities,
+    required this.isRecommended,
+    required this.isVerified,
+    required this.isFeatured,
+    required this.createdAt,
   });
 
 // Initialize the model with default values
@@ -76,7 +84,12 @@ class AddListingModel {
         propertyType: 'Apartment'.obs,
         countryName: 'Kenya'.obs,
         latitude: 0.0,
-        longitude: 0.0);
+        longitude: 0.0,
+              isRecommended: false,
+      isVerified: false,
+      isFeatured: false,
+      createdAt: DateTime.now(),
+        );
   }
 
 // Convert the model instance to a map for storing in Firestore
@@ -115,7 +128,11 @@ class AddListingModel {
       'facilities': facilities,
       'latitude': latitude,
       'longitude': longitude,
-      'indicatePayList': indicatePayListMaps
+      'indicatePayList': indicatePayListMaps,
+      'isRecommended': isRecommended,
+      'isVerified': isVerified,
+      'isFeatured': isFeatured,
+      'createdAt': Timestamp.fromDate(createdAt),
       // indicatePayList.map((element) => element.toMap()).toList(),
     };
   }
@@ -137,6 +154,15 @@ class AddListingModel {
     List<Rx<Uint8List>> imageMemories = [];
     for (int i = 0; i < images.length; i++) {
       imageMemories.add(Rx<Uint8List>(Uint8List(0)));
+    }
+        // Handle Timestamp for createdAt
+    DateTime createdAt;
+    if (snapshot.data()!['createdAt'] is Timestamp) {
+      createdAt = (snapshot.data()!['createdAt'] as Timestamp).toDate();
+    } else if (snapshot.data()!['createdAt'] is String) {
+      createdAt = DateTime.parse(snapshot.data()!['createdAt']);
+    } else {
+      createdAt = DateTime.now(); // Fallback if createdAt is missing or invalid
     }
     return AddListingModel(
       indicatePayList: RxList<IndicatePayListModel>(timingsList),
@@ -171,6 +197,11 @@ class AddListingModel {
       selectedBedroom: RxList<String>.from(
           snapshot.data()!['selectedBedroom'].map((e) => e.toString())),
       countryName: RxString(snapshot.data()!['countryName']),
+            isRecommended: snapshot.data()!['isRecommended'] ?? false,
+      isVerified: snapshot.data()!['isVerified'] ?? false,
+      isFeatured: snapshot.data()!['isFeatured'] ?? false,
+      createdAt: createdAt,
+
     );
   }
 }
