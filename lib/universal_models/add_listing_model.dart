@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:intl/intl.dart';
 import '../common_widgets/global_functions.dart';
 import '../main.dart';
@@ -30,6 +31,8 @@ class AddListingModel {
   bool isRecommended;
   bool isVerified;
   bool isFeatured;
+  bool isPending;
+  bool isApproved;
   DateTime createdAt;
 
   //constructor
@@ -56,7 +59,10 @@ class AddListingModel {
     required this.isRecommended,
     required this.isVerified,
     required this.isFeatured,
+     required this.isPending,
+    required this.isApproved,
     required this.createdAt,
+   
   });
 
 // Initialize the model with default values
@@ -88,6 +94,8 @@ class AddListingModel {
               isRecommended: false,
       isVerified: false,
       isFeatured: false,
+    isPending: true,
+    isApproved: false,
       createdAt: DateTime.now(),
         );
   }
@@ -132,6 +140,8 @@ class AddListingModel {
       'isRecommended': isRecommended,
       'isVerified': isVerified,
       'isFeatured': isFeatured,
+      'isPending': isPending,
+      'isApproved':isApproved,
       'createdAt': Timestamp.fromDate(createdAt),
       // indicatePayList.map((element) => element.toMap()).toList(),
     };
@@ -200,6 +210,8 @@ class AddListingModel {
             isRecommended: snapshot.data()!['isRecommended'] ?? false,
       isVerified: snapshot.data()!['isVerified'] ?? false,
       isFeatured: snapshot.data()!['isFeatured'] ?? false,
+      isPending: snapshot.data()!['isPending']?? false,
+      isApproved: snapshot.data()!['isApproved']?? false,
       createdAt: createdAt,
 
     );

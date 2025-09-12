@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:property_rental_app/pages/auth/login/login_screen.dart';
-
 import '../../main.dart';
 import '../bottom_nav_bar/user_bottom_nav_bar.dart';
 import 'carousel.dart';
 import 'landing_page.dart';
-
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 

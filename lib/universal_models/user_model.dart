@@ -15,37 +15,41 @@ class UserModel {
   RxBool isRecentViewed;
   RxBool isEmailRecommendation;
   RxBool isNotifications;
+  DateTime createdAt;
 
   //constructor
-  UserModel(
-      {required this.phoneNo,
-      required this.userName,
-      required this.userEmail,
-      this.token,
-      required this.countryCode,
-      required this.userID,
-      required this.password,
-      required this.isEmailRecommendation,
-      required this.isNotifications,
-      required this.isRecentViewed});
+  UserModel({
+    required this.phoneNo,
+    required this.userName,
+    required this.userEmail,
+    this.token,
+    required this.countryCode,
+    required this.userID,
+    required this.password,
+    required this.isEmailRecommendation,
+    required this.isNotifications,
+    required this.isRecentViewed,
+    required this.createdAt,
+  });
 
-// Initialize the model with default values
-
+  // Initialize the model with default values
   static UserModel initialize() {
     return UserModel(
-        isNotifications: false.obs,
-        phoneNo: TextEditingController(),
-        userName: TextEditingController(),
-        userEmail: TextEditingController(),
-        userID: currentUser != null ? currentUser!.id : '',
-        password: TextEditingController(),
-        token: '',
-        isEmailRecommendation: false.obs,
-        isRecentViewed: true.obs,
-        countryCode: 'KE');
+      isNotifications: false.obs,
+      phoneNo: TextEditingController(),
+      userName: TextEditingController(),
+      userEmail: TextEditingController(),
+      userID: currentUser != null ? currentUser!.id : '',
+      password: TextEditingController(),
+      token: '',
+      isEmailRecommendation: false.obs,
+      isRecentViewed: true.obs,
+      countryCode: 'KE',
+      createdAt: DateTime.now(),
+    );
   }
 
-// Convert the model instance to a map for storing in Firestore
+  // Convert the model instance to a map for storing in Firestore
   Future<Map<String, dynamic>> toMap() async {
     token = await Get.put(MainController()).getToken();
     print(token);
@@ -61,11 +65,12 @@ class UserModel {
       'isRecentViewed': isRecentViewed.value,
       'isNotifications': isNotifications.value,
       'token': token,
-      'countryCode': countryCode
+      'countryCode': countryCode,
+      'createdAt': Timestamp.fromDate(createdAt),
     };
   }
 
-// Create a model instance from a DocumentSnapshot
+  // Create a model instance from a DocumentSnapshot
   static UserModel fromDocumentSnapshot(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return UserModel(
@@ -87,6 +92,7 @@ class UserModel {
       token: snapshot.data()!['token'] ?? '',
       isRecentViewed: RxBool(snapshot.data()!['isRecentViewed']),
       isNotifications: RxBool(snapshot.data()!['isNotifications']),
+      createdAt: (snapshot.data()!['createdAt'] as Timestamp).toDate(),
     );
   }
 }
