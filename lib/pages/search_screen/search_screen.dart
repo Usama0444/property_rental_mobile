@@ -34,7 +34,7 @@ class SearchScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(
-            height: 44,
+            height: 50,
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -86,58 +86,59 @@ class SearchScreen extends StatelessWidget {
             color: greyBorderColor,
             height: 0.5,
           ),
-          Container(
-            height: 42,
-            width: Get.width,
-            color: primaryColor.withOpacity(0.1),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                RichText(
-                  text: const TextSpan(
-                    text: 'Show ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: blackColor,
-                      fontSize: 14,
-                      fontFamily: 'Avenir',
-                    ),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: 'Verified ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: blackColor,
-                          fontSize: 14,
-                          fontFamily: 'Avenir',
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'listings first',
-                        style: TextStyle(
-                          color: blackColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Avenir',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Obx(
-                  () => CustomSwitchButtonWidget(
-                    status: controller.isVerified.value,
-                    onToggle: (value) {
-                      controller.isVerified.value =
-                          !controller.isVerified.value;
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   height: 42,
+          //   width: Get.width,
+          //   color: primaryColor.withOpacity(0.1),
+          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+          //   child: Row(
+          //     crossAxisAlignment: CrossAxisAlignment.center,
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       RichText(
+          //         text: const TextSpan(
+          //           text: 'Show ',
+          //           style: TextStyle(
+          //             fontWeight: FontWeight.w500,
+          //             color: blackColor,
+          //             fontSize: 14,
+          //             fontFamily: 'Avenir',
+          //           ),
+          //           children: <TextSpan>[
+          //             TextSpan(
+          //               text: 'Verified ',
+          //               style: TextStyle(
+          //                 fontWeight: FontWeight.w700,
+          //                 color: blackColor,
+          //                 fontSize: 14,
+          //                 fontFamily: 'Avenir',
+          //               ),
+          //             ),
+          //             TextSpan(
+          //               text: 'listings first',
+          //               style: TextStyle(
+          //                 color: blackColor,
+          //                 fontSize: 14,
+          //                 fontWeight: FontWeight.w500,
+          //                 fontFamily: 'Avenir',
+          //               ),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //       Obx(
+          //         () => CustomSwitchButtonWidget(
+          //           status: controller.isVerified.value,
+          //           onToggle: (value) {
+          //             controller.isVerified.value =
+          //                 !controller.isVerified.value;
+          //           },
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
