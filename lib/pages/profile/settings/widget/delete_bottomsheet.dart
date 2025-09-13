@@ -67,7 +67,7 @@ deleteBottomSheet() {
                   width: Get.width,
                   height: 46,
                   onPressed: () async {
-                    deleteUserAccount();
+                   await deleteUserAccount();
                   },
                 ),
                 const SizedBox(height: 20),

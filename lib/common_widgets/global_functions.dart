@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:property_rental_app/common_widgets/loading_dialog.dart';
 import 'package:property_rental_app/pages/auth/login/login_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -83,6 +84,7 @@ Future<void> saveTokenToDatabase(String? token) async {
 
 ///deleting account
 Future<void> deleteUserAccount() async {
+  
   if (auth.currentUser != null) {
     var data = await FirebaseFirestore.instance
         .collection('users')

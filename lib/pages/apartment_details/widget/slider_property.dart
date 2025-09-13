@@ -123,73 +123,9 @@ class RecommendedProperties extends StatelessWidget {
                     //         offset: const Offset(1, 3)),
                     //   ],
                     // ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: listingModel!.listingImages.length != 0
-                                ? Image.network(
-                                    listingModel!.listingImages.first.value,
-                                    height: 120,
-                                    width: Get.width,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return FutureBuilder(
-                                        future: videoThumbnail(
-                                            urlForThumbnail: listingModel
-                                                .listingImages[0].value),
-                                        builder: (context, snapshot) {
-                                          print(snapshot.data.toString());
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.waiting) {
-                                            return SizedBox(
-                                                height: 120,
-                                                width: Get.width,
-                                                child: const Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                  color: primaryColor,
-                                                )));
-                                          }
-                                          if (snapshot.hasError) {
-                                            print(snapshot.error.toString());
-                                            print('error');
-                                          }
-                                          if (snapshot.connectionState ==
-                                              ConnectionState.done) {
-                                            return SizedBox(
-                                                height: 120,
-                                                width: Get.width,
-                                                child: Image.file(
-                                                  File(
-                                                      snapshot.data.toString()),
-                                                  height: 120,
-                                                  width: 126,
-                                                  fit: BoxFit.cover,
-                                                ));
-                                          } else {
-                                            return SizedBox(
-                                                width: Get.width,
-                                                height: 120,
-                                                child: const Center(
-                                                    child: SizedBox()));
-                                          }
-                                        },
-                                      );
-                                    },
-                                  )
-                                : Container(
-                                    height: 200,
-                                    width: Get.width,
-                                  )),
-                        const SizedBox(width: 8),
-                        GestureDetector(
-                          onTap: () {
-                            print('shvd====');
-                            // Get.to(()=>SearchScreen(role: 'hvsfd', isComingFromActivity: true));
-                            Navigator.push(
+                    child: GestureDetector(
+                      onTap: () {
+                         Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => ApartmentDetails(
@@ -198,69 +134,138 @@ class RecommendedProperties extends StatelessWidget {
                                             snapshot.data!.docs[index].id,
                                       )),
                             );
-                            // Get.back();
-                            // Get.to(() => ApartmentDetails(
-                            //       comingFromMyAdd: false,
-                            //       listingId: snapshot.data!.docs[index].id,
-                            //     ));
-                          },
-                          child: Container(
-                            color: Colors.transparent,
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 3, bottom: 2),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    listingModel.propertyName.text,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: blackColor,
-                                      fontFamily: 'Avenir',
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: listingModel!.listingImages.length != 0
+                                  ? Image.network(
+                                      listingModel!.listingImages.first.value,
+                                      height: 120,
+                                      width: Get.width,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return FutureBuilder(
+                                          future: videoThumbnail(
+                                              urlForThumbnail: listingModel
+                                                  .listingImages[0].value),
+                                          builder: (context, snapshot) {
+                                            print(snapshot.data.toString());
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return SizedBox(
+                                                  height: 120,
+                                                  width: Get.width,
+                                                  child: const Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                    color: primaryColor,
+                                                  )));
+                                            }
+                                            if (snapshot.hasError) {
+                                              print(snapshot.error.toString());
+                                              print('error');
+                                            }
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.done) {
+                                              return SizedBox(
+                                                  height: 120,
+                                                  width: Get.width,
+                                                  child: Image.file(
+                                                    File(
+                                                        snapshot.data.toString()),
+                                                    height: 120,
+                                                    width: 126,
+                                                    fit: BoxFit.cover,
+                                                  ));
+                                            } else {
+                                              return SizedBox(
+                                                  width: Get.width,
+                                                  height: 120,
+                                                  child: const Center(
+                                                      child: SizedBox()));
+                                            }
+                                          },
+                                        );
+                                      },
+                                    )
+                                  : Container(
+                                      height: 200,
+                                      width: Get.width,
+                                    )),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () {
+                              print('shvd====');
+                              // Get.to(()=>SearchScreen(role: 'hvsfd', isComingFromActivity: true));
+                             
+                              // Get.back();
+                              // Get.to(() => ApartmentDetails(
+                              //       comingFromMyAdd: false,
+                              //       listingId: snapshot.data!.docs[index].id,
+                              //     ));
+                            },
+                            child: Container(
+                              color: Colors.transparent,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 3, bottom: 2),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 5,
                                     ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    'KSH ${listingModel.payment.text}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: primaryColor,
-                                      fontFamily: 'Avenir',
+                                    Text(
+                                      listingModel.propertyName.text,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: blackColor,
+                                        fontFamily: 'Avenir',
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/icons/bedroom_2.png',
-                                        height: 16,
-                                        width: 16,
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      'KSH ${listingModel.payment.text}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: primaryColor,
+                                        fontFamily: 'Avenir',
                                       ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                        'Bedrooms : ${listingModel.selectedBedroom.last}',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w800,
-                                          color: blackColor,
-                                          fontFamily: 'Avenir',
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        Image.asset(
+                                          'assets/icons/bedroom_2.png',
+                                          height: 16,
+                                          width: 16,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          'Bedrooms : ${listingModel.selectedBedroom.last}',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w800,
+                                            color: blackColor,
+                                            fontFamily: 'Avenir',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
                     // ),
                     // StreamBuilder(

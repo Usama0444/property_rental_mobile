@@ -224,7 +224,7 @@ reservationCheckInBottomSheet(
                                 weekDayMargin: EdgeInsets.zero,
                                 childAspectRatio: 1,
                                 todayBorderColor: primaryColor,
-                                todayButtonColor: primaryColor.withOpacity(0.8),
+                                todayButtonColor: primaryColor,
                                 todayTextStyle: const TextStyle(
                                   fontFamily: 'Avenir',
                                   fontWeight: FontWeight.w400,
@@ -346,7 +346,7 @@ reservationCheckInBottomSheet(
                                 weekDayMargin: EdgeInsets.zero,
                                 childAspectRatio: 1,
                                 todayBorderColor: primaryColor,
-                                todayButtonColor: primaryColor.withOpacity(0.8),
+                                todayButtonColor: primaryColor,
                                 todayTextStyle: const TextStyle(
                                   fontFamily: 'Avenir',
                                   fontWeight: FontWeight.w400,

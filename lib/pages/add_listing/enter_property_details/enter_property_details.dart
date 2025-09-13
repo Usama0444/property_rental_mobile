@@ -69,7 +69,8 @@ class EnterPropertyDetails extends StatelessWidget {
                   ..listingImageMemories = <Rx<Uint8List>>[].obs;
               }
 
-              return Expanded(
+              return 
+              Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),

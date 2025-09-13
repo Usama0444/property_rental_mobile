@@ -225,7 +225,7 @@ class Home extends StatelessWidget {
                                       AddListingModel.fromDocumentSnapshot(
                                           snapshot.data!.docs[index]);
                                   return BedsittersWidget(
-                                    listingID: snapshot.data!.docs[index].id,
+                                    listingID: listingModel.docId,
                                     listingModel: listingModel,
                                     // homeModel: controller.bedsittersList[0],
                                   );

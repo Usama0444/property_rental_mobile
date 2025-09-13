@@ -79,6 +79,12 @@ class PaymentScreen extends StatelessWidget {
                             text: 'Ksh ${rentAmount.toString()}',
                             title: 'Rent Amount',
                           ),
+                            Divider(thickness: 0.2),
+                          const SizedBox(height: 12),
+                          PaymentRow(
+                            text: '2000',
+                            title: "Sale/Rent Comission",
+                          ),
                           Divider(thickness: 0.2),
                           const SizedBox(height: 12),
                           Text(
