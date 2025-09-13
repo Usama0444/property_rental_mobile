@@ -266,22 +266,16 @@ class Home extends StatelessWidget {
                                       fontFamily: 'Avenir',
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: 4,
-                                  ),
+                                  const SizedBox(width: 4),
                                   Image.asset(
                                     'assets/icons/arrow_right.png',
                                     height: 16,
                                     width: 16,
                                   )
-                                ],
-                              ),
+                                ]),
                             ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
+                          ]),
+                        const SizedBox(height: 8),
                         StreamBuilder(
                           stream: FirebaseFirestore.instance
                               .collection('listings')
@@ -291,7 +285,7 @@ class Home extends StatelessWidget {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return CircularProgressIndicator(); // Or any other loading indicator
+                              return const CircularProgressIndicator(color: primaryColor); // Or any other loading indicator
                             }
                             if (snapshot.hasError) {
                               print(snapshot.error.toString());
@@ -299,8 +293,7 @@ class Home extends StatelessWidget {
                             }
                             if (!snapshot.hasData ||
                                 snapshot.data!.docs.isEmpty) {
-                              return Text(
-                                  'No data available'); // Or any other empty state widget
+                              return const Text('No data available'); // Or any other empty state widget
                             }
                             return SizedBox(
                               height: 120,
@@ -322,9 +315,7 @@ class Home extends StatelessWidget {
                             );
                           },
                         ),
-                        const SizedBox(
-                          height: 28,
-                        ),
+                        const SizedBox(height: 28),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

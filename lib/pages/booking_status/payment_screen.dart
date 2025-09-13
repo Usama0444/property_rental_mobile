@@ -20,7 +20,10 @@ class PaymentScreen extends StatelessWidget {
         required this.extraAmount,
         required this.days,
         required this.rentAmount,
-        required this.listingID});
+        required this.listingID,
+        required this.commission,
+        required this.subTotal,
+      });
   final controller = Get.put(BookingsController());
   final AddListingModel listingModel;
   final String totalAmount;
@@ -28,6 +31,8 @@ class PaymentScreen extends StatelessWidget {
   final String rentAmount;
   final String listingID;
   final int days;
+  final String commission;
+  final String subTotal;
 
   @override
   Widget build(BuildContext context) {
@@ -68,26 +73,26 @@ class PaymentScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 34),
-                          PaymentRow(
+                          const PaymentRow(
                             text: 'Mpesa',
                             title: 'Payment Method',
                           ),
-                          Divider(thickness: 0.2),
+                          const Divider(thickness: 0.2),
                           const SizedBox(height: 12),
 
                           PaymentRow(
                             text: 'Ksh ${rentAmount.toString()}',
                             title: 'Rent Amount',
                           ),
-                            Divider(thickness: 0.2),
+                          const Divider(thickness: 0.2),
                           const SizedBox(height: 12),
                           PaymentRow(
-                            text: '2000',
+                            text: 'Ksh ${commission.toString()}',
                             title: "Sale/Rent Comission",
                           ),
-                          Divider(thickness: 0.2),
+                          const Divider(thickness: 0.2),
                           const SizedBox(height: 12),
-                          Text(
+                          const Text(
                             'Extra Payments',
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
@@ -97,7 +102,7 @@ class PaymentScreen extends StatelessWidget {
                             ),
                           ),
 
-                          listingModel.indicatePayList.length != 0
+                          listingModel.indicatePayList.isNotEmpty
                               ? Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Column(
@@ -143,22 +148,20 @@ class PaymentScreen extends StatelessWidget {
                               ),
                             ),
                           )
-                              : SizedBox(),
-                          SizedBox(
-                            height: 10,
-                          ),
+                              : const SizedBox(),
+                          const SizedBox(height: 10),
                           PaymentRow(
                             text: 'Ksh ${extraAmount.toString()}',
                             title: '',
                           ),
 
-                          Divider(thickness: 0.2),
+                          const Divider(thickness: 0.2),
                           const SizedBox(height: 12),
                           PaymentRow(
                             text: 'Ksh ${totalAmount.toString()}',
                             title: "Total",
                           ),
-                          Divider(thickness: 0.2),
+                          const Divider(thickness: 0.2),
                           const SizedBox(height: 18),
 
 
@@ -204,7 +207,10 @@ class PaymentScreen extends StatelessWidget {
                                       listingModel,
                                       listingModel.sellerID,
                                       listingID,
-                                      totalAmount);
+                                      subTotal,
+                                    commission,
+                                    totalAmount,
+                                  );
                                   // Get.to(() =>  BookingStatus(listingModel:listingModel));
                                   // Get.find<BottomNavController>().tabIndex.value = 0;
                                 }

@@ -464,6 +464,7 @@ reservationCheckInBottomSheet(
                       // },
                       onPressed: () async {
                         final totalAmount;
+                        final subTotal;
                         int extraPayTotal=0;
                         if (controller.checkOutDate.value
                             .isAfter(controller.checkInDate.value) ||
@@ -476,13 +477,27 @@ reservationCheckInBottomSheet(
 
                           final rentTotalAmount = daysDifference *
                               int.parse(listingModel.payment.text);
+
+                          final double commissionRate = await FirebaseFirestore.instance.collection(listingModel.listingRole.value == 'Rent' ? 'rentcommission' : 'salescommission').where('property_type', isEqualTo: listingModel.propertyType.value).get().then((val){
+
+                            if(val.size == 0){
+                              return 0;
+                            }else{
+                              return double.parse(val.docs.first['commission_rate']);
+                            }
+
+                          });
+
                           if (listingModel.extraPay.text != '') {
                             extraPayTotal = daysDifference *
                                 int.parse(listingModel.extraPay.text);
 
-                            totalAmount = rentTotalAmount + extraPayTotal;
+
+                            totalAmount = rentTotalAmount + commissionRate + extraPayTotal;
+                            subTotal = rentTotalAmount + extraPayTotal;
                           } else {
-                            totalAmount = rentTotalAmount;
+                            totalAmount = rentTotalAmount + commissionRate;
+                            subTotal = rentTotalAmount;
                           }
 
 
@@ -506,7 +521,10 @@ reservationCheckInBottomSheet(
                                 days:daysDifference,
                                 extraAmount: extraPayTotal.toString(),
                                 rentAmount: rentTotalAmount.toString(),
-                                totalAmount: totalAmount.toString()));
+                                totalAmount: totalAmount.toString(),
+                                commission: commissionRate.toString(),
+                              subTotal: subTotal.toString(),
+                            ));
                           } else {
                             loadingDialog(
                                 message:

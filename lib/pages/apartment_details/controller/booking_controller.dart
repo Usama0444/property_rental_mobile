@@ -35,7 +35,7 @@ class BookingsController extends GetxController {
 
   ///publish listing function
   Future<void> rentBooking(
-      AddListingModel listingModel, sellerID, listingID, payment) async {
+      AddListingModel listingModel, sellerID, listingID, subTotal, commission, total) async {
     loadingDialog(message: 'Please wait !!', loading: true);
     currentUser = await checkUserData();
     print(sellerID);
@@ -89,7 +89,7 @@ class BookingsController extends GetxController {
           .then((value) {
         Get.back();
         Get.to(
-            () => BookingStatus(listingModel: listingModel, payment: payment));
+            () => BookingStatus(listingModel: listingModel, subTotal: subTotal, commission: commission, total: total));
         print('done');
 
         Get.put(MainController()).sendPushNotification(

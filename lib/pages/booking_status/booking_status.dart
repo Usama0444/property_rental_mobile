@@ -11,9 +11,11 @@ import '../../universal_models/add_listing_model.dart';
 import '../apartment_details/controller/booking_controller.dart';
 
 class BookingStatus extends StatelessWidget {
-  BookingStatus({super.key, required this.listingModel, required this.payment});
+  BookingStatus({super.key, required this.listingModel, required this.subTotal, required this.commission, required this.total});
   final AddListingModel listingModel;
-  final String payment;
+  final String subTotal;
+  final String commission;
+  final String total;
   final controller = Get.put(BookingsController());
 
   @override
@@ -158,7 +160,7 @@ class BookingStatus extends StatelessWidget {
                               ),
                               const SizedBox(height: 24),
                               Text(
-                                "Ksh ${payment}",
+                                "Ksh $subTotal",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
@@ -200,7 +202,7 @@ class BookingStatus extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "Ksh ${payment}",
+                            "Ksh $total",
                             style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
