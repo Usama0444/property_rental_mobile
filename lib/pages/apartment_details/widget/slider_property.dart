@@ -1,14 +1,9 @@
 import 'dart:io';
-
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
 import 'package:property_rental_app/pages/apartment_details/controller/apartment_details_controller.dart';
-import 'package:property_rental_app/pages/search_screen/search_screen.dart';
-import 'package:property_rental_app/universal_models/favourites_model.dart';
-
 import '../../../common_widgets/global_functions.dart';
 import '../../../main.dart';
 import '../../../universal_models/add_listing_model.dart';
