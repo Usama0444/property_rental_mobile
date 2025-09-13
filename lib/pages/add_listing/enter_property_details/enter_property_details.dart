@@ -55,7 +55,7 @@ class EnterPropertyDetails extends StatelessWidget {
             builder: (context, snapshot) {
               AddListingModel listingModel = AddListingModel.initialize();
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox();
+                return Expanded(child: Center(child: const CircularProgressIndicator(color: Colors.black,)));
               }
               if (snapshot.hasError) {
                 print(snapshot.error.toString());
@@ -69,8 +69,8 @@ class EnterPropertyDetails extends StatelessWidget {
                   ..listingImageMemories = <Rx<Uint8List>>[].obs;
               }
 
-              return 
-              Expanded(
+              return
+               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),

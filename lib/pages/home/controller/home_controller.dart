@@ -4,14 +4,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:property_rental_app/common_widgets/no_internet_dialog.dart';
 import 'package:property_rental_app/pages/home/model/home_model.dart';
+import 'package:property_rental_app/universal_models/rating_model.dart';
 import 'package:property_rental_app/universal_models/recent_searches_model.dart';
 import 'package:property_rental_app/universal_models/viewed_property_model.dart';
 
 import '../../../main.dart';
 
 class HomeController extends GetxController {
+    final highRatings = <RatingModel>[].obs;
+
   ViewedPropertyModel vpModel = ViewedPropertyModel.initialize();
   RecentSearchesModel rcModel = RecentSearchesModel.initialize();
+    @override
+  void onInit() {
+    super.onInit();
+    print(highRatings.length);
+    fetchHighRatings();
+  }
+
   Future<void> addSearches(
       // required propertyID,
       ) async {
@@ -39,7 +49,27 @@ class HomeController extends GetxController {
       print('Search already exists');
     }
   }
-
+ Future<void> fetchHighRatings() async {
+  try {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('ratings')
+        .where('starRating', isGreaterThanOrEqualTo: 4)
+        .where('starRating', isLessThanOrEqualTo: 5)
+        .orderBy('timestamp', descending: true)
+        .get();
+    print('Fetched ${querySnapshot.docs.length} documents');
+    highRatings.assignAll(
+      querySnapshot.docs.map((doc) {
+        print('Document data: ${doc.data()}');
+        return RatingModel.fromFirestore(doc);
+      }).toList(),
+    );
+    print('highRatings length: ${highRatings.length}');
+  } catch (e) {
+    print('Error fetching high ratings: $e');
+    Get.snackbar('Error', 'Failed to load ratings.');
+  }
+}
   Future<void> addViewProperty({
     required propertyID,
     /* required token*/

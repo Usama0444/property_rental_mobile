@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
+import 'package:property_rental_app/pages/create_new_advert/create_new_advert.dart';
 import 'package:property_rental_app/pages/start_new_ads/start_new_ads.dart';
 
 class FabButton extends StatelessWidget {
@@ -13,9 +14,14 @@ class FabButton extends StatelessWidget {
     return FloatingActionButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       onPressed: () {
-        Get.to(
-          () => const CreatingNewAds(),
+         Get.to(
+          
+          () => const CreateNewAdvert(),
         );
+        // Get.to(
+
+        //   () => const CreatingNewAds(),
+        // );
       },
       backgroundColor: primaryColor,
       child: Padding(

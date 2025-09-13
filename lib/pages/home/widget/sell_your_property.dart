@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:property_rental_app/common_widgets/custom_button.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
+import 'package:property_rental_app/pages/create_new_advert/create_new_advert.dart';
 import 'package:property_rental_app/pages/start_new_ads/start_new_ads.dart';
 
 class SellYourProperty extends StatelessWidget {
@@ -67,7 +68,7 @@ class SellYourProperty extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
                       onPressed: () {
-                        Get.to(() => const CreatingNewAds());
+                        Get.to(() => const CreateNewAdvert());
                       },
                     ),
                     const SizedBox(
