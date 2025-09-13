@@ -78,6 +78,7 @@ class RecommendedProperties extends StatelessWidget {
       stream: FirebaseFirestore.instance
           .collection('listings')
           .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+          .where('isRecommended', isEqualTo: true)
           // .where('propertyType', isEqualTo: 'Bedsitters')
           .snapshots(),
       builder: (context, snapshot) {
