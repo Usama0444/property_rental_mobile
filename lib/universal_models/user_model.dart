@@ -75,13 +75,13 @@ class UserModel {
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     return UserModel(
       phoneNo: TextEditingController(
-        text: snapshot.data()!['phoneNo'],
+        text: snapshot.data()?['phoneNo'] ?? '',
       ),
       userName: TextEditingController(
-        text: snapshot.data()!['userName'],
+        text: snapshot.data()?['userName'] ?? '',
       ),
       userEmail: TextEditingController(
-        text: snapshot.data()!['userEmail'],
+        text: snapshot.data()?['userEmail'] ?? '',
       ),
       password: TextEditingController(text: snapshot.data()!['password']),
       userID: snapshot.data()!.containsKey('userID')

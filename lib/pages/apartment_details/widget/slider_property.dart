@@ -92,10 +92,13 @@ class RecommendedProperties extends StatelessWidget {
           return const Text(
               'No data available'); // Or any other empty state widget
         }
-        return Center(
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            children: List.generate(snapshot.data!.docs.length, (index) {
+        return SizedBox(
+          height: 220,
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+              scrollDirection: Axis.horizontal,
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
               AddListingModel listingModel =
                   AddListingModel.fromDocumentSnapshot(
                       snapshot.data!.docs[index]);
@@ -104,11 +107,11 @@ class RecommendedProperties extends StatelessWidget {
                 children: [
                   Container(
                     width: Get.width * 0.44,
-                    margin: const EdgeInsets.only(
+                    margin: EdgeInsets.only(
                         // right: 10, bottom: 8, left: 10, top: 8),
-                        right: 8,
+                        right: index == (snapshot.data!.docs.length-1) ? 0 : 8,
                         bottom: 8,
-                        left: 8,
+                        left: index == 0 ? 0 : 8,
                         top: 8),
                     // padding: const EdgeInsets.only(
                     //     left: 8, right: 12, top: 8, bottom: 8),
@@ -129,9 +132,9 @@ class RecommendedProperties extends StatelessWidget {
                       children: [
                         ClipRRect(
                             borderRadius: BorderRadius.circular(8),
-                            child: listingModel!.listingImages.length != 0
+                            child: listingModel.listingImages.isNotEmpty
                                 ? Image.network(
-                                    listingModel!.listingImages.first.value,
+                                    listingModel.listingImages.first.value,
                                     height: 120,
                                     width: Get.width,
                                     fit: BoxFit.cover,
@@ -180,8 +183,8 @@ class RecommendedProperties extends StatelessWidget {
                                       );
                                     },
                                   )
-                                : Container(
-                                    height: 200,
+                                : SizedBox(
+                                    height: 120,
                                     width: Get.width,
                                   )),
                         const SizedBox(width: 8),
@@ -211,9 +214,7 @@ class RecommendedProperties extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(
-                                    height: 5,
-                                  ),
+                                  const SizedBox(height: 5),
                                   Text(
                                     listingModel.propertyName.text,
                                     style: const TextStyle(
@@ -344,7 +345,6 @@ class RecommendedProperties extends StatelessWidget {
                 ],
               );
             }),
-          ),
         );
       },
     );

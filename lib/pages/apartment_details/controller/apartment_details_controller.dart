@@ -23,8 +23,7 @@ class ApartmentDetailsController extends GetxController {
   Set<Marker> markers = <Marker>{}.obs;
   var selectedWidget = 0.obs;
 
-  final Completer<GoogleMapController> mapController =
-      Completer<GoogleMapController>();
+  GoogleMapController? mapController;
 
   final initialPosition = const CameraPosition(
     target: LatLng(33.60045758933767, 73.15116840774387),

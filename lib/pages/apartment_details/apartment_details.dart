@@ -663,8 +663,7 @@ class ApartmentDetails extends StatelessWidget {
                                           onMapCreated:
                                               (GoogleMapController controller) {
                                             apartmentDetailsController
-                                                .mapController
-                                                .complete(controller);
+                                                .mapController = controller;
                                           },
                                         ),
                                 ),
