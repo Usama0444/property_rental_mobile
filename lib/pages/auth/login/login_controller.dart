@@ -50,6 +50,7 @@ class LoginController extends GetxController {
             Get.back();
 
             if (currentUserDataModel != null) {
+              Get.put(BottomNavController());
               Get.offAll(() => BottomNavBar());
               Get.find<BottomNavController>().tabIndex.value = 0;
 

@@ -10,6 +10,7 @@ import 'package:property_rental_app/common_widgets/loading_dialog.dart';
 import 'package:property_rental_app/universal_models/feedback_model.dart';
 
 class ApartmentDetailsController extends GetxController {
+  
   RxBool isFavourite = false.obs;
   var isSelectedImage = ''.obs;
   var index = 0.obs;

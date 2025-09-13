@@ -92,7 +92,7 @@ class BookingStatus extends StatelessWidget {
                               ),
                               SizedBox(height: 24),
                               Text(
-                                "Transition ID",
+                                "Transaction ID",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
@@ -103,6 +103,17 @@ class BookingStatus extends StatelessWidget {
                               SizedBox(height: 24),
                               Text(
                                 "Subtotal",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: textColor8080,
+                                  fontFamily: 'Avenir',
+                                ),
+                              ),
+                                                            SizedBox(height: 24),
+
+                               Text(
+                                "Sales/Rent Comission",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
@@ -149,6 +160,16 @@ class BookingStatus extends StatelessWidget {
                               Text(
                                 "Ksh ${payment}",
                                 style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: textColor8080,
+                                  fontFamily: 'Avenir',
+                                ),
+                              ),
+                                const SizedBox(height: 24),
+                              const Text(
+                                "200",
+                                style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                   color: textColor8080,
