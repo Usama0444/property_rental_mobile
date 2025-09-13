@@ -81,7 +81,7 @@ class Home extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    RentBuyButton(),
+                    RentBuyButton(key: key,),
                     const SizedBox(
                       height: 11,
                     ),
@@ -456,25 +456,31 @@ class Home extends StatelessWidget {
                                 fontWeight: FontWeight.w500,
                                 color: textColor,
                                 fontFamily: 'Avenir',
-                              ),
+                              ), 
                             ),
                           ],
                         ),
                         const SizedBox(
                           height: 12,
                         ),
-                        SizedBox(
-                          height: 216,
-                          child: ListView.builder(
-                              itemCount: 3,
-                              scrollDirection: Axis.horizontal,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                return AgentProfileWidget(
-                                  agentProfileModel:
-                                      controller.agentsProfileList[index],
-                                );
-                              }),
+                        Obx(() =>
+                         SizedBox(
+                            height: 216,
+                            
+                            child: controller.highRatings.isEmpty
+                                ? const Center(child: Text('No Rating'))
+                                :
+                            ListView.builder(
+                                itemCount: controller.highRatings.length,
+                                scrollDirection: Axis.horizontal,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return AgentProfileWidget(
+                                    agentProfileModel:
+                                        controller.highRatings[index],
+                                  );
+                                }),
+                          ),
                         ),
                         const SizedBox(
                           height: 44,

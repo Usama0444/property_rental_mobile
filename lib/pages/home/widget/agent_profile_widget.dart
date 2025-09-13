@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
 import 'package:property_rental_app/pages/home/model/home_model.dart';
+import 'package:property_rental_app/universal_models/rating_model.dart';
 
 class AgentProfileWidget extends StatelessWidget {
   const AgentProfileWidget({
@@ -9,7 +10,7 @@ class AgentProfileWidget extends StatelessWidget {
     required this.agentProfileModel,
   });
 
-  final AgentProfileModel agentProfileModel;
+  final RatingModel agentProfileModel;
 
   @override
   Widget build(BuildContext context) {
@@ -37,26 +38,26 @@ class AgentProfileWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: const Color(0xFF6C63FF),
-                  ),
-                ),
-                padding: const EdgeInsets.all(2),
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage(
-                    agentProfileModel.image,
-                  ),
-                ),
-              ),
+              // Container(
+              //   decoration: BoxDecoration(
+              //     shape: BoxShape.circle,
+              //     border: Border.all(
+              //       color: const Color(0xFF6C63FF),
+              //     ),
+              //   ),
+              //   padding: const EdgeInsets.all(2),
+              //   child: CircleAvatar(
+              //     radius: 20,
+              //     backgroundImage: AssetImage(
+              //       'assets/images/profile_1.png',
+              //     ),
+              //   ),
+              // ),
               const SizedBox(
                 height: 8,
               ),
               Text(
-                agentProfileModel.name,
+                agentProfileModel.userName,
                 style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
@@ -70,7 +71,7 @@ class AgentProfileWidget extends StatelessWidget {
               SizedBox(
                 width: 190,
                 child: Text(
-                  agentProfileModel.description,
+                  agentProfileModel.reviewText,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,

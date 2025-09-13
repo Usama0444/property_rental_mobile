@@ -153,112 +153,102 @@ class BrowsProperty extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 22),
-            Obx(() {
-              return StreamBuilder(
-                  stream: filterValue.value == true
-                      ? query?.snapshots()
-                      : query?.snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox();
-                    }
-                    if (snapshot.hasError) {
-                      print(snapshot.error.toString());
-                      print('error');
-                    }
-                    if (snapshot.data!.docs.isEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Text(
-                            'No Property for this category.',
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: blackColor,
-                              fontFamily: 'Avenir',
-                            ),
-                          ),
-                        ),
-                      );
-                    }
+          Obx(() {
+  return StreamBuilder(
+    stream: filterValue.value == true ? query?.snapshots() : query?.snapshots(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const SizedBox();
+      }
+      if (snapshot.hasError) {
+        print(snapshot.error.toString());
+        return const Center(child: Text('Error loading properties'));
+      }
+      if (snapshot.data!.docs.isEmpty) {
+        controller.initialPage.value = 0; // Reset initialPage when empty
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              'No Property for this category.',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: blackColor,
+                fontFamily: 'Avenir',
+              ),
+            ),
+          ),
+        );
+      }
 
-                    List<AddListingModel> myProperties = [];
-                    for (var data in snapshot.data!.docs) {
-                      AddListingModel listingModel =
-                          AddListingModel.fromDocumentSnapshot(data);
-                      myProperties.add(listingModel);
-                    }
-                    return Column(
-                      children: [
-                        CarouselSlider(
-                          options: CarouselOptions(
-                            clipBehavior: Clip.hardEdge,
-                            padEnds: false,
-                            aspectRatio: 16 / 9,
-                            height: 265,
-                            autoPlayCurve: Curves.easeIn,
-                            enlargeFactor: 0.0,
-                            enlargeCenterPage: true,
-                            autoPlay: true,
-                            viewportFraction: 0.8,
-                            enableInfiniteScroll: true,
-                            initialPage: controller.initialPage.value,
-                            onPageChanged: (index, dynamic) {
-                              // print(index);
-                              // print('1111111111111111111');
-                              controller.initialPage.value = index;
-                            },
-                            scrollDirection: Axis.horizontal,
-                          ),
-                          items: List.generate(myProperties.length, (index) {
-                            return PropertyData(
-                              imageMap: myProperties[index],
-                              selectedName: controller.selectedName.value,
-                              role: 'Rent',
-                              listingId: snapshot.data!.docs[index].id,
-                            );
-                          }),
+      List<AddListingModel> myProperties = [];
+      for (var data in snapshot.data!.docs) {
+        AddListingModel listingModel = AddListingModel.fromDocumentSnapshot(data);
+        myProperties.add(listingModel);
+      }
 
-                          // myProperties.map(
-                          //   (imageMap) {
-                          //     return PropertyData(
-                          //       imageMap: imageMap,
-                          //       selectedName: controller.selectedName.value,
-                          //       role: 'Rent', listingId:snapshot.data!.docs[].id ,
-                          //     );
-                          //   },
-                          // ).toList(),
-                        ),
-                        Obx(
-                          () => Center(
-                            child: PageViewDotIndicator(
-                              currentItem: controller.initialPage.value,
-                              count: myProperties.length,
-                              unselectedColor: lightGreyD9,
-                              selectedColor: primaryColor,
-                              size: const Size(40, 6),
-                              unselectedSize: const Size(22, 6),
-                              duration: const Duration(milliseconds: 200),
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
-                              padding: EdgeInsets.zero,
-                              alignment: Alignment.center,
-                              fadeEdges: false,
-                              boxShape: BoxShape.rectangle,
-                              //defaults to circle
-                              borderRadius: BorderRadius.circular(50),
-                              //only for rectangle shape
-                              onItemClicked: (index) {
-                                controller.initialPage.value = index;
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  });
+      // Reset initialPage if it's out of bounds
+      if (controller.initialPage.value >= myProperties.length) {
+        controller.initialPage.value = 0;
+      }
+
+      return Column(
+        children: [
+          CarouselSlider(
+            options: CarouselOptions(
+              clipBehavior: Clip.hardEdge,
+              padEnds: false,
+              aspectRatio: 16 / 9,
+              height: 265,
+              autoPlayCurve: Curves.easeIn,
+              enlargeFactor: 0.0,
+              enlargeCenterPage: true,
+              autoPlay: true,
+              viewportFraction: 0.8,
+              enableInfiniteScroll: true,
+              initialPage: controller.initialPage.value,
+              onPageChanged: (index, reason) {
+                controller.initialPage.value = index;
+              },
+              scrollDirection: Axis.horizontal,
+            ),
+            items: List.generate(myProperties.length, (index) {
+              return PropertyData(
+                imageMap: myProperties[index],
+                selectedName: controller.selectedName.value,
+                role: 'Rent',
+                listingId: snapshot.data!.docs[index].id,
+              );
             }),
-            const SizedBox(
+          ),
+          Obx(
+            () => Center(
+              child: PageViewDotIndicator(
+                currentItem: controller.initialPage.value,
+                count: myProperties.length,
+                unselectedColor: lightGreyD9,
+                selectedColor: primaryColor,
+                size: const Size(40, 6),
+                unselectedSize: const Size(22, 6),
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                padding: EdgeInsets.zero,
+                alignment: Alignment.center,
+                fadeEdges: false,
+                boxShape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(50),
+                onItemClicked: (index) {
+                  controller.initialPage.value = index;
+                },
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );}),
+  const SizedBox(
               height: 24,
             ),
           ],

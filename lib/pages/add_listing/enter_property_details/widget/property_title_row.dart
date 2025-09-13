@@ -27,7 +27,7 @@ class PropertyTitleRow extends StatelessWidget {
         ),
         isRequired == true
             ? const Text(
-                '*',
+                '',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

@@ -106,7 +106,7 @@ class BookingHistoryOngoing extends StatelessWidget {
                     listingsModel.listingRole == "Rent" ||
                             bookingModel.pendingPayment == '0'
                         ? CustomButton(
-                            text: 'Delete',
+                            text: 'Completed',
                             height: 38,
                             isBorder: true,
                             textColor: primaryColor,
@@ -114,32 +114,32 @@ class BookingHistoryOngoing extends StatelessWidget {
                             backgroundColor: whiteColor,
                             width: Get.width * 0.4,
                             onPressed: () async {
-                              loadingDialog(
-                                  button: true,
-                                  button1: true,
-                                  endBtnText: 'Yes',
-                                  message:
-                                      'Are you sure you want to delete the Ad?',
-                                  tap: () {
-                                    FirebaseFirestore.instance
-                                        .collection('bookings')
-                                        .doc(docID)
-                                        .delete()
-                                        .then((value) {
-                                      Get.back();
-                                    });
-                                  },
-                                  startWidget: Padding(
-                                    padding: const EdgeInsets.only(right: 8.0),
-                                    child: CustomButton(
-                                      text: "Cancel",
-                                      height: 40,
-                                      width: Get.width * 0.26,
-                                      onPressed: () {
-                                        Get.back();
-                                      },
-                                    ),
-                                  ));
+                              // loadingDialog(
+                              //     button: true,
+                              //     button1: true,
+                              //     endBtnText: 'Yes',
+                              //     message:
+                              //         'Are you sure you want to delete the Ad?',
+                              //     tap: () {
+                              //       FirebaseFirestore.instance
+                              //           .collection('bookings')
+                              //           .doc(docID)
+                              //           .delete()
+                              //           .then((value) {
+                              //         Get.back();
+                              //       });
+                              //     },
+                              //     startWidget: Padding(
+                              //       padding: const EdgeInsets.only(right: 8.0),
+                              //       child: CustomButton(
+                              //         text: "Cancel",
+                              //         height: 40,
+                              //         width: Get.width * 0.26,
+                              //         onPressed: () {
+                              //           Get.back();
+                              //         },
+                              //       ),
+                              //     ));
                             })
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
