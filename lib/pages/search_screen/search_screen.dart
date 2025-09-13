@@ -164,7 +164,8 @@ class SearchScreen extends StatelessWidget {
           Obx(() => StreamBuilder(
                 stream: controller.isFilter.value == true
                     ? controller.filter()
-                    : controller.propertyStatus.value == 'all'
+                    :
+                     controller.propertyStatus.value == 'all'
                         ? FirebaseFirestore.instance
                             .collection('listings')
                             .where('sellerID',

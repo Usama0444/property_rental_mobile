@@ -9,6 +9,7 @@ import '../common_widgets/global_functions.dart';
 import '../main.dart';
 
 class AddListingModel {
+  String docId; // Add docId property
   TextEditingController propertyName;
   TextEditingController phoneNo;
   RxString listingRole;
@@ -37,6 +38,7 @@ class AddListingModel {
 
   //constructor
   AddListingModel({
+    required this.docId, // Add docId to constructor
     required this.listingImages,
     required this.indicatePayList,
     required this.listingImageMemories,
@@ -69,6 +71,7 @@ class AddListingModel {
 
   static AddListingModel initialize() {
     return AddListingModel(
+      docId: '',
         indicatePayList: RxList<IndicatePayListModel>.generate(
             1, (index) => IndicatePayListModel.initialize()),
 
@@ -174,11 +177,15 @@ class AddListingModel {
     } else {
       createdAt = DateTime.now(); // Fallback if createdAt is missing or invalid
     }
+    // Convert cost to String
+  final costValue = snapshot.data()!['cost'];
+  String costString = costValue is String ? costValue : costValue.toString();
     return AddListingModel(
       indicatePayList: RxList<IndicatePayListModel>(timingsList),
       /* RxList<IndicatePayListModel>.from(snapshot
           .data()!['indicatePayList']
           .map((e) => IndicatePayListModel.fromMap(e))),*/
+          docId: snapshot.id,
       listingImages: listingImages,
       listingImageMemories: RxList<Rx<Uint8List>>(imageMemories),
       latitude: snapshot.data()!['latitude'] ?? 33.602018,
@@ -200,7 +207,7 @@ class AddListingModel {
       sellerID: snapshot.data()!['sellerID'],
       phoneNo: TextEditingController(text: snapshot.data()!['phoneNo']),
       description: TextEditingController(text: snapshot.data()!['description']),
-      cost: TextEditingController(text: snapshot.data()!['cost']),
+     cost: TextEditingController(text: costString), // Use converted string
       listingRole: RxString(snapshot.data()!['listingRole']),
       facilities: RxList<String>.from(
           snapshot.data()!['facilities'].map((e) => e.toString())),

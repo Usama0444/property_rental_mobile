@@ -314,34 +314,34 @@ class ApartmentDetails extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: skyColor,
-                                borderRadius: BorderRadius.circular(26)),
-                            padding: const EdgeInsets.only(
-                                left: 8, right: 12, top: 4, bottom: 4),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/icons/verified_icon.png',
-                                  height: 16,
-                                  width: 16,
-                                ),
-                                const Text(
-                                  'Verified',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: blueLightColor,
-                                    fontSize: 12,
-                                    fontFamily: 'Avenir',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //       color: skyColor,
+                          //       borderRadius: BorderRadius.circular(26)),
+                          //   padding: const EdgeInsets.only(
+                          //       left: 8, right: 12, top: 4, bottom: 4),
+                          //   child: Row(
+                          //     mainAxisSize: MainAxisSize.min,
+                          //     crossAxisAlignment: CrossAxisAlignment.center,
+                          //     mainAxisAlignment: MainAxisAlignment.center,
+                          //     children: [
+                          //       Image.asset(
+                          //         'assets/icons/verified_icon.png',
+                          //         height: 16,
+                          //         width: 16,
+                          //       ),
+                          //       const Text(
+                          //         'Verified',
+                          //         style: TextStyle(
+                          //           fontWeight: FontWeight.w600,
+                          //           color: blueLightColor,
+                          //           fontSize: 12,
+                          //           fontFamily: 'Avenir',
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -642,32 +642,26 @@ class ApartmentDetails extends StatelessWidget {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                child: Obx(
-                                  () => apartmentDetailsController
-                                              .isLoading.value ==
-                                          false
-                                      ? const SizedBox()
-                                      : GoogleMap(
-                                          zoomGesturesEnabled: true,
-                                          scrollGesturesEnabled: true,
-                                          zoomControlsEnabled: false,
-                                          markers: apartmentDetailsController
-                                              .markers,
-                                          mapType: MapType.normal,
-                                          initialCameraPosition: CameraPosition(
-                                            target: LatLng(
-                                                listingModel.latitude,
-                                                listingModel.longitude),
-                                            zoom: 14,
-                                          ),
-                                          onMapCreated:
-                                              (GoogleMapController controller) {
-                                            apartmentDetailsController
-                                                .mapController
-                                                .complete(controller);
-                                          },
-                                        ),
-                                ),
+                              child: Obx(
+              () => apartmentDetailsController.isLoading.value == false
+                  ? const SizedBox()
+                  : GoogleMap(
+                      zoomGesturesEnabled: true,
+                      scrollGesturesEnabled: true,
+                      zoomControlsEnabled: false,
+                      markers: apartmentDetailsController.markers,
+                      mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(listingModel.latitude, listingModel.longitude),
+                        zoom: 14,
+                      ),
+                      onMapCreated: (GoogleMapController controller) {
+                        if (!apartmentDetailsController.mapController.isCompleted) {
+                          apartmentDetailsController.mapController.complete(controller);
+                        }
+                      },
+                    ),
+            ),
                               ),
                             ),
 
@@ -816,7 +810,7 @@ class ApartmentDetails extends StatelessWidget {
                             /// feedback widget...
                             comingFromMyAdd != true
                                 ? FeedBackWidget(
-                                    propertyID: listingId!,
+                                    propertyID: listingModel.docId,
                                     sellerID: listingModel.sellerID)
                                 : const SizedBox(),
                             SizedBox(height: comingFromMyAdd != true ? 20 : 0),
