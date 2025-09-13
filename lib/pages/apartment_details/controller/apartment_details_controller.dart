@@ -10,7 +10,6 @@ import 'package:property_rental_app/common_widgets/loading_dialog.dart';
 import 'package:property_rental_app/universal_models/feedback_model.dart';
 
 class ApartmentDetailsController extends GetxController {
-  
   RxBool isFavourite = false.obs;
   var isSelectedImage = ''.obs;
   var index = 0.obs;
@@ -24,7 +23,8 @@ class ApartmentDetailsController extends GetxController {
   Set<Marker> markers = <Marker>{}.obs;
   var selectedWidget = 0.obs;
 
-  GoogleMapController? mapController;
+  Completer<GoogleMapController> mapController =
+      Completer<GoogleMapController>();
 
   final initialPosition = const CameraPosition(
     target: LatLng(33.60045758933767, 73.15116840774387),

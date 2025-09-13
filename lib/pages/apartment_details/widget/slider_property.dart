@@ -349,8 +349,7 @@ class RecommendedProperties extends StatelessWidget {
                 ],
               );
             }),
-          ),
-        );
+          );
       },
     );
   }
