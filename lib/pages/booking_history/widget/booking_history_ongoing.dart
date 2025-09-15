@@ -103,47 +103,25 @@ class BookingHistoryOngoing extends StatelessWidget {
                             ),
                           ),
                     const SizedBox(height: 16),
-                    listingsModel.listingRole == "Rent" ||
-                            bookingModel.pendingPayment == '0'
-                        ? CustomButton(
-                            text: 'Completed',
-                            height: 38,
-                            isBorder: true,
-                            textColor: primaryColor,
-                            borderColor: primaryColor,
-                            backgroundColor: whiteColor,
-                            width: Get.width * 0.4,
-                            onPressed: () async {
-                              // loadingDialog(
-                              //     button: true,
-                              //     button1: true,
-                              //     endBtnText: 'Yes',
-                              //     message:
-                              //         'Are you sure you want to delete the Ad?',
-                              //     tap: () {
-                              //       FirebaseFirestore.instance
-                              //           .collection('bookings')
-                              //           .doc(docID)
-                              //           .delete()
-                              //           .then((value) {
-                              //         Get.back();
-                              //       });
-                              //     },
-                              //     startWidget: Padding(
-                              //       padding: const EdgeInsets.only(right: 8.0),
-                              //       child: CustomButton(
-                              //         text: "Cancel",
-                              //         height: 40,
-                              //         width: Get.width * 0.26,
-                              //         onPressed: () {
-                              //           Get.back();
-                              //         },
-                              //       ),
-                              //     ));
-                            })
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
+                    bookingModel.pendingPayment == '0'
+                    ? CustomButton(
+                        text: 'Complete',
+                        height: 38,
+                        backgroundColor: primaryColor,
+                        textColor: whiteColor,
+                        width: Get.width * 0.4,
+                        onPressed: () {
+                          // FirebaseFirestore.instance
+                          //     .collection('bookings')
+                          //     .doc(docID)
+                          //     .update({
+                          //   'orderStatus': 'Completed',
+                          // }).then((_) {
+                          //   // _showFeedbackDialog(context);
+                          // });
+                        },
+                      )
+                        : 
                               CustomButton(
                                   text: 'Pay',
                                   height: 38,
@@ -158,43 +136,10 @@ class BookingHistoryOngoing extends StatelessWidget {
                                         bookingID: docID,
                                         bookingModel: bookingModel));
                                   }),
-                              // const SizedBox(width: 12),
-                              CustomButton(
-                                  text: 'Delete',
-                                  height: 38,
-                                  isBorder: true,
-                                  textColor: primaryColor,
-                                  borderColor: primaryColor,
-                                  backgroundColor: whiteColor,
-                                  width: Get.width * 0.4,
-                                  onPressed: () {     loadingDialog(
-                                      button: true,
-                                      button1: true,
-                                      endBtnText: 'Yes',
-                                      message:
-                                      'Are you sure you want to delete the Ad?',
-                                      tap: () {
-                                        FirebaseFirestore.instance
-                                            .collection('bookings')
-                                            .doc(docID)
-                                            .delete()
-                                            .then((value) {
-                                          Get.back();
-                                        });
-                                      },
-                                      startWidget: Padding(
-                                        padding: const EdgeInsets.only(right: 8.0),
-                                        child: CustomButton(
-                                          text: "Cancel",
-                                          height: 40,
-                                          width: Get.width * 0.26,
-                                          onPressed: () {
-                                            Get.back();
-                                          },
-                                        ),
-                                      ));})
-                            ],
-                          ),
+                             
+                                      
+                            
+                          
                     const SizedBox(height: 16),
                   ],
                 ),

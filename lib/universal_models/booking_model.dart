@@ -18,6 +18,7 @@ class BookingModel {
   String bookingType; //rent or sold
   String pendingPayment;
   String totalPayment;
+  String commission;
   bool isPaymentDone;
   String orderDate;
   RxList<String> selectedBedroom;
@@ -33,6 +34,7 @@ class BookingModel {
     required this.sellerName,
     required this.sellerPhoneNo,
     required this.sellerID,
+    required this.commission,
     required this.buyerName,
     required this.orderStatus,
     required this.bookingType,
@@ -62,6 +64,7 @@ class BookingModel {
       pendingPayment: '0',
       totalPayment: '0',
       propertyID: '',
+      commission: '0',
       orderDate: DateFormat('dd MMMM,yyyy').format(DateTime.now()),
       sellerID: '',
       checkIn: 0,
@@ -73,6 +76,7 @@ class BookingModel {
   Future<Map<String, dynamic>> toMap() async {
     return {
       'buyerID': buyerID,
+      'commission': commission,
       'totalPayment': totalPayment,
       'propertyID': propertyID,
       'sellerID': sellerID,
@@ -115,6 +119,7 @@ class BookingModel {
       checkOut: snapshot.data()!['checkOut'],
       sellerName: snapshot.data()!['sellerName'],
       sellerPhoneNo: snapshot.data()!['sellerPhoneNo'],
+      commission: snapshot.data()!['commission'] ?? '0',
     );
   }
 }

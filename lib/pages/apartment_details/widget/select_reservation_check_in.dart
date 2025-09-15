@@ -223,8 +223,8 @@ reservationCheckInBottomSheet(
                                 ),
                                 weekDayMargin: EdgeInsets.zero,
                                 childAspectRatio: 1,
-                                todayBorderColor: primaryColor,
-                                todayButtonColor: primaryColor,
+                                todayBorderColor: Colors.grey,
+                                todayButtonColor: Colors.grey,
                                 todayTextStyle: const TextStyle(
                                   fontFamily: 'Avenir',
                                   fontWeight: FontWeight.w400,
@@ -240,18 +240,28 @@ reservationCheckInBottomSheet(
                                 selectedDayBorderColor: primaryColor,
                                 selectedDayButtonColor: primaryColor,
                                 selectedDateTime: controller.checkInDate.value,
-                                onDayPressed: (date, events) {
+                               onDayPressed: (date, events) async {
                                   DateTime now = DateTime.now();
-
-                                  if (date.isAfter(DateTime(
-                                          now.year, now.month, now.day)) ||
-                                      date ==
-                                          DateTime(
-                                              now.year, now.month, now.day)) {
-                                    print('wenter');
-                                    controller.checkInDate.value = date;
+                                  if (date.isBefore(DateTime(
+                                      now.year, now.month, now.day))) {
+                                    loadingDialog(
+                                        message:
+                                            'Cannot select a past date for check-in.',
+                                        button: true);
+                                    return;
                                   }
-                                  // controller.checkInDate.value = date;
+                                  int selectedDateMillis =
+                                      date.millisecondsSinceEpoch;
+                                  bool isBookable = await checkBookingAvailability(
+                                      selectedDateMillis, selectedDateMillis);
+                                  if (isBookable) {
+                                    controller.checkInDate.value = date;
+                                  } else {
+                                    loadingDialog(
+                                        message:
+                                            'The selected check-in date is already booked.',
+                                        button: true);
+                                  }
                                 },
                               ),
                             ),
@@ -345,8 +355,8 @@ reservationCheckInBottomSheet(
                                 ),
                                 weekDayMargin: EdgeInsets.zero,
                                 childAspectRatio: 1,
-                                todayBorderColor: primaryColor,
-                                todayButtonColor: primaryColor,
+                               todayBorderColor: Colors.grey,
+                                todayButtonColor: Colors.grey,
                                 todayTextStyle: const TextStyle(
                                   fontFamily: 'Avenir',
                                   fontWeight: FontWeight.w400,
@@ -363,18 +373,35 @@ reservationCheckInBottomSheet(
                                 selectedDayButtonColor: primaryColor,
                                 selectedDateTime: controller.checkOutDate.value,
 
-                                onDayPressed: (date, events) {
-                                  DateTime now = DateTime.now();
-
-                                  if (date.isAfter(DateTime(
-                                          now.year, now.month, now.day)) ||
-                                      date ==
-                                          DateTime(
-                                              now.year, now.month, now.day)) {
-                                    print('wenter');
-                                    controller.checkOutDate.value = date;
-                                  }
-                                },
+                                onDayPressed: (date, events) async {
+  print('Check-out calendar pressed: $date');
+  DateTime now = DateTime.now();
+  if (date.isBefore(DateTime(now.year, now.month, now.day))) {
+    loadingDialog(
+        message: 'Cannot select a past date for check-out.',
+        button: true);
+    return;
+  }
+  if (date.isBefore(controller.checkInDate.value) ||
+      isSameDay(date, controller.checkInDate.value)) {
+    loadingDialog(
+        message: 'Check-out date must be after check-in date.',
+        button: true);
+    return;
+  }
+  int selectedDateMillis = date.millisecondsSinceEpoch;
+  bool isBookable = await checkBookingAvailability(
+      selectedDateMillis, selectedDateMillis);
+  if (isBookable) {
+    print('Setting checkOutDate to: $date');
+    controller.checkOutDate.value = date;
+    print('checkInDate after update: ${controller.checkInDate.value}');
+  } else {
+    loadingDialog(
+        message: 'The selected check-out date is already booked.',
+        button: true);
+  }
+},
                               ),
                             ),
                           ),
