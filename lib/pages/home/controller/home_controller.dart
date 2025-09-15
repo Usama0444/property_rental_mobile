@@ -49,6 +49,8 @@ class HomeController extends GetxController {
       print('Search already exists');
     }
   }
+ 
+ 
  Future<void> fetchHighRatings() async {
   try {
     final querySnapshot = await FirebaseFirestore.instance

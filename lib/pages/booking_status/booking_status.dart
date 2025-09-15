@@ -169,8 +169,8 @@ class BookingStatus extends StatelessWidget {
                                 ),
                               ),
                                 const SizedBox(height: 24),
-                              const Text(
-                                "200",
+                               Text(
+                                commission,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,

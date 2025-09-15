@@ -81,9 +81,9 @@ class PaymentScreen extends StatelessWidget {
                           const SizedBox(height: 12),
 
                           PaymentRow(
-                            text: 'Ksh ${rentAmount.toString()}',
-                            title: 'Rent Amount',
-                          ),
+                          text: '$days * ${listingModel.payment.text}', // Updated to show days * rentAmount
+                          title: 'Rent Amount',
+                        ),
                           const Divider(thickness: 0.2),
                           const SizedBox(height: 12),
                           PaymentRow(

@@ -61,6 +61,7 @@ class BookingsController extends GetxController {
     bookingMdl.bookingType = 'Rent';
     bookingMdl.sellerName = uModel.userName.text;
     bookingMdl.sellerPhoneNo = uModel.phoneNo.text;
+    bookingMdl.commission = commission;
     var data = await bookingMdl.toMap();
     await FirebaseFirestore.instance
         .collection('bookings')
@@ -138,6 +139,7 @@ class BookingsController extends GetxController {
     bookingMdl.sellerPhoneNo = uModel.phoneNo.text;
     bookingMdl.totalPayment = listingModel.cost.text;
     bookingMdl.checkOut = bookingMdl.checkIn;
+    bookingMdl.commission = bookingMdl.commission;
     var data = await bookingMdl.toMap();
     await FirebaseFirestore.instance
         .collection('bookings')
