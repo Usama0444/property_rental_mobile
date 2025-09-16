@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:property_rental_app/common_widgets/custom_switch_button.dart';
 import 'package:property_rental_app/common_widgets/custom_text_field.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
 import 'package:property_rental_app/main.dart';
@@ -26,7 +25,6 @@ class SearchScreen extends StatelessWidget {
   final String role;
   @override
   Widget build(BuildContext context) {
-
     // print(controller.propertyStatus.value + '   ===============hadbvkih');
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -138,7 +136,7 @@ class SearchScreen extends StatelessWidget {
           //     ],
           //   ),
           // ),
-          
+
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -164,17 +162,18 @@ class SearchScreen extends StatelessWidget {
           Obx(() => StreamBuilder(
                 stream: controller.isFilter.value == true
                     ? controller.filter()
-                    :
-                     controller.propertyStatus.value == 'all'
+                    : controller.propertyStatus.value == 'all'
                         ? FirebaseFirestore.instance
                             .collection('listings')
                             .where('sellerID',
                                 isNotEqualTo: auth.currentUser!.uid)
+                            .where('isActive', isEqualTo: true)
                             .snapshots()
                         : FirebaseFirestore.instance
                             .collection('listings')
                             .where('sellerID',
                                 isNotEqualTo: auth.currentUser!.uid)
+                            .where('isActive', isEqualTo: true)
                             .where('listingRole',
                                 isEqualTo: controller.propertyStatus.value)
                             .snapshots(),

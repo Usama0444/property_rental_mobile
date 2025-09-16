@@ -1,16 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:property_rental_app/common_widgets/custom_appbar.dart';
 import 'package:property_rental_app/common_widgets/global_functions.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
+import 'package:property_rental_app/pages/apartment_details/widget/feedback_widget.dart';
 import 'package:property_rental_app/pages/booking_history/controller/booking_history_controller.dart';
 import 'package:property_rental_app/pages/booking_history/widget/booking_history_completed.dart';
 import 'package:property_rental_app/pages/booking_history/widget/booking_history_ongoing.dart';
 import 'package:property_rental_app/pages/booking_history/widget/ongoing_listing.dart';
 import 'package:property_rental_app/universal_models/booking_model.dart';
-import 'package:property_rental_app/utils/custom_dialog.dart';
 import '../../main.dart';
 import 'widget/ongoing_completed.dart';
 
@@ -177,12 +176,13 @@ class BookingHistory extends StatelessWidget {
                               BookingModel.fromDocumentSnapshot(
                                   snapshot.data!.docs[index]);
                           if (bookingModel.pendingPayment == '0' ) {
+                
                             print('000000000000');
                             print(snapshot.data!.docs[index].id.toString());
-                            checkTimeExpire(
-                                bookingModel.checkOut.toString(),
-                                snapshot.data!.docs[index].id.toString(),
-                                bookingModel.orderStatus);
+                            // checkTimeExpire(
+                            //     bookingModel.checkOut.toString(),
+                            //     snapshot.data!.docs[index].id.toString(),
+                            //     bookingModel.orderStatus);
                           }
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16),

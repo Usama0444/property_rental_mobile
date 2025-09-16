@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,9 +7,7 @@ import 'package:property_rental_app/common_widgets/custom_appbar.dart';
 import 'package:property_rental_app/common_widgets/custom_button.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
 import 'package:property_rental_app/pages/apartment_details/controller/booking_controller.dart';
-import 'package:property_rental_app/pages/booking_status/booking_status.dart';
-import 'package:property_rental_app/pages/bottom_nav_bar/controller/bottom_bar_controller.dart';
-import 'package:property_rental_app/pages/bottom_nav_bar/user_bottom_nav_bar.dart';
+
 import 'package:property_rental_app/universal_models/add_listing_model.dart';
 
 import '../../common_widgets/custom_text_field.dart';
@@ -239,7 +239,7 @@ class PaymentRow extends StatelessWidget {
       children: [
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 14,
             // color: textColor8080,
@@ -248,7 +248,7 @@ class PaymentRow extends StatelessWidget {
         ),
         Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 14,
             color: textColor8080,

@@ -222,7 +222,7 @@ class BookingStatus extends StatelessWidget {
                           width: Get.width,
                           onPressed: () {
                             Get.find<BottomNavController>().tabIndex.value = 0;
-                            Get.to(BottomNavBar());
+                            Get.offAll(BottomNavBar());
                           }),
                     ),
                   ],
