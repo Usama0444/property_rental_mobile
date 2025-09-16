@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:property_rental_app/common_widgets/custom_button.dart';
+import 'package:property_rental_app/common_widgets/custom_text_field.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
 import 'package:property_rental_app/main.dart';
+import 'package:property_rental_app/pages/apartment_details/controller/apartment_details_controller.dart';
 import 'package:property_rental_app/pages/apartment_details/controller/booking_controller.dart';
+import 'package:property_rental_app/pages/apartment_details/widget/feedback_widget.dart';
 import 'package:property_rental_app/pages/booking_history/widget/pending_payment.dart';
 import 'package:property_rental_app/universal_models/add_listing_model.dart';
 import 'package:property_rental_app/universal_models/booking_model.dart';
@@ -21,9 +25,107 @@ class BookingHistoryOngoing extends StatelessWidget {
   final BookingModel bookingModel;
   final String docID;
   final controller = Get.put(BookingsController());
-  @override
-  Widget build(BuildContext context) {
+  
+void _checkAndCompleteBooking(BuildContext context) {
+final endDate = DateTime.fromMillisecondsSinceEpoch(int.parse(bookingModel.checkOut.toString()));   
+ final currentDate = DateTime.now();
+    if (currentDate.isAfter(endDate.add(Duration(days: 1)))) {
+      FirebaseFirestore.instance
+          .collection('bookings')
+          .doc(docID)
+          .update({
+            'orderStatus': 'Completed',
+          }).then((_) {
+           _showFeedbackDialog(context);
+          });
+    }
+  }
+  void _showFeedbackDialog(BuildContext context) {
+    final feedbackController = Get.put(ApartmentDetailsController());
+    final formKey = GlobalKey<FormState>();
 
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          backgroundColor: whiteColor,
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  spreadRadius: 3,
+                  blurRadius: 10,
+                ),
+              ],
+              borderRadius: BorderRadius.circular(5),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Post a feedback for this property',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: blackColor3B,
+                      fontSize: 16,
+                      fontFamily: 'Avenir',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  CustomTextField(
+                    hintText: 'Enter your feedback',
+                    maxLines: 5,
+                    borderRadius: 8,
+                    controller: feedbackController.feedbackModel.feedback,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter feedback.';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  CustomButton(
+                    text: 'Post',
+                    height: 44,
+                    width: Get.width,
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        feedbackController.addFeedback(bookingModel.sellerID, bookingModel.propertyID);
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  CustomButton(
+                    text: 'Cancel',
+                    height: 44,
+                    width: Get.width,
+                    backgroundColor: greyBorderColor,
+                    textColor: blackColor3B,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+ 
+ @override
+  Widget build(BuildContext context) {
+  _checkAndCompleteBooking(context);
     print(bookingModel.propertyID);
     return StreamBuilder(
       stream: FirebaseFirestore.instance
@@ -103,25 +205,25 @@ class BookingHistoryOngoing extends StatelessWidget {
                             ),
                           ),
                     const SizedBox(height: 16),
-                    bookingModel.pendingPayment == '0'
-                    ? CustomButton(
-                        text: 'Complete',
-                        height: 38,
-                        backgroundColor: primaryColor,
-                        textColor: whiteColor,
-                        width: Get.width * 0.4,
-                        onPressed: () {
-                          // FirebaseFirestore.instance
-                          //     .collection('bookings')
-                          //     .doc(docID)
-                          //     .update({
-                          //   'orderStatus': 'Completed',
-                          // }).then((_) {
-                          //   // _showFeedbackDialog(context);
-                          // });
-                        },
-                      )
-                        : 
+                 if (bookingModel.pendingPayment != '0') ...[
+                    // CustomButton(
+                    //     text: 'Complete',
+                    //     height: 38,
+                    //     backgroundColor: primaryColor,
+                    //     textColor: whiteColor,
+                    //     width: Get.width * 0.4,
+                    //     onPressed: () {
+                    //       // FirebaseFirestore.instance
+                    //       //     .collection('bookings')
+                    //       //     .doc(docID)
+                    //       //     .update({
+                    //       //   'orderStatus': 'Completed',
+                    //       // }).then((_) {
+                    //       //   // _showFeedbackDialog(context);
+                    //       // });
+                    //     },
+                    //   )
+                    //     : 
                               CustomButton(
                                   text: 'Pay',
                                   height: 38,
@@ -142,7 +244,7 @@ class BookingHistoryOngoing extends StatelessWidget {
                           
                     const SizedBox(height: 16),
                   ],
-                ),
+            ])
               ),
               GestureDetector(
                 onTap: () {

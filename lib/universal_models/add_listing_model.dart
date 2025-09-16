@@ -34,6 +34,7 @@ class AddListingModel {
   bool isFeatured;
   bool isPending;
   bool isApproved;
+  bool isActive;
   DateTime createdAt;
 
   //constructor
@@ -62,6 +63,7 @@ class AddListingModel {
     required this.isVerified,
     required this.isFeatured,
      required this.isPending,
+        required this.isActive,
     required this.isApproved,
     required this.createdAt,
    
@@ -97,6 +99,7 @@ class AddListingModel {
               isRecommended: false,
       isVerified: false,
       isFeatured: false,
+      isActive: true,
     isPending: true,
     isApproved: false,
       createdAt: DateTime.now(),
@@ -144,6 +147,7 @@ class AddListingModel {
       'isVerified': isVerified,
       'isFeatured': isFeatured,
       'isPending': isPending,
+      'isActive': isActive,
       'isApproved':isApproved,
       'createdAt': Timestamp.fromDate(createdAt),
       // indicatePayList.map((element) => element.toMap()).toList(),
@@ -218,6 +222,7 @@ class AddListingModel {
       isVerified: snapshot.data()!['isVerified'] ?? false,
       isFeatured: snapshot.data()!['isFeatured'] ?? false,
       isPending: snapshot.data()!['isPending']?? false,
+      isActive: snapshot.data()!['isActive']?? false,
       isApproved: snapshot.data()!['isApproved']?? false,
       createdAt: createdAt,
 

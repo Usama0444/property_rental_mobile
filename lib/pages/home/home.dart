@@ -194,11 +194,40 @@ class Home extends StatelessWidget {
                         const SizedBox(
                           height: 8,
                         ),
-                        StreamBuilder(
+                       StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('bookings')
+                              .where('orderStatus', isNotEqualTo: 'Completed')
+                              .snapshots(),
+                          builder: (context, bookingSnapshot) {
+                            if (bookingSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
+                            if (bookingSnapshot.hasError) {
+                              print(bookingSnapshot.error.toString());
+                              return Text('Error: ${bookingSnapshot.error}');
+                            }
+
+                            final currentDate = DateTime.now().millisecondsSinceEpoch;
+                            final bookedProperties = bookingSnapshot.data?.docs
+                                    .where((doc) {
+                                      final data = doc.data() as Map<String, dynamic>;
+                                      final checkOut =
+                                          int.parse(data['checkOut'].toString());
+                                      return currentDate <= (checkOut + 86400000);
+                                    })
+                                    .map((doc) => {
+                                          'propertyID': doc['propertyID'] as String,
+                                          'buyerID': doc['buyerID'] as String,
+                                        })
+                                    .toList() ??
+                                [];
+                                return  StreamBuilder(
                           stream: FirebaseFirestore.instance
                               .collection('listings')
                               .where('sellerID',
-                                  isNotEqualTo: auth.currentUser!.uid)
+                                  isNotEqualTo: auth.currentUser!.uid)    .where('isActive', isEqualTo: true)
                               .snapshots(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -213,17 +242,29 @@ class Home extends StatelessWidget {
                                 snapshot.data!.docs.isEmpty) {
                               return Text(
                                   'No data available'); // Or any other empty state widget
-                            }
+                            } final availableListings = snapshot.data!.docs
+                                    .where((doc) {
+                                      final bookingForProperty = bookedProperties.firstWhere(
+                                        (booking) => booking['propertyID'] == doc.id,
+                                        orElse: () => {},
+                                      );
+                                      return bookingForProperty.isEmpty ||
+                                          bookingForProperty['buyerID'] == auth.currentUser!.uid;
+                                    })
+                                    .map((doc) => AddListingModel.fromDocumentSnapshot(doc))
+                                    .toList();
+
+                                if (availableListings.isEmpty) {
+                                  return const Text('No available listings');
+                                }
                             return SizedBox(
                               height: 120,
                               child: ListView.builder(
                                 shrinkWrap: true,
-                                itemCount: snapshot.data!.docs.length,
+                                itemCount: availableListings.length,
                                 scrollDirection: Axis.horizontal,
                                 itemBuilder: (context, index) {
-                                  AddListingModel listingModel =
-                                      AddListingModel.fromDocumentSnapshot(
-                                          snapshot.data!.docs[index]);
+                                   final listingModel = availableListings[index];
                                   return BedsittersWidget(
                                     listingID: listingModel.docId,
                                     listingModel: listingModel,
@@ -233,7 +274,7 @@ class Home extends StatelessWidget {
                               ),
                             );
                           },
-                        ),
+                        );}),
                         const SizedBox(
                           height: 28,
                         ),
@@ -280,7 +321,8 @@ class Home extends StatelessWidget {
                           stream: FirebaseFirestore.instance
                               .collection('listings')
                               .where('sellerID',
-                                  isNotEqualTo: auth.currentUser!.uid).where('propertyType',isEqualTo: 'Bedsitters')
+                                  isNotEqualTo: auth.currentUser!.uid)    .where('isActive', isEqualTo: true).
+                                  where('propertyType',isEqualTo: 'Bedsitters')
                               .snapshots(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
@@ -367,13 +409,14 @@ class Home extends StatelessWidget {
                               .where(Filter.and(
                                   Filter('sellerID',
                                       isNotEqualTo: auth.currentUser!.uid),
+                                      
                                   Filter('selectedBedroom', arrayContainsAny: [
                                     "Studio",
                                     '0',
                                     '1',
                                     '2',
                                     '3'
-                                  ])))
+                                  ])))    .where('isActive', isEqualTo: true)
                               .snapshots(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==

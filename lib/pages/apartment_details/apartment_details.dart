@@ -709,69 +709,304 @@ class ApartmentDetails extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              listingModel.listingRole != 'Rent'
-                                                  ? 'KSH ${listingModel.payment.text}'
-                                                  : 'KSH ${listingModel.payment.text}/Night',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                color: blackColor3B,
-                                                fontSize: 16,
-                                                fontFamily: 'Avenir',
+                                        GestureDetector(
+                                          onTap: () {
+                                                 showModalBottomSheet(
+          context: context,
+          isScrollControlled: true, // Allows dynamic height
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          backgroundColor: Colors.white,
+          builder: (BuildContext context) {
+            return DraggableScrollableSheet(
+              initialChildSize: 0.7, // Takes 70% of screen height initially
+              minChildSize: 0.4,
+              maxChildSize: 0.9,
+              expand: false,
+              builder: (context, scrollController) {
+                return Column(
+                  children: [
+                    // Header with title and close button
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(20),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Property Reviews',
+                            style: TextStyle(
+                              fontFamily: 'Avenir',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 18,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.black54,
+                              size: 24,
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Feedback list
+                    Expanded(
+                      child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('feedbacks')
+                            .where('propertyID', isEqualTo: listingId)
+                            .snapshots(),
+                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot2) {
+                          if (snapshot2.connectionState == ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                              ),
+                            );
+                          }
+                          if (snapshot2.hasError) {
+                            print('Error: ${snapshot2.error}');
+                            return const Center(
+                              child: Text(
+                                'Error loading feedback',
+                                style: TextStyle(
+                                  fontFamily: 'Avenir',
+                                  fontSize: 14,
+                                  color: Colors.redAccent,
+                                ),
+                              ),
+                            );
+                          }
+                          if (!snapshot2.hasData || snapshot2.data!.docs.isEmpty) {
+                            return const Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.info_outline,
+                                    size: 40,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    'No feedback available',
+                                    style: TextStyle(
+                                      fontFamily: 'Avenir',
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          // Build feedback list
+                          return ListView.builder(
+                            controller: scrollController,
+                            padding: const EdgeInsets.all(16),
+                            itemCount: snapshot2.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              var feedback = snapshot2.data!.docs[index];
+                              String buyerID = feedback['buyerID'];
+                              String feedbackText = feedback['feedback'];
+                              String orderDate = feedback['orderDate'];
+
+                              // Fetch buyer name
+                              return FutureBuilder<DocumentSnapshot>(
+                                future: FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(buyerID)
+                                    .get(),
+                                builder: (context, AsyncSnapshot<DocumentSnapshot> userSnapshot) {
+                                  if (userSnapshot.connectionState == ConnectionState.waiting) {
+                                    return const ListTile(
+                                      title: Text(
+                                        'Loading...',
+                                        style: TextStyle(fontFamily: 'Avenir'),
+                                      ),
+                                    );
+                                  }
+                                  if (userSnapshot.hasError) {
+                                    print('Error fetching user: ${userSnapshot.error}');
+                                    return const ListTile(
+                                      title: Text(
+                                        'Error loading user',
+                                        style: TextStyle(
+                                          fontFamily: 'Avenir',
+                                          color: Colors.redAccent,
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  String buyerName = userSnapshot.data!.exists
+                                      ? userSnapshot.data!['userName'] ?? 'Unknown User'
+                                      : 'Unknown User';
+
+                                  return Card(
+                                    elevation: 2,
+                                    margin: const EdgeInsets.symmetric(vertical: 8),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 20,
+                                                backgroundColor: Colors.blue.shade100,
+                                                child: Text(
+                                                  buyerName[0].toUpperCase(),
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Avenir',
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
                                               ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Text(
+                                                  buyerName,
+                                                  style: const TextStyle(
+                                                    fontFamily: 'Avenir',
+                                                    fontWeight: FontWeight.w800,
+                                                    fontSize: 16,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            feedbackText,
+                                            style: const TextStyle(
+                                              fontFamily: 'Avenir',
+                                              fontSize: 14,
+                                              color: Colors.black54,
                                             ),
-                                            const SizedBox(
-                                              height: 6,
-                                            ),
-                                            // listingModel.listingRole == 'Rent'
-                                            //     ?
-                                            StreamBuilder(
-                                                stream: FirebaseFirestore
-                                                    .instance
-                                                    .collection('feedbacks')
-                                                    .where('propertyID',
-                                                        isEqualTo: listingId!)
-                                                    .snapshots(),
-                                                builder: (context, snapshot2) {
-                                                  if (snapshot2
-                                                          .connectionState ==
-                                                      ConnectionState.waiting) {
-                                                    return const SizedBox();
-                                                  }
-                                                  if (snapshot2.hasError) {
-                                                    print(snapshot2.error
-                                                        .toString());
-                                                  }
-                                                  // if (snapshot2.data!.docs.isEmpty) {
-                                                  //   return SizedBox();
-                                                  // }
-                                                  return Text(
-                                                    '${snapshot2.data!.docs.length == 0 ? 0 : snapshot2.data!.docs.length} Reviews',
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: blackColor3B,
-                                                      fontSize: 12,
-                                                      fontFamily: 'Avenir',
-                                                    ),
-                                                  );
-                                                })
-                                            // : Text(
-                                            //     isForSale == true
-                                            //         ? 'Click to add tour details'
-                                            //         : '13+ Reviews',
-                                            //     style: const TextStyle(
-                                            //       fontWeight: FontWeight.w700,
-                                            //       color: blackColor3B,
-                                            //       fontSize: 12,
-                                            //       fontFamily: 'Avenir',
-                                            //     ),
-                                            //   ),
-                                          ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.calendar_today,
+                                                size: 14,
+                                                color: Colors.grey,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                orderDate,
+                                                style: const TextStyle(
+                                                  fontFamily: 'Avenir',
+                                                  fontSize: 12,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+     
+                                          },
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                listingModel.listingRole != 'Rent'
+                                                    ? 'KSH ${listingModel.payment.text}'
+                                                    : 'KSH ${listingModel.payment.text}/Night',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: blackColor3B,
+                                                  fontSize: 16,
+                                                  fontFamily: 'Avenir',
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 6,
+                                              ),
+                                              // listingModel.listingRole == 'Rent'
+                                              //     ?
+                                              StreamBuilder(
+                                                  stream: FirebaseFirestore
+                                                      .instance
+                                                      .collection('feedbacks')
+                                                      .where('propertyID',
+                                                          isEqualTo: listingId!)
+                                                      .snapshots(),
+                                                  builder: (context, snapshot2) {
+                                                    if (snapshot2
+                                                            .connectionState ==
+                                                        ConnectionState.waiting) {
+                                                      return const SizedBox();
+                                                    }
+                                                    if (snapshot2.hasError) {
+                                                      print(snapshot2.error
+                                                          .toString());
+                                                    }
+                                                    // if (snapshot2.data!.docs.isEmpty) {
+                                                    //   return SizedBox();
+                                                    // }
+                                                    return Text(
+                                                      '${snapshot2.data!.docs.length == 0 ? 0 : snapshot2.data!.docs.length} Reviews',
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color: blackColor3B,
+                                                        fontSize: 12,
+                                                        fontFamily: 'Avenir',
+                                                      ),
+                                                    );
+                                                  })
+                                              // : Text(
+                                              //     isForSale == true
+                                              //         ? 'Click to add tour details'
+                                              //         : '13+ Reviews',
+                                              //     style: const TextStyle(
+                                              //       fontWeight: FontWeight.w700,
+                                              //       color: blackColor3B,
+                                              //       fontSize: 12,
+                                              //       fontFamily: 'Avenir',
+                                              //     ),
+                                              //   ),
+                                            ],
+                                          ),
                                         ),
                                         comingFromMyAdd == false
                                             ? CustomButton(

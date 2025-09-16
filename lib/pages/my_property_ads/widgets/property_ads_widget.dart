@@ -7,6 +7,7 @@ import 'package:property_rental_app/common_widgets/custom_button.dart';
 import 'package:property_rental_app/common_widgets/loading_dialog.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
 import 'package:property_rental_app/pages/apartment_details/apartment_details.dart';
+import 'package:property_rental_app/pages/my_property_ads/widgets/property_actions.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../common_widgets/global_functions.dart';
@@ -230,59 +231,8 @@ class PropertyAdsWidget extends StatelessWidget {
             const SizedBox(
               height: 12,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Flexible(
-                //   child: CustomButton(
-                //     width: Get.width,
-                //     text: 'Post your ad',
-                //     suffixTextIconWidth: 2,
-                //     onPressed: () {},
-                //   ),
-                // ),
-                // const SizedBox(
-                //   width: 12,
-                // ),
-                Flexible(
-                  child: CustomButton(
-                    width: Get.width,
-                    // backgroundColor: whiteColor,
-                    // isBorder: true,
-                    // textColor: primaryColor,
-                    text: 'Delete Ad',
-                    suffixTextIconWidth: 2,
-                    onPressed: () {
-                      loadingDialog(
-                          button: true,
-                          button1: true,
-                          endBtnText: 'Yes',
-                          message: 'Are you sure you want to delete the Ad?',
-                          tap: () {
-                            FirebaseFirestore.instance
-                                .collection('listings')
-                                .doc(listingId)
-                                .delete()
-                                .then((value) {
-                              Get.back();
-                            });
-                          },
-                          startWidget: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: CustomButton(
-                              text: "Cancel",
-                              height: 40,
-                              width: Get.width * 0.26,
-                              onPressed: () {
-                                Get.back();
-                              },
-                            ),
-                          ));
-                    },
-                  ),
-                ),
-              ],
-            )
+            PropertyActions(listing: searchModel!, listingId: listingId),
+          
           ],
         ),
       ),

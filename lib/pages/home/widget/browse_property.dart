@@ -30,7 +30,8 @@ class BrowsProperty extends StatelessWidget {
                 .collection('listings')
                 .where('propertyType', isEqualTo: 'Apartment')
                 .where('listingRole', isEqualTo: controller.propertyType2.value)
-                .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+                .where('sellerID', isNotEqualTo: auth.currentUser!.uid)  
+                .where('isActive', isEqualTo: true)
             as Query<Map<String, dynamic>>;
       }
       if (controller.selectedName.value == 'Bedsitters') {
@@ -40,7 +41,7 @@ class BrowsProperty extends StatelessWidget {
                 .collection('listings')
                 .where('listingRole', isEqualTo: controller.propertyType2.value)
                 .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
-                .where('propertyType', isEqualTo: 'Bedsitters')
+                .where('propertyType', isEqualTo: 'Bedsitters').where('isActive', isEqualTo: true)
             as Query<Map<String, dynamic>>;
       }
       if (controller.selectedName.value == 'Single room') {
@@ -50,7 +51,7 @@ class BrowsProperty extends StatelessWidget {
                 .collection('listings')
                 .where('selectedBedroom', arrayContains: '1')
                 .where('listingRole', isEqualTo: controller.propertyType2.value)
-                .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+                .where('sellerID', isNotEqualTo: auth.currentUser!.uid).where('isActive', isEqualTo: true)
             as Query<Map<String, dynamic>>;
       }
       if (controller.selectedName.value == '1,2,3+ Bedrooms') {
@@ -59,7 +60,7 @@ class BrowsProperty extends StatelessWidget {
         query = FirebaseFirestore.instance
                 .collection('listings')
                 .where('listingRole', isEqualTo: controller.propertyType2.value)
-                .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+                .where('sellerID', isNotEqualTo: auth.currentUser!.uid).where('isActive', isEqualTo: true)
             as Query<Map<String, dynamic>>;
       }
       if (controller.selectedName.value == 'For Sale') {
@@ -67,7 +68,7 @@ class BrowsProperty extends StatelessWidget {
         query = FirebaseFirestore.instance
                 .collection('listings')
                 .where('listingRole', isEqualTo: 'For Sale')
-                .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+                .where('sellerID', isNotEqualTo: auth.currentUser!.uid).where('isActive', isEqualTo: true)
             as Query<Map<String, dynamic>>;
       }
 
