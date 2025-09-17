@@ -69,25 +69,27 @@ class RecommendedProperties extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('listings')
-          .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
-          .where('isRecommended', isEqualTo: true)
-          // .where('propertyType', isEqualTo: 'Bedsitters')
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Or any other loading indicator
-        }
-        if (snapshot.hasError) {
-          print(snapshot.error.toString());
-          return Text('Error: ${snapshot.error}');
-        }
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Text(
-              'No data available'); // Or any other empty state widget
-        }
+    return FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('listings')
+      .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+      .where('isRecommended', isEqualTo: true)
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const CircularProgressIndicator();
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      return Text('Error: ${snapshot.error}');
+    }
+    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      return const Text('No data available');
+    }
         return SizedBox(
           height: 220,
           child: ListView.builder(

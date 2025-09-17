@@ -47,27 +47,32 @@ class EnterPropertyDetails extends StatelessWidget {
                   Get.offAll(BottomNavBar());
                 }),
           ),
-          StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('listings')
-                .doc(listingId)
-                .snapshots(),
-            builder: (context, snapshot) {
-              AddListingModel listingModel = AddListingModel.initialize();
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Expanded(child: Center(child: const CircularProgressIndicator(color: Colors.black,)));
-              }
-              if (snapshot.hasError) {
-                print(snapshot.error.toString());
-              }
-              if (!snapshot.data!.exists) {
-                listingModel = AddListingModel.initialize();
-              }
-              if (snapshot.data!.exists) {
-                listingModel = AddListingModel.fromDocumentSnapshot(
-                    snapshot.data! as DocumentSnapshot<Map<String, dynamic>>)
-                  ..listingImageMemories = <Rx<Uint8List>>[].obs;
-              }
+        FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+    future: FirebaseFirestore.instance
+        .collection('listings')
+        .doc(listingId)
+        .withConverter<Map<String, dynamic>>(
+          fromFirestore: (snapshot, _) => snapshot.data()!,
+          toFirestore: (data, _) => data,
+        )
+        .get(),
+    builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+      AddListingModel listingModel = AddListingModel.initialize();
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Expanded(
+          child: Center(child: CircularProgressIndicator(color: Colors.black)),
+        );
+      }
+      if (snapshot.hasError) {
+        print(snapshot.error.toString());
+        return const Text('Error loading listing data');
+      }
+      if (!snapshot.hasData || !snapshot.data!.exists) {
+        listingModel = AddListingModel.initialize();
+      } else {
+        listingModel = AddListingModel.fromDocumentSnapshot(snapshot.data!)
+          ..listingImageMemories = <Rx<Uint8List>>[].obs;
+      }
 
               return
                Expanded(

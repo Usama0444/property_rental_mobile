@@ -56,37 +56,39 @@ class ApartmentDetails extends StatelessWidget {
             : const SizedBox()
       ],
       body: SingleChildScrollView(
-          child: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('listings')
-            .doc(listingId)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Padding(
-              padding:
-                  EdgeInsets.only(top: Get.height / 2, left: Get.width / 9),
-              child: const Center(
-                child: SizedBox(
-                    // height: Get.height /2,
-                    // width: Get.width/2,
-                    child: CircularProgressIndicator(
-                  color: primaryColor,
-                  strokeWidth: 2,
-                )),
-              ),
-            );
-          }
-          if (snapshot.hasError) {
-            print(snapshot.error.toString());
-          }
-          if (!snapshot.data!.exists) {
-            return const Text('Data does\'nt exist');
-          }
-          AddListingModel listingModel = AddListingModel.fromDocumentSnapshot(
-              snapshot.data as DocumentSnapshot<Map<String, dynamic>>);
-          apartmentDetailsController.addMarker(
-              listingModel.latitude, listingModel.longitude);
+          child: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('listings')
+      .doc(listingId)
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return Padding(
+        padding: EdgeInsets.only(top: Get.height / 2, left: Get.width / 9),
+        child: const Center(
+          child: SizedBox(
+            child: CircularProgressIndicator(
+              color: primaryColor,
+              strokeWidth: 2,
+            ),
+          ),
+        ),
+      );
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      return const Text('Error loading listing data');
+    }
+    if (!snapshot.hasData || !snapshot.data!.exists) {
+      return const Text('Data doesn\'t exist');
+    }
+    AddListingModel listingModel = AddListingModel.fromDocumentSnapshot(snapshot.data!);
+    apartmentDetailsController.addMarker(
+        listingModel.latitude, listingModel.longitude);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -122,46 +124,46 @@ class ApartmentDetails extends StatelessWidget {
                     ),
                     const SizedBox(width: 12),
                     comingFromMyAdd == false
-                        ? StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('favourites')
-                                .doc(listingId)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              print("$listingId +'/////'");
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                      top: Get.height / 2,
-                                      right: Get.width / 3),
-                                  child: const Center(
-                                    child: SizedBox(
-                                        // height: Get.height /2,
-                                        // width: Get.width/2,
-                                        child: CircularProgressIndicator(
-                                      color: primaryColor,
-                                      strokeWidth: 2,
-                                    )),
-                                  ),
-                                );
-                              }
-                              if (snapshot.hasError) {
-                                print(snapshot.error.toString());
-                              }
-                              FavouriteModel? model;
+                        ? FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('favourites')
+      .doc(listingId)
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+    print("$listingId +'/////'");
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return Padding(
+        padding: EdgeInsets.only(
+          top: Get.height / 2,
+          right: Get.width / 3,
+        ),
+        child: const Center(
+          child: SizedBox(
+            child: CircularProgressIndicator(
+              color: primaryColor,
+              strokeWidth: 2,
+            ),
+          ),
+        ),
+      );
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      return const Text('Error loading favourites data');
+    }
+    FavouriteModel? model;
 
-                              if (!snapshot.data!.exists) {
-                                print('data doesnts');
-
-                                model = FavouriteModel.initialize();
-                              }
-                              if (snapshot.data!.exists) {
-                                print('data ecxists');
-                                model = FavouriteModel.fromDocumentSnapshot(
-                                    snapshot.data as DocumentSnapshot<
-                                        Map<String, dynamic>>);
-                              }
+    if (!snapshot.hasData || !snapshot.data!.exists) {
+      print('data doesnts');
+      model = FavouriteModel.initialize();
+    } else {
+      print('data ecxists');
+      model = FavouriteModel.fromDocumentSnapshot(snapshot.data!);
+    }
 
                               return GestureDetector(
                                 onTap: () {
@@ -682,26 +684,27 @@ class ApartmentDetails extends StatelessWidget {
                                 width: Get.width,
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 16, horizontal: 20),
-                                child: StreamBuilder(
-                                  stream: FirebaseFirestore.instance
-                                      .collection('listings')
-                                      .doc(listingId!)
-                                      .snapshots(),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const SizedBox();
-                                    }
-                                    if (snapshot.hasError) {
-                                      print(snapshot.error.toString());
-                                    }
-                                    if (!snapshot.data!.exists) {
-                                      return const Text('Data does\'nt exist');
-                                    }
-                                    AddListingModel listingModel =
-                                        AddListingModel.fromDocumentSnapshot(
-                                            snapshot.data as DocumentSnapshot<
-                                                Map<String, dynamic>>);
+                                child:FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('listings')
+      .doc(listingId!)
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const SizedBox();
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      return const Text('Error loading listing data');
+    }
+    if (!snapshot.hasData || !snapshot.data!.exists) {
+      return const Text('Data doesn\'t exist');
+    }
+    AddListingModel listingModel = AddListingModel.fromDocumentSnapshot(snapshot.data!);
 
                                     return Row(
                                       crossAxisAlignment:
@@ -764,32 +767,36 @@ class ApartmentDetails extends StatelessWidget {
                     ),
                     // Feedback list
                     Expanded(
-                      child: StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection('feedbacks')
-                            .where('propertyID', isEqualTo: listingId)
-                            .snapshots(),
-                        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot2) {
-                          if (snapshot2.connectionState == ConnectionState.waiting) {
-                            return const Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                              ),
-                            );
-                          }
-                          if (snapshot2.hasError) {
-                            print('Error: ${snapshot2.error}');
-                            return const Center(
-                              child: Text(
-                                'Error loading feedback',
-                                style: TextStyle(
-                                  fontFamily: 'Avenir',
-                                  fontSize: 14,
-                                  color: Colors.redAccent,
-                                ),
-                              ),
-                            );
-                          }
+                      child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('feedbacks')
+      .where('propertyID', isEqualTo: listingId)
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot2) {
+    if (snapshot2.connectionState == ConnectionState.waiting) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+        ),
+      );
+    }
+    if (snapshot2.hasError) {
+      print('Error: ${snapshot2.error}');
+      return const Center(
+        child: Text(
+          'Error loading feedback',
+          style: TextStyle(
+            fontFamily: 'Avenir',
+            fontSize: 14,
+            color: Colors.redAccent,
+          ),
+        ),
+      );
+    }
                           if (!snapshot2.hasData || snapshot2.data!.docs.isEmpty) {
                             return const Center(
                               child: Column(
@@ -963,23 +970,32 @@ class ApartmentDetails extends StatelessWidget {
                                               ),
                                               // listingModel.listingRole == 'Rent'
                                               //     ?
-                                              StreamBuilder(
-                                                  stream: FirebaseFirestore
-                                                      .instance
-                                                      .collection('feedbacks')
-                                                      .where('propertyID',
-                                                          isEqualTo: listingId!)
-                                                      .snapshots(),
-                                                  builder: (context, snapshot2) {
-                                                    if (snapshot2
-                                                            .connectionState ==
-                                                        ConnectionState.waiting) {
-                                                      return const SizedBox();
-                                                    }
-                                                    if (snapshot2.hasError) {
-                                                      print(snapshot2.error
-                                                          .toString());
-                                                    }
+                                              FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('feedbacks')
+      .where('propertyID', isEqualTo: listingId!)
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot2) {
+    if (snapshot2.connectionState == ConnectionState.waiting) {
+      return const SizedBox();
+    }
+    if (snapshot2.hasError) {
+      print(snapshot2.error.toString());
+      return const Center(
+        child: Text(
+          'Error loading feedback',
+          style: TextStyle(
+            fontFamily: 'Avenir',
+            fontSize: 14,
+            color: Colors.redAccent,
+          ),
+        ),
+      );
+    }
                                                     // if (snapshot2.data!.docs.isEmpty) {
                                                     //   return SizedBox();
                                                     // }
