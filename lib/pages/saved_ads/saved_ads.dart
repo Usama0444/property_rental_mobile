@@ -115,106 +115,102 @@ class SavedAds extends StatelessWidget {
           //     },
           //   ),
           // )
-          Expanded(
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('favourites')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox();
-                }
-                if (snapshot.hasError) {
-                  print(snapshot.error.toString());
-                  // Display an error message if there's an error
-                  return Text('Error: ${snapshot.error}');
-                }
+      Expanded(
+  child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+    future: FirebaseFirestore.instance
+        .collection('favourites')
+        .withConverter<Map<String, dynamic>>(
+          fromFirestore: (snapshot, _) => snapshot.data()!,
+          toFirestore: (data, _) => data,
+        )
+        .get(),
+    builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const SizedBox();
+      }
+      if (snapshot.hasError) {
+        print(snapshot.error.toString());
+        return Text('Error: ${snapshot.error}');
+      }
 
-                bool currentUserLikedAnyProperty = false;
+      bool currentUserLikedAnyProperty = false;
 
-                for (var doc in snapshot.data!.docs) {
-                  FavouriteModel favModel = FavouriteModel.fromDocumentSnapshot(
-                      doc as DocumentSnapshot<Map<String, dynamic>>);
-                  if (favModel.likes.contains(auth.currentUser!.uid)) {
-                    print('yes');
-                    currentUserLikedAnyProperty = true;
-                    break;
-                  }
-                }
-                print(currentUserLikedAnyProperty);
-                // Check if the current user hasn't liked any property
-                if (currentUserLikedAnyProperty == true) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          FavouriteModel favModel =
-                              FavouriteModel.fromDocumentSnapshot(snapshot
-                                      .data!.docs[index]
-                                  as DocumentSnapshot<Map<String, dynamic>>);
-                          print(favModel.likes);
-                          if (favModel.likes.contains(auth.currentUser!.uid)) {
-                            // SearchModel newModel =
-                            //     controller.propertiesList[index];
+      for (var doc in snapshot.data!.docs) {
+        FavouriteModel favModel = FavouriteModel.fromDocumentSnapshot(doc);
+        if (favModel.likes.contains(auth.currentUser!.uid)) {
+          print('yes');
+          currentUserLikedAnyProperty = true;
+          break;
+        }
+      }
+      print(currentUserLikedAnyProperty);
 
-                            return StreamBuilder(
-                              stream: FirebaseFirestore.instance
-                                  .collection('listings')
-                                  .doc(snapshot.data!.docs[index].id)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return const SizedBox();
-                                }
-                                if (snapshot.hasError) {
-                                  print(snapshot.error.toString());
-                                  // Display an error message if there's an error
-                                  return Text('Error: ${snapshot.error}');
-                                }
-                                if (!snapshot.data!.exists) {
-                                  return SizedBox();
-                                }
-                                AddListingModel listingModel =
-                                    AddListingModel.fromDocumentSnapshot(
-                                        snapshot.data as DocumentSnapshot<
-                                            Map<String, dynamic>>);
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: SearchPropertyWidget(
-                                    searchModel: listingModel,
-                                    listingId: snapshot.data!.id,
-                                    // searchModelUI: newModel,
-                                  ),
-                                );
-                              },
-                            );
-                          }
-                          return const SizedBox();
-                        }),
-                  );
-                } else {
-                  print('mine');
-                  print(currentUserLikedAnyProperty);
-                  return const Center(
-                      child: SizedBox(
-                          child: Text(
-                    'No saved Ads yet.',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: textColor,
-                      fontSize: 14,
-                      fontFamily: 'Avenir',
-                    ),
-                  )));
-                }
-              },
+      if (currentUserLikedAnyProperty == true) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: ListView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              FavouriteModel favModel = FavouriteModel.fromDocumentSnapshot(snapshot.data!.docs[index]);
+              print(favModel.likes);
+              if (favModel.likes.contains(auth.currentUser!.uid)) {
+                return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                  future: FirebaseFirestore.instance
+                      .collection('listings')
+                      .doc(snapshot.data!.docs[index].id)
+                      .withConverter<Map<String, dynamic>>(
+                        fromFirestore: (snapshot, _) => snapshot.data()!,
+                        toFirestore: (data, _) => data,
+                      )
+                      .get(),
+                  builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> listingSnapshot) {
+                    if (listingSnapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox();
+                    }
+                    if (listingSnapshot.hasError) {
+                      print(listingSnapshot.error.toString());
+                      return Text('Error: ${listingSnapshot.error}');
+                    }
+                    if (!listingSnapshot.hasData || !listingSnapshot.data!.exists) {
+                      return const SizedBox();
+                    }
+                    AddListingModel listingModel = AddListingModel.fromDocumentSnapshot(listingSnapshot.data!);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: SearchPropertyWidget(
+                        searchModel: listingModel,
+                        listingId: listingSnapshot.data!.id,
+                      ),
+                    );
+                  },
+                );
+              }
+              return const SizedBox();
+            },
+          ),
+        );
+      } else {
+        print('mine');
+        print(currentUserLikedAnyProperty);
+        return const Center(
+          child: SizedBox(
+            child: Text(
+              'No saved Ads yet.',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: textColor,
+                fontSize: 14,
+                fontFamily: 'Avenir',
+              ),
             ),
-          )
-        ],
+          ),
+        );
+      }
+    },
+  ),
+)  ],
       ),
     );
   }

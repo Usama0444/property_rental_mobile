@@ -75,115 +75,124 @@ class MyActivity extends StatelessWidget {
           Obx(
             () => controller.isRecentSearches.value == 0
                 ? Expanded(
-                    child: StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('recentSearches')
-                        .where('userID', isEqualTo: auth.currentUser!.uid)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const SizedBox();
-                      }
-                      if (snapshot.hasError) {
-                        print(snapshot.error.toString());
-                      }
-                      if (!snapshot.data!.docs.isNotEmpty) {
-                        return const Center(
-                          child: Text(
-                            'Data doesn\'t exist',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                              color: greyColor,
-                              fontFamily: 'Avenir',
-                            ),
-                          ),
-                        );
-                      }
-                      return ListView.builder(
-                        itemCount:snapshot.data!.docs.length,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-
-                          RecentSearchesModel rcModel = RecentSearchesModel.fromDocumentSnapshot(snapshot.data!.docs[index]);
-                          return  Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: RecentSearch(rcModel:rcModel),
-                          );
-                        },
-                      );
-                    },
-                  ))
+  child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+    future: FirebaseFirestore.instance
+        .collection('recentSearches')
+        .where('userID', isEqualTo: auth.currentUser!.uid)
+        .withConverter<Map<String, dynamic>>(
+          fromFirestore: (snapshot, _) => snapshot.data()!,
+          toFirestore: (data, _) => data,
+        )
+        .get(),
+    builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const SizedBox();
+      }
+      if (snapshot.hasError) {
+        print(snapshot.error.toString());
+        return Text('Error: ${snapshot.error}');
+      }
+      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+        return const Center(
+          child: Text(
+            'Data doesn\'t exist',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+              color: greyColor,
+              fontFamily: 'Avenir',
+            ),
+          ),
+        );
+      }
+      return ListView.builder(
+        itemCount: snapshot.data!.docs.length,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          RecentSearchesModel rcModel = RecentSearchesModel.fromDocumentSnapshot(snapshot.data!.docs[index]);
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: RecentSearch(rcModel: rcModel),
+          );
+        },
+      );
+    },
+  ),
+)
                 : Expanded(
-                    child: StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('viewedProperty')
-                        .doc(auth.currentUser!.uid)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const SizedBox();
-                      }
-                      if (snapshot.hasError) {
-                        print(snapshot.error.toString());
-                      }
-                      if (!snapshot.data!.exists) {
-                        return const Center(
-                          child: Text(
-                            'No viewed property yet',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                              color: greyColor,
-                              fontFamily: 'Avenir',
-                            ),
-                          ),
-                        );
-                      }
-                      ViewedPropertyModel vpModel =
-                          ViewedPropertyModel.fromDocumentSnapshot(snapshot
-                              .data! as DocumentSnapshot<Map<String, dynamic>>);
-                      return ListView.builder(
-                        itemCount: vpModel.propertyIds.length,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('listings')
-                                .doc(vpModel.propertyIds[index])
-                                .snapshots(),
-                            builder: (context, snapshot2) {
-                              print(
-                                  '${vpModel.propertyIds[index]} ==================123');
-                              if (snapshot2.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const SizedBox();
-                              }
-                              if (snapshot2.hasError) {
-                                print(snapshot2.error.toString());
-                              }
-                              if (!snapshot2.data!.exists) {
-                                return const SizedBox();
-                              }
-                              AddListingModel listingModel =
-                                  AddListingModel.fromDocumentSnapshot(
-                                      snapshot2.data as DocumentSnapshot<
-                                          Map<String, dynamic>>);
-
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 16),
-                                child: ViewedActivity(
-                                    listingModel: listingModel,
-                                    listingId: vpModel.propertyIds[index]!),
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                  )),
+  child: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+    future: FirebaseFirestore.instance
+        .collection('viewedProperty')
+        .doc(auth.currentUser!.uid)
+        .withConverter<Map<String, dynamic>>(
+          fromFirestore: (snapshot, _) => snapshot.data()!,
+          toFirestore: (data, _) => data,
+        )
+        .get(),
+    builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const SizedBox();
+      }
+      if (snapshot.hasError) {
+        print(snapshot.error.toString());
+        return Text('Error: ${snapshot.error}');
+      }
+      if (!snapshot.hasData || !snapshot.data!.exists) {
+        return const Center(
+          child: Text(
+            'No viewed property yet',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+              color: greyColor,
+              fontFamily: 'Avenir',
+            ),
+          ),
+        );
+      }
+      ViewedPropertyModel vpModel = ViewedPropertyModel.fromDocumentSnapshot(snapshot.data!);
+      return ListView.builder(
+        itemCount: vpModel.propertyIds.length,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+            future: FirebaseFirestore.instance
+                .collection('listings')
+                .doc(vpModel.propertyIds[index])
+                .withConverter<Map<String, dynamic>>(
+                  fromFirestore: (snapshot, _) => snapshot.data()!,
+                  toFirestore: (data, _) => data,
+                )
+                .get(),
+            builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot2) {
+              print('${vpModel.propertyIds[index]} ==================123');
+              if (snapshot2.connectionState == ConnectionState.waiting) {
+                return const SizedBox();
+              }
+              if (snapshot2.hasError) {
+                print(snapshot2.error.toString());
+                return Text('Error: ${snapshot2.error}');
+              }
+              if (!snapshot2.hasData || !snapshot2.data!.exists) {
+                return const SizedBox();
+              }
+              AddListingModel listingModel = AddListingModel.fromDocumentSnapshot(snapshot2.data!);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: ViewedActivity(
+                  listingModel: listingModel,
+                  listingId: vpModel.propertyIds[index]!,
+                ),
+              );
+            },
+          );
+        },
+      );
+    },
+  ),
+)
           ),
         ],
       ),

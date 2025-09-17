@@ -42,34 +42,39 @@ class EditProfile extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-              child: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('users')
-                .doc(auth.currentUser!.uid)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (snapshot.hasError) {
-                print(snapshot.error);
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+       Expanded(
+  child: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+    future: FirebaseFirestore.instance
+        .collection('users')
+        .doc(auth.currentUser!.uid)
+        .withConverter<Map<String, dynamic>>(
+          fromFirestore: (snapshot, _) => snapshot.data()!,
+          toFirestore: (data, _) => data,
+        )
+        .get(),
+    builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+      if (snapshot.hasError) {
+        print(snapshot.error);
+        return const Center(
+          child: Text('Error loading user data'),
+        );
+      }
 
-              UserModel userModel;
+      UserModel userModel;
 
-              if (snapshot.data != null) {
-                userModel = UserModel.fromDocumentSnapshot(
-                    snapshot.data as DocumentSnapshot<Map<String, dynamic>>);
-              } else {
-                userModel = UserModel.initialize();
-              }
+      if (snapshot.hasData && snapshot.data!.exists) {
+        userModel = UserModel.fromDocumentSnapshot(snapshot.data!);
+      } else {
+        userModel = UserModel.initialize();
+      }
 
+    
+  
               return Column(
                 children: [
                   Expanded(

@@ -46,26 +46,29 @@ class PaymentScreen extends StatelessWidget {
             title: 'Payment',
             isBackButton: true,
           ),
-          Expanded(
-            child: SingleChildScrollView(
-                child: StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection('listings')
-                      .doc(listingID)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox();
-                    }
-                    if (snapshot.hasError) {
-                      print(snapshot.error.toString());
-                    }
-                    if (!snapshot.data!.exists) {
-                      return const Text('Data does\'nt exist');
-                    }
-                    AddListingModel listingModel =
-                    AddListingModel.fromDocumentSnapshot(snapshot.data
-                    as DocumentSnapshot<Map<String, dynamic>>);
+         Expanded(
+  child: SingleChildScrollView(
+    child: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      future: FirebaseFirestore.instance
+          .collection('listings')
+          .doc(listingID)
+          .withConverter<Map<String, dynamic>>(
+            fromFirestore: (snapshot, _) => snapshot.data()!,
+            toFirestore: (data, _) => data,
+          )
+          .get(),
+      builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox();
+        }
+        if (snapshot.hasError) {
+          print(snapshot.error.toString());
+          return const Text('Error loading listing data');
+        }
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const Text('Data doesn\'t exist');
+        }
+        AddListingModel listingModel = AddListingModel.fromDocumentSnapshot(snapshot.data!);
                     return Padding(
                       padding: const EdgeInsets.only(left: 28, right: 24),
                       child: Column(

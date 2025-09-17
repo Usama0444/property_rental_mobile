@@ -24,23 +24,27 @@ class BookTourWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('listings')
-          .doc(listingID)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox();
-        }
-        if (snapshot.hasError) {
-          print(snapshot.error.toString());
-        }
-        if (!snapshot.data!.exists) {
-          return const Text('Data does\'nt exist');
-        }
-        AddListingModel searchModel = AddListingModel.fromDocumentSnapshot(
-            snapshot.data as DocumentSnapshot<Map<String, dynamic>>);
+    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('listings')
+      .doc(listingID)
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const SizedBox();
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      return const Text('Error loading listing data');
+    }
+    if (!snapshot.hasData || !snapshot.data!.exists) {
+      return const Text('Data doesn\'t exist');
+    }
+    AddListingModel searchModel = AddListingModel.fromDocumentSnapshot(snapshot.data!);
         return Container(
           height: 78,
           decoration: BoxDecoration(

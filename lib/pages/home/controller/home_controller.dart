@@ -138,11 +138,17 @@ class HomeController extends GetxController {
 
   var minValue = 1000.0.obs;
   var maxValue = 1040000.0.obs;
-  Stream<QuerySnapshot> filter() {
+Future<QuerySnapshot<Map<String, dynamic>>> filter() {
+        print('Filter Parameters:');
+      print('Search Text: ${filterSearchCtrl.text}');
+      print('Buy/Rent: ${buyRentValue.value} (isBuyRent: ${isBuyRent.value})');
+      print('Property Type: ${propertyTypeValue.value} (propertyType: ${propertyType.value})');
+      print('Bedroom: ${bedroomCount.value} (selectedBedroom: ${selectedBedroom.value})');
+      print('Price Range: ${minValue.value} to ${maxValue.value}');
     print('filter working');
 
     // Start with a base query
-    Query baseQuery = FirebaseFirestore.instance
+    Query<Map<String, dynamic>> baseQuery = FirebaseFirestore.instance
         .collection('listings')
         .where('sellerID', isNotEqualTo: auth.currentUser!.uid);
 
@@ -158,7 +164,7 @@ class HomeController extends GetxController {
     }
 
     if (isBuyRent.value != 10) {
-      print('buyrent');
+      print('buyrent${isBuyRent}');
       baseQuery = baseQuery.where('listingRole', isEqualTo: buyRentValue.value);
     }
 
@@ -179,10 +185,10 @@ class HomeController extends GetxController {
     // double maxCost = double.parse(maxValue.value.toString());
 
     // if (minCost >= 1000.0 && maxCost <= 104000.0) {
-    //
+    
     //   print(minCost.toString());
     //   print(maxCost.toString());
-    //
+    
     //   baseQuery = baseQuery.where(Filter.and(
     //       Filter('cost', isGreaterThanOrEqualTo: num.parse(minCost.toString())),
     //       Filter('cost', isLessThanOrEqualTo: num.parse(maxCost.toString()))));
@@ -200,7 +206,7 @@ class HomeController extends GetxController {
 
     print(baseQuery.toString());
     // Return the filtered stream
-    return baseQuery.snapshots();
+    return baseQuery.get();
   }
 
   // Stream<QuerySnapshot> filterr() {

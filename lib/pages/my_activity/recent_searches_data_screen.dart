@@ -31,68 +31,71 @@ class RecentSearchesResultScreen extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('listings')
-                .where(Filter.or(
-                    Filter('countryName', isEqualTo: searchText),
-                    Filter('street', isEqualTo: searchText),
-                    Filter('town', isEqualTo: searchText)))
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox();
-              }
-              if (snapshot.hasError) {
-                print(snapshot.error.toString());
-              }
-              if (snapshot.data!.docs.isEmpty) {
-                return Padding(
-                  padding: EdgeInsets.only(top: Get.height / 3.5),
-                  child: const Center(
-                      child: SizedBox(
-                          child: Text(
-                    'No matched searches.',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: textColor,
-                      fontSize: 14,
-                      fontFamily: 'Avenir',
-                    ),
-                  ))),
-                );
-              }
-              print(snapshot.data!.docs.length);
-              return Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    // Ensure that the type of `snapshot` is explicitly defined as AsyncSnapshot<QuerySnapshot>
-                    // AsyncSnapshot<QuerySnapshot> querySnapshot =
-                    //     snapshot as AsyncSnapshot<QuerySnapshot>;
-
-                    // Access the docs property from querySnapshot
-                    AddListingModel listingModel =
-                        AddListingModel.fromDocumentSnapshot(
-                            snapshot.data!.docs[index]
-                                as DocumentSnapshot<Map<String, dynamic>>);
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: SearchPropertyWidget(
-                        listingId: snapshot.data!.docs[index].id,
-                        searchModel: listingModel,
-                      ),
-                    );
-                  },
+         Expanded(
+  child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+    future: FirebaseFirestore.instance
+        .collection('listings')
+        .where(Filter.or(
+          Filter('countryName', isEqualTo: searchText),
+          Filter('street', isEqualTo: searchText),
+          Filter('town', isEqualTo: searchText),
+        ))
+        .withConverter<Map<String, dynamic>>(
+          fromFirestore: (snapshot, _) => snapshot.data()!,
+          toFirestore: (data, _) => data,
+        )
+        .get(),
+    builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const SizedBox();
+      }
+      if (snapshot.hasError) {
+        print(snapshot.error.toString());
+        return Text('Error: ${snapshot.error}');
+      }
+      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+        return Padding(
+          padding: EdgeInsets.only(top: Get.height / 3.5),
+          child: const Center(
+            child: SizedBox(
+              child: Text(
+                'No matched searches.',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: textColor,
+                  fontSize: 14,
+                  fontFamily: 'Avenir',
                 ),
-              ));
+              ),
+            ),
+          ),
+        );
+      }
+      print(snapshot.data!.docs.length);
+      return Expanded(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: ListView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              AddListingModel listingModel =
+                  AddListingModel.fromDocumentSnapshot(snapshot.data!.docs[index]);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: SearchPropertyWidget(
+                  listingId: snapshot.data!.docs[index].id,
+                  searchModel: listingModel,
+                ),
+              );
             },
-          )
+          ),
+        ),
+      );
+    },
+  ),
+),
         ],
       ),
     );

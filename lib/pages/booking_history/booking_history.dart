@@ -133,247 +133,271 @@ class BookingHistory extends StatelessWidget {
                     controller.selectedButton.value == 0
 
                 ///ongoing my bookings
-                ? StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection('bookings')
-                        .where(Filter.and(
-                            Filter('buyerID', isEqualTo: auth.currentUser!.uid),
-                            Filter('orderStatus', isEqualTo: 'Pending')))
-                        // .where('buyerID', isEqualTo: auth.currentUser!.uid)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return SizedBox(
-                            width: Get.width,
-                            height: 246,
-                            child: const Center(
-                                child: CircularProgressIndicator(
-                              color: primaryColor,
-                            )));
-                      }
-                      if (snapshot.hasError) {
-                        print(snapshot.error.toString());
-                        print('error');
-                      }  if (snapshot.data!.docs.isEmpty) {
-                        return const Center(
-                          child: SizedBox(
-                            child: Text('No ongoing bookings yet',  style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12,
-                              color: greyColor,
-                              fontFamily: 'Avenir',
-                            ),),
-                          ),
-                        );
-                        print('no data exit');
-                      }
-                      return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        itemBuilder: (context, index) {
-                          BookingModel bookingModel =
-                              BookingModel.fromDocumentSnapshot(
-                                  snapshot.data!.docs[index]);
-                          if (bookingModel.pendingPayment == '0' ) {
-                
-                            print('000000000000');
-                            print(snapshot.data!.docs[index].id.toString());
-                            // checkTimeExpire(
-                            //     bookingModel.checkOut.toString(),
-                            //     snapshot.data!.docs[index].id.toString(),
-                            //     bookingModel.orderStatus);
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: BookingHistoryOngoing(
-                                docID: snapshot.data!.docs[index].id,
-                                bookingModel: bookingModel),
-                          );
-                        },
-                      );
-                    },
-                  )
-
+                ? 
+                FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('bookings')
+      .where(Filter.and(
+          Filter('buyerID', isEqualTo: auth.currentUser!.uid),
+          Filter('orderStatus', isEqualTo: 'Pending')))
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return SizedBox(
+        width: Get.width,
+        height: 246,
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: primaryColor,
+          ),
+        ),
+      );
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      print('error');
+      return Text('Error: ${snapshot.error}');
+    }
+    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      print('no data exit');
+      return const Center(
+        child: SizedBox(
+          child: Text(
+            'No ongoing bookings yet',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+              color: greyColor,
+              fontFamily: 'Avenir',
+            ),
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      itemCount: snapshot.data!.docs.length,
+      shrinkWrap: true,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      itemBuilder: (context, index) {
+        BookingModel bookingModel =
+            BookingModel.fromDocumentSnapshot(snapshot.data!.docs[index]);
+        if (bookingModel.pendingPayment == '0') {
+          print('000000000000');
+          print(snapshot.data!.docs[index].id.toString());
+          // checkTimeExpire(
+          //     bookingModel.checkOut.toString(),
+          //     snapshot.data!.docs[index].id.toString(),
+          //     bookingModel.orderStatus);
+        }
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: BookingHistoryOngoing(
+            docID: snapshot.data!.docs[index].id,
+            bookingModel: bookingModel,
+          ),
+        );
+      },
+    );
+  },
+)
                 ///my completed bookings
                 : controller.mySelection.value == 0 &&
                         controller.selectedButton.value == 1
-                    ? StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection('bookings')
-                            .where(Filter.and(
-                                Filter('buyerID',
-                                    isEqualTo: auth.currentUser!.uid),
-                                Filter('orderStatus', isEqualTo: 'Completed')))
-                            // .where('buyerID', isEqualTo: auth.currentUser!.uid)
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return SizedBox(
-                                width: Get.width,
-                                height: 246,
-                                child: const Center(
-                                    child: CircularProgressIndicator(
-                                  color: primaryColor,
-                                )));
-                          }
-                          if (snapshot.hasError) {
-                            print(snapshot.error.toString());
-                            print('error');
-                          }
-                          if (snapshot.data!.docs.isEmpty) {
-                            return const Center(
-                              child: SizedBox(
-                                child: Text('No completed bookings yet',  style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
-                                  color: greyColor,
-                                  fontFamily: 'Avenir',
-                                ),),
-                              ),
-                            );
-                            print('no data exit');
-                          }
-
-                          return ListView.builder(
-                            itemCount: snapshot.data!.docs.length,
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            itemBuilder: (context, index) {
-                              BookingModel bookingModel =
-                                  BookingModel.fromDocumentSnapshot(
-                                      snapshot.data!.docs[index]);
-////////////////////////////////
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 16),
-                                child: BookingHistoryCompleted(
-                                    bookingModel: bookingModel),
-                              );
-                            },
-                          );
-                        },
-                      )
+                    ? FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('bookings')
+      .where(Filter.and(
+          Filter('buyerID', isEqualTo: auth.currentUser!.uid),
+          Filter('orderStatus', isEqualTo: 'Completed')))
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return SizedBox(
+        width: Get.width,
+        height: 246,
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: primaryColor,
+          ),
+        ),
+      );
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      print('error');
+      return Text('Error: ${snapshot.error}');
+    }
+    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      print('no data exit');
+      return const Center(
+        child: SizedBox(
+          child: Text(
+            'No completed bookings yet',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+              color: greyColor,
+              fontFamily: 'Avenir',
+            ),
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      itemCount: snapshot.data!.docs.length,
+      shrinkWrap: true,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      itemBuilder: (context, index) {
+        BookingModel bookingModel =
+            BookingModel.fromDocumentSnapshot(snapshot.data!.docs[index]);
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: BookingHistoryCompleted(
+            bookingModel: bookingModel,
+          ),
+        );
+      },
+    );
+  },
+)
 
                     ///my listings ongoing
                     : controller.mySelection.value == 1 &&
                             controller.selectedButton.value == 0
-                        ? StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('bookings')
-                                .where(Filter.and(
-                                    Filter('sellerID',
-                                        isEqualTo: auth.currentUser!.uid),
-                                    Filter('orderStatus',
-                                        isEqualTo: 'Pending')))
-                                // .where('buyerID', isEqualTo: auth.currentUser!.uid)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return SizedBox(
-                                    width: Get.width,
-                                    height: 246,
-                                    child: const Center(
-                                        child: CircularProgressIndicator(
-                                      color: primaryColor,
-                                    )));
-                              }
-                              if (snapshot.hasError) {
-                                print(snapshot.error.toString());
-                                print('error');
-                              }
-                              if (snapshot.data!.docs.isEmpty) {
-                                return const Center(
-                                  child: SizedBox(
-                                    child: Text('No ongoing bookings yet',  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12,
-                                      color: greyColor,
-                                      fontFamily: 'Avenir',
-                                    ),),
-                                  ),
-                                );
-                              }
-                              return ListView.builder(
-                                itemCount: snapshot.data!.docs.length,
-                                shrinkWrap: true,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                itemBuilder: (context, index) {
-                                  BookingModel bookingModel =
-                                      BookingModel.fromDocumentSnapshot(
-                                          snapshot.data!.docs[index]);
-                                  return Padding(
-                                    padding: const EdgeInsets.only(bottom: 16),
-                                    child: OngoingListing(
-                                        bookingModel: bookingModel),
-                                  );
-                                },
-                              );
-                            },
-                          )
-                        : StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('bookings')
-                                .where(Filter.and(
-                                    Filter('sellerID',
-                                        isEqualTo: auth.currentUser!.uid),
-                                    Filter('orderStatus',
-                                        isEqualTo: 'Completed')))
-                                // .where('buyerID', isEqualTo: auth.currentUser!.uid)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return SizedBox(
-                                    width: Get.width,
-                                    height: 246,
-                                    child: const Center(
-                                        child: CircularProgressIndicator(
-                                      color: primaryColor,
-                                    )));
-                              }
-                              if (snapshot.hasError) {
-                                print(snapshot.error.toString());
-                                print('error');
-                              }
-                              if (snapshot.data!.docs.isEmpty) {
-                                return const Center(
-                                  child: SizedBox(
-                                    child: Text('No completed bookings yet',  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12,
-                                      color: greyColor,
-                                      fontFamily: 'Avenir',
-                                    ),),
-                                  ),
-                                );
-                              }
-                              return ListView.builder(
-                                itemCount: snapshot.data!.docs.length,
-                                shrinkWrap: true,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                itemBuilder: (context, index) {
-                                  BookingModel bookingModel =
-                                      BookingModel.fromDocumentSnapshot(
-                                          snapshot.data!.docs[index]);
-                                  return GestureDetector(
-                                    onTap: () {
-                                      // customDialog(bookingModel:bookingModel, listingModel:);
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(bottom: 16),
-                                      child: OngoingListing(
-                                        bookingModel: bookingModel,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          )),
+                        ? FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('bookings')
+      .where(Filter.and(
+          Filter('sellerID', isEqualTo: auth.currentUser!.uid),
+          Filter('orderStatus', isEqualTo: 'Pending')))
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return SizedBox(
+        width: Get.width,
+        height: 246,
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: primaryColor,
+          ),
+        ),
+      );
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      print('error');
+      return Text('Error: ${snapshot.error}');
+    }
+    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      return const Center(
+        child: SizedBox(
+          child: Text(
+            'No ongoing bookings yet',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+              color: greyColor,
+              fontFamily: 'Avenir',
+            ),
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      itemCount: snapshot.data!.docs.length,
+      shrinkWrap: true,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      itemBuilder: (context, index) {
+        BookingModel bookingModel =
+            BookingModel.fromDocumentSnapshot(snapshot.data!.docs[index]);
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: OngoingListing(
+            bookingModel: bookingModel,
+          ),
+        );
+      },
+    );
+  },
+)
+                        : FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('bookings')
+      .where(Filter.and(
+          Filter('sellerID', isEqualTo: auth.currentUser!.uid),
+          Filter('orderStatus', isEqualTo: 'Completed')))
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return SizedBox(
+        width: Get.width,
+        height: 246,
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: primaryColor,
+          ),
+        ),
+      );
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      print('error');
+      return Text('Error: ${snapshot.error}');
+    }
+    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      return const Center(
+        child: SizedBox(
+          child: Text(
+            'No completed bookings yet',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+              color: greyColor,
+              fontFamily: 'Avenir',
+            ),
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      itemCount: snapshot.data!.docs.length,
+      shrinkWrap: true,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      itemBuilder: (context, index) {
+        BookingModel bookingModel =
+            BookingModel.fromDocumentSnapshot(snapshot.data!.docs[index]);
+        return GestureDetector(
+          onTap: () {
+            // customDialog(bookingModel: bookingModel, listingModel:);
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: OngoingListing(
+              bookingModel: bookingModel,
+            ),
+          ),
+        );
+      },
+    );
+  },
+)
+                          ),
           ),
         ],
       ),

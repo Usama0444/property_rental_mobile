@@ -25,53 +25,58 @@ class MyPropertyAds extends StatelessWidget {
             isBackButton: true,
           ),
           const SizedBox(height: 20),
-          Expanded(
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('listings')
-                  .where('sellerID', isEqualTo: auth.currentUser!.uid)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox();
-                }
-                if (snapshot.hasError) {
-                  print(snapshot.error.toString());
-                }
-                if (!snapshot.data!.docs.isNotEmpty) {
-                  return const Center(
-                      child: SizedBox(
-                          child: Text(
-                    'No Ads yet.',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: textColor,
-                      fontSize: 14,
-                      fontFamily: 'Avenir',
-                    ),
-                  )));
-                }
-                return ListView.builder(
-                  itemCount: snapshot.data!.docs.length,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    AddListingModel listingModel =
-                        AddListingModel.fromDocumentSnapshot(
-                            snapshot.data!.docs[index]
-                                as DocumentSnapshot<Map<String, dynamic>>);
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 16),
-                      child: PropertyAdsWidget(
-                          listingId: snapshot.data!.docs[index].id,
-                          searchModel: listingModel),
-                    );
-                  },
-                );
-              },
+        Expanded(
+  child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+    future: FirebaseFirestore.instance
+        .collection('listings')
+        .where('sellerID', isEqualTo: auth.currentUser!.uid)
+        .withConverter<Map<String, dynamic>>(
+          fromFirestore: (snapshot, _) => snapshot.data()!,
+          toFirestore: (data, _) => data,
+        )
+        .get(),
+    builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const SizedBox();
+      }
+      if (snapshot.hasError) {
+        print(snapshot.error.toString());
+        return Text('Error: ${snapshot.error}');
+      }
+      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+        return const Center(
+          child: SizedBox(
+            child: Text(
+              'No Ads yet.',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: textColor,
+                fontSize: 14,
+                fontFamily: 'Avenir',
+              ),
             ),
-          )
-        ],
+          ),
+        );
+      }
+      return ListView.builder(
+        itemCount: snapshot.data!.docs.length,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          AddListingModel listingModel =
+              AddListingModel.fromDocumentSnapshot(snapshot.data!.docs[index]);
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: PropertyAdsWidget(
+              listingId: snapshot.data!.docs[index].id,
+              searchModel: listingModel,
+            ),
+          );
+        },
+      );
+    },
+  ),
+)],
       ),
     );
   }

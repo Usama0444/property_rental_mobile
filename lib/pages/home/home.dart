@@ -194,87 +194,85 @@ class Home extends StatelessWidget {
                         const SizedBox(
                           height: 8,
                         ),
-                       StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('bookings')
-                              .where('orderStatus', isNotEqualTo: 'Completed')
-                              .snapshots(),
-                          builder: (context, bookingSnapshot) {
-                            if (bookingSnapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const CircularProgressIndicator();
-                            }
-                            if (bookingSnapshot.hasError) {
-                              print(bookingSnapshot.error.toString());
-                              return Text('Error: ${bookingSnapshot.error}');
-                            }
+                  FutureBuilder(
+  future: FirebaseFirestore.instance
+      .collection('bookings')
+      .where('orderStatus', isNotEqualTo: 'Completed')
+      .get(),
+  builder: (context, bookingSnapshot) {
+    if (bookingSnapshot.connectionState == ConnectionState.waiting) {
+      return const CircularProgressIndicator();
+    }
+    if (bookingSnapshot.hasError) {
+      print(bookingSnapshot.error.toString());
+      return Text('Error: ${bookingSnapshot.error}');
+    }
 
-                            final currentDate = DateTime.now().millisecondsSinceEpoch;
-                            final bookedProperties = bookingSnapshot.data?.docs
-                                    .where((doc) {
-                                      final data = doc.data() as Map<String, dynamic>;
-                                      final checkOut =
-                                          int.parse(data['checkOut'].toString());
-                                      return currentDate <= (checkOut + 86400000);
-                                    })
-                                    .map((doc) => {
-                                          'propertyID': doc['propertyID'] as String,
-                                          'buyerID': doc['buyerID'] as String,
-                                        })
-                                    .toList() ??
-                                [];
-                                return  StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('listings')
-                              .where('sellerID',
-                                  isNotEqualTo: auth.currentUser!.uid)    .where('isActive', isEqualTo: true)
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator(); // Or any other loading indicator
-                            }
-                            if (snapshot.hasError) {
-                              print(snapshot.error.toString());
-                              return Text('Error: ${snapshot.error}');
-                            }
-                            if (!snapshot.hasData ||
-                                snapshot.data!.docs.isEmpty) {
-                              return Text(
-                                  'No data available'); // Or any other empty state widget
-                            } final availableListings = snapshot.data!.docs
-                                    .where((doc) {
-                                      final bookingForProperty = bookedProperties.firstWhere(
-                                        (booking) => booking['propertyID'] == doc.id,
-                                        orElse: () => {},
-                                      );
-                                      return bookingForProperty.isEmpty ||
-                                          bookingForProperty['buyerID'] == auth.currentUser!.uid;
-                                    })
-                                    .map((doc) => AddListingModel.fromDocumentSnapshot(doc))
-                                    .toList();
+    final currentDate = DateTime.now().millisecondsSinceEpoch;
+    final bookedProperties = bookingSnapshot.data?.docs
+            .where((doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              final checkOut = int.parse(data['checkOut'].toString());
+              return currentDate <= (checkOut + 86400000);
+            })
+            .map((doc) => {
+                  'propertyID': doc['propertyID'] as String,
+                  'buyerID': doc['buyerID'] as String,
+                })
+            .toList() ??
+        [];
 
-                                if (availableListings.isEmpty) {
-                                  return const Text('No available listings');
-                                }
-                            return SizedBox(
-                              height: 120,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: availableListings.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                   final listingModel = availableListings[index];
-                                  return BedsittersWidget(
-                                    listingID: listingModel.docId,
-                                    listingModel: listingModel,
-                                    // homeModel: controller.bedsittersList[0],
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                        );}),
+    return FutureBuilder(
+      future: FirebaseFirestore.instance
+          .collection('listings')
+          .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+          .where('isActive', isEqualTo: true)
+          .get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
+        if (snapshot.hasError) {
+          print(snapshot.error.toString());
+          return Text('Error: ${snapshot.error}');
+        }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Text('No data available');
+        }
+        final availableListings = snapshot.data!.docs
+            .where((doc) {
+              final bookingForProperty = bookedProperties.firstWhere(
+                (booking) => booking['propertyID'] == doc.id,
+                orElse: () => {},
+              );
+              return bookingForProperty.isEmpty ||
+                  bookingForProperty['buyerID'] == auth.currentUser!.uid;
+            })
+            .map((doc) => AddListingModel.fromDocumentSnapshot(doc))
+            .toList();
+
+        if (availableListings.isEmpty) {
+          return const Text('No available listings');
+        }
+        return SizedBox(
+          height: 120,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: availableListings.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              final listingModel = availableListings[index];
+              return BedsittersWidget(
+                listingID: listingModel.docId,
+                listingModel: listingModel,
+              );
+            },
+          ),
+        );
+      },
+    );
+  },
+),
                         const SizedBox(
                           height: 28,
                         ),
@@ -317,46 +315,42 @@ class Home extends StatelessWidget {
                             ),
                           ]),
                         const SizedBox(height: 8),
-                        StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('listings')
-                              .where('sellerID',
-                                  isNotEqualTo: auth.currentUser!.uid)    .where('isActive', isEqualTo: true).
-                                  where('propertyType',isEqualTo: 'Bedsitters')
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const CircularProgressIndicator(color: primaryColor); // Or any other loading indicator
-                            }
-                            if (snapshot.hasError) {
-                              print(snapshot.error.toString());
-                              return Text('Error: ${snapshot.error}');
-                            }
-                            if (!snapshot.hasData ||
-                                snapshot.data!.docs.isEmpty) {
-                              return const Text('No data available'); // Or any other empty state widget
-                            }
-                            return SizedBox(
-                              height: 120,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: snapshot.data!.docs.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  AddListingModel listingModel =
-                                      AddListingModel.fromDocumentSnapshot(
-                                          snapshot.data!.docs[index]);
-                                  return BedsittersWidget(
-                                    listingID: snapshot.data!.docs[index].id,
-                                    // homeModel: controller.bedsittersList[index],
-                                    listingModel: listingModel,
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                        ),
+                        FutureBuilder(
+  future: FirebaseFirestore.instance
+      .collection('listings')
+      .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+      .where('isActive', isEqualTo: true)
+      .where('propertyType', isEqualTo: 'Bedsitters')
+      .get(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const CircularProgressIndicator(color: primaryColor);
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      return Text('Error: ${snapshot.error}');
+    }
+    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      return const Text('No data available');
+    }
+    return SizedBox(
+      height: 120,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: snapshot.data!.docs.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          AddListingModel listingModel =
+              AddListingModel.fromDocumentSnapshot(snapshot.data!.docs[index]);
+          return BedsittersWidget(
+            listingID: snapshot.data!.docs[index].id,
+            listingModel: listingModel,
+          );
+        },
+      ),
+    );
+  },
+),
                         const SizedBox(height: 28),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -403,56 +397,54 @@ class Home extends StatelessWidget {
                         const SizedBox(
                           height: 8,
                         ),
-                        StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('listings')
-                              .where(Filter.and(
-                                  Filter('sellerID',
-                                      isNotEqualTo: auth.currentUser!.uid),
-                                      
-                                  Filter('selectedBedroom', arrayContainsAny: [
-                                    "Studio",
-                                    '0',
-                                    '1',
-                                    '2',
-                                    '3'
-                                  ])))    .where('isActive', isEqualTo: true)
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator(); // Or any other loading indicator
-                            }
-                            if (snapshot.hasError) {
-                              print(snapshot.error.toString());
-                              return Text('Error: ${snapshot.error}');
-                            }
-                            if (!snapshot.hasData ||
-                                snapshot.data!.docs.isEmpty) {
-                              return Text(
-                                  'No data available'); // Or any other empty state widget
-                            }
-                            return SizedBox(
-                              height: 120,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: snapshot.data!.docs.length,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  AddListingModel listingModel =
-                                      AddListingModel.fromDocumentSnapshot(
-                                          snapshot.data!.docs[index]);
-                                  return BedsittersWidget(
-                                    listingID: snapshot.data!.docs[index].id,
-                                    listingModel: listingModel,
-                                    // homeModel: controller.bedsittersList[0],
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(
+                     FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+  future: FirebaseFirestore.instance
+      .collection('listings')
+      .where(Filter.and(
+          Filter('sellerID', isNotEqualTo: auth.currentUser!.uid),
+          Filter('selectedBedroom', arrayContainsAny: [
+            "Studio",
+            '0',
+            '1',
+            '2',
+            '3'
+          ])))
+      .where('isActive', isEqualTo: true)
+      .withConverter<Map<String, dynamic>>(
+        fromFirestore: (snapshot, _) => snapshot.data()!,
+        toFirestore: (data, _) => data,
+      )
+      .get(),
+  builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator(); // Or any other loading indicator
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      return Text('Error: ${snapshot.error}');
+    }
+    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      return Text('No data available'); // Or any other empty state widget
+    }
+    return SizedBox(
+      height: 120,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: snapshot.data!.docs.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          AddListingModel listingModel =
+              AddListingModel.fromDocumentSnapshot(
+                  snapshot.data!.docs[index]);
+          return BedsittersWidget(
+            listingID: snapshot.data!.docs[index].id,
+            listingModel: listingModel,
+          );
+        },
+      ),
+    );
+  },
+),  const SizedBox(
                           height: 40,
                         ),
                         const Column(

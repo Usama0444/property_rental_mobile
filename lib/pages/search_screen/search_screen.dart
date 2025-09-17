@@ -159,93 +159,91 @@ class SearchScreen extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          Obx(() => StreamBuilder(
-                stream: controller.isFilter.value == true
-                    ? controller.filter()
-                    : controller.propertyStatus.value == 'all'
-                        ? FirebaseFirestore.instance
-                            .collection('listings')
-                            .where('sellerID',
-                                isNotEqualTo: auth.currentUser!.uid)
-                            .where('isActive', isEqualTo: true)
-                            .snapshots()
-                        : FirebaseFirestore.instance
-                            .collection('listings')
-                            .where('sellerID',
-                                isNotEqualTo: auth.currentUser!.uid)
-                            .where('isActive', isEqualTo: true)
-                            .where('listingRole',
-                                isEqualTo: controller.propertyStatus.value)
-                            .snapshots(),
-                builder: (context, snapshot) {
-                  print(controller.isFilter.value);
-                  // print( controller.filter());
+         Obx(() => FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+  future: controller.isFilter.value == true
+      ? controller.filter() // Assumes filter() returns a Future<QuerySnapshot<Map<String, dynamic>>>
+      : controller.propertyStatus.value == 'all'
+          ? FirebaseFirestore.instance
+              .collection('listings')
+              .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+              .where('isActive', isEqualTo: true)
+              .withConverter<Map<String, dynamic>>(
+                fromFirestore: (snapshot, _) => snapshot.data()!,
+                toFirestore: (data, _) => data,
+              )
+              .get()
+          : FirebaseFirestore.instance
+              .collection('listings')
+              .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+              .where('isActive', isEqualTo: true)
+              .where('listingRole', isEqualTo: controller.propertyStatus.value)
+              .withConverter<Map<String, dynamic>>(
+                fromFirestore: (snapshot, _) => snapshot.data()!,
+                toFirestore: (data, _) => data,
+              )
+              .get(),
+  builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+    print(controller.isFilter.value);
 
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox();
-                  }
-                  if (snapshot.hasError) {
-                    print(snapshot.error.toString());
-                  }
-                  if (snapshot.data!.docs.isEmpty) {
-                    return Padding(
-                      padding: EdgeInsets.only(top: Get.height / 3.5),
-                      child: const Center(
-                          child: SizedBox(
-                              child: Text(
-                        'No property Ads yet.',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: textColor,
-                          fontSize: 14,
-                          fontFamily: 'Avenir',
-                        ),
-                      ))),
-                    );
-                  }
-                  return Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      itemCount: (snapshot as AsyncSnapshot<QuerySnapshot>)
-                          .data!
-                          .docs
-                          .length,
-                      itemBuilder: (context, index) {
-                        // Ensure that the type of `snapshot` is explicitly defined as AsyncSnapshot<QuerySnapshot>
-                        AsyncSnapshot<QuerySnapshot> querySnapshot =
-                            snapshot as AsyncSnapshot<QuerySnapshot>;
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const SizedBox();
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      return Text('Error: ${snapshot.error}');
+    }
+    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      return Padding(
+        padding: EdgeInsets.only(top: Get.height / 3.5),
+        child: const Center(
+          child: SizedBox(
+            child: Text(
+              'No property Ads yet.',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: textColor,
+                fontSize: 14,
+                fontFamily: 'Avenir',
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: ListView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            AddListingModel listingModel =
+                AddListingModel.fromDocumentSnapshot(
+                    snapshot.data!.docs[index]);
 
-                        // Access the docs property from querySnapshot
-                        AddListingModel listingModel =
-                            AddListingModel.fromDocumentSnapshot(
-                                querySnapshot.data!.docs[index]
-                                    as DocumentSnapshot<Map<String, dynamic>>);
+            return Obx(() {
+              print(controller.minValue.value.toString() + 'hvdckhj');
+              print(controller.maxValue.value);
+              return double.parse(listingModel.cost.text) >=
+                          controller.minValue.value &&
+                      double.parse(listingModel.cost.text) <=
+                          controller.maxValue.value
+                  ? Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: SearchPropertyWidget(
+                        listingId: snapshot.data!.docs[index].id,
+                        searchModel: listingModel,
+                      ),
+                    )
+                  : SizedBox();
+            });
+          },
+        ),
+      ),
+    
+  
 
-                        return Obx(() {
-                          // print(double.parse(listingModel.cost.text));
-                          print(
-                              controller.minValue.value.toString() + 'hvdckhj');
-                          print(controller.maxValue.value);
-                          return double.parse(listingModel.cost.text) >=
-                                      controller.minValue.value &&
-                                  double.parse(listingModel.cost.text) <=
-                                      controller.maxValue.value
-                              ? Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: SearchPropertyWidget(
-                                    listingId:
-                                        querySnapshot.data!.docs[index].id,
-                                    searchModel: listingModel,
-                                  ),
-                                )
-                              : SizedBox();
-                        });
-                      },
-                    ),
-                  )
                       /*Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: ListView.builder(
