@@ -19,9 +19,11 @@ class PropertyAdsWidget extends StatelessWidget {
     super.key,
     this.searchModel,
     this.listingId,
+    this.onActionComplete,
   });
   String? listingId;
   AddListingModel? searchModel;
+  final VoidCallback? onActionComplete;
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +233,7 @@ class PropertyAdsWidget extends StatelessWidget {
             const SizedBox(
               height: 12,
             ),
-            PropertyActions(listing: searchModel!, listingId: listingId),
+            PropertyActions(listing: searchModel!, listingId: listingId,onActionComplete: onActionComplete,),
           
           ],
         ),

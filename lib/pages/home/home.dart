@@ -120,13 +120,13 @@ class Home extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
 
-                  /// Sell your property...
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: SellYourProperty(),
-                  ),
+                  // /// Sell your property...
+                  // const Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 20),
+                  //   child: SellYourProperty(),
+                  // ),
                   const SizedBox(height: 24),
 
                   /// Browse property by categories...

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:get/get.dart';
 import 'package:property_rental_app/common_widgets/custom_button.dart';
@@ -13,10 +14,49 @@ import 'package:property_rental_app/universal_models/add_listing_model.dart';
 
 import '../../booking_status/payment_screen.dart';
 
-reservationCheckInBottomSheet(
-    {required AddListingModel listingModel, required String listingID}) {
+Future<void> reservationCheckInBottomSheet({
+  required AddListingModel listingModel,
+  required String listingID,
+}) async {
   // print(listingModel./)
   final controller = Get.put(BookingsController());
+  EventList<Event> markedDatesMap = EventList<Event>(events: {});
+
+  // Query Firestore to get all bookings for the given listingID
+  QuerySnapshot bookingsSnapshot = await FirebaseFirestore.instance
+      .collection('bookings')
+      .where('propertyID', isEqualTo: listingID)
+      .get();
+
+  // Iterate through bookings and mark all dates between check-in and check-out
+  for (var doc in bookingsSnapshot.docs) {
+    int checkInMillis = doc['checkIn'];
+    int checkOutMillis = doc['checkOut'];
+
+    DateTime checkInDate = DateTime.fromMillisecondsSinceEpoch(checkInMillis);
+    DateTime checkOutDate = DateTime.fromMillisecondsSinceEpoch(checkOutMillis);
+
+    // Mark all dates in the range from check-in to check-out
+    DateTime currentDate = checkInDate;
+    while (!currentDate.isAfter(checkOutDate)) {
+      markedDatesMap.add(
+        currentDate,
+        Event(
+          date: currentDate,
+          title: 'Booked',
+          dot: Container(
+            width: 5,
+            height: 5,
+            decoration: const BoxDecoration(
+              color: Colors.brown, // Light brown color for booked dates
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      );
+      currentDate = currentDate.add(const Duration(days: 1));
+    }
+  }
   // final controller1 = Get.put(HomeController());
   return showModalBottomSheet(
     context: Get.context!,
@@ -192,12 +232,19 @@ reservationCheckInBottomSheet(
                                 weekendTextStyle: activeStyle(),
                                 inactiveDaysTextStyle: inActiveStyle(),
                                 inactiveWeekendTextStyle: inActiveStyle(),
-                                markedDateCustomTextStyle: const TextStyle(
-                                  fontFamily: 'Avenir',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 15,
-                                  color: whiteColor,
-                                ),
+                                           markedDateCustomShapeBorder: RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(10),
+  side: const BorderSide(
+    color: Color(0xFFB08968),
+    width: 2,
+  ),
+),
+markedDateCustomTextStyle: const TextStyle(
+  fontFamily: 'Avenir',
+  fontWeight: FontWeight.w400,
+  fontSize: 15,
+  color: Colors.white, // Match text color to light brown
+),
                                 dayPadding: 2,
                                 nextDaysTextStyle: inActiveStyle(),
                                 prevDaysTextStyle: inActiveStyle(),
@@ -213,14 +260,7 @@ reservationCheckInBottomSheet(
                                   fontSize: 18,
                                   color: blackColor3B,
                                 ),
-                                markedDateCustomShapeBorder:
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  side: const BorderSide(
-                                    color: primaryColor,
-                                    width: 2,
-                                  ),
-                                ),
+                              
                                 weekDayMargin: EdgeInsets.zero,
                                 childAspectRatio: 1,
                                 todayBorderColor: Colors.grey,
@@ -237,9 +277,13 @@ reservationCheckInBottomSheet(
                                   fontSize: 15,
                                   color: whiteColor,
                                 ),
+                                
                                 selectedDayBorderColor: primaryColor,
                                 selectedDayButtonColor: primaryColor,
                                 selectedDateTime: controller.checkInDate.value,
+                                markedDatesMap: markedDatesMap, // Add marked dates
+                                markedDateShowIcon: false,
+                                markedDateIconBuilder: (event) => event.dot,
                                onDayPressed: (date, events) async {
                                   DateTime now = DateTime.now();
                                   if (date.isBefore(DateTime(
@@ -324,12 +368,19 @@ reservationCheckInBottomSheet(
                                 weekendTextStyle: activeStyle(),
                                 inactiveDaysTextStyle: inActiveStyle(),
                                 inactiveWeekendTextStyle: inActiveStyle(),
-                                markedDateCustomTextStyle: const TextStyle(
-                                  fontFamily: 'Avenir',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 15,
-                                  color: whiteColor,
-                                ),
+                               markedDateCustomShapeBorder: RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(10),
+  side: const BorderSide(
+    color: Color(0xFFB08968),
+    width: 2,
+  ),
+),
+markedDateCustomTextStyle: const TextStyle(
+  fontFamily: 'Avenir',
+  fontWeight: FontWeight.w400,
+  fontSize: 15,
+  color: Color(0xFFB08968), // Match text color to light brown
+),
                                 dayPadding: 2,
                                 nextDaysTextStyle: inActiveStyle(),
                                 prevDaysTextStyle: inActiveStyle(),
@@ -345,14 +396,7 @@ reservationCheckInBottomSheet(
                                   fontSize: 18,
                                   color: blackColor3B,
                                 ),
-                                markedDateCustomShapeBorder:
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  side: const BorderSide(
-                                    color: primaryColor,
-                                    width: 2,
-                                  ),
-                                ),
+                              
                                 weekDayMargin: EdgeInsets.zero,
                                 childAspectRatio: 1,
                                todayBorderColor: Colors.grey,
@@ -372,7 +416,9 @@ reservationCheckInBottomSheet(
                                 selectedDayBorderColor: primaryColor,
                                 selectedDayButtonColor: primaryColor,
                                 selectedDateTime: controller.checkOutDate.value,
-
+markedDatesMap: markedDatesMap, // Add marked dates
+                                markedDateShowIcon: false,
+                                markedDateIconBuilder: (event) => event.dot,
                                 onDayPressed: (date, events) async {
   print('Check-out calendar pressed: $date');
   DateTime now = DateTime.now();

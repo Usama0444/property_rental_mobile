@@ -6,13 +6,15 @@ import 'package:property_rental_app/common_widgets/loading_dialog.dart';
 import 'package:property_rental_app/universal_models/add_listing_model.dart';
 
 class PropertyActions extends StatelessWidget {
-  final AddListingModel listing;
-  final listingId;
+final AddListingModel listing;
+  final String? listingId;
+  final VoidCallback? onActionComplete;
 
   const PropertyActions({
     Key? key,
-    required this.listing,
+required this.listing,
     required this.listingId,
+    this.onActionComplete,
   }) : super(key: key);
 
   @override
@@ -21,7 +23,8 @@ class PropertyActions extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Flexible(
-          child: CustomButton(
+          child: 
+          CustomButton(
             width: Get.width,
             text: listing.isActive ? 'Active' : 'Paused',
             suffixTextIconWidth: 2,
@@ -52,7 +55,8 @@ class PropertyActions extends StatelessWidget {
 
                     // Close loading and confirmation dialogs
                     Get.back(); // Close loading dialog
-                    Get.back(); // Close confirmation dialog
+                    Get.back();
+                    onActionComplete?.call(); // Close confirmation dialog
                   } catch (e) {
                     Get.back(); // Close loading dialog
                     Get.snackbar(
@@ -107,7 +111,9 @@ class PropertyActions extends StatelessWidget {
 
                     // Close loading and confirmation dialogs
                     Get.back(); // Close loading dialog
-                    Get.back(); // Close confirmation dialog
+                    Get.back();
+                    onActionComplete?.call();
+                    // Close confirmation dialog
                   } catch (e) {
                     Get.back(); // Close loading dialog
                     Get.snackbar(

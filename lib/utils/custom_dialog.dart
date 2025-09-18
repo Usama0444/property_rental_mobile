@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:property_rental_app/common_widgets/custom_button.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
 import 'package:property_rental_app/main.dart';
 import 'package:property_rental_app/universal_models/add_listing_model.dart';
@@ -240,70 +241,41 @@ void customDialog(
                                 ),
                               ],
                             ),
-                      // bookingModel
-                      StreamBuilder(
-                        stream: FirebaseFirestore.instance
-                            .collection('feedbacks')
-                            .where('propertyID',
-                                isEqualTo: bookingModel.propertyID)
-                            .where('buyerID', isEqualTo: auth.currentUser!.uid)
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const SizedBox();
-                          }
-                          if (snapshot.hasError) {
-                            print(snapshot.error.toString());
-                            print('error');
-                          }
-                          if (snapshot.data!.docs.isEmpty) {
-                            return SizedBox();
-                          }
-                          FeedBackModel fModel =
-                              FeedBackModel.fromDocumentSnapshot(snapshot
-                                      .data!.docs[0]
-                                  as DocumentSnapshot<Map<String, dynamic>>);
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const SizedBox(height: 20),
-                              const Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  'Review',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: blackColor3B,
-                                    fontSize: 16,
-                                    fontFamily: 'Avenir',
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  fModel.feedback.text,
-                                  // 'Voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    color: blackColor3B.withOpacity(0.6),
-                                    fontSize: 10,
-                                    fontFamily: 'Avenir',
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      // : const SizedBox.shrink(),
+                             
+       
+                     // : const SizedBox.shrink(),
                       const SizedBox(height: 20),
                     ],
                   ),
                 ),
+                Align(
+                              alignment: AlignmentGeometry.topLeft,
+                               child: TextButton(
+                                                           
+                                onPressed: () {
+                                 
+                               },
+                                 style: TextButton.styleFrom(
+                                   minimumSize: const Size(200, 45), // Matches width: 200, height: 45
+                                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                   shape: RoundedRectangleBorder(
+                                     borderRadius: BorderRadius.circular(8), // Adjust radius to match CustomButton
+                                   ),
+                                   textStyle: const TextStyle(
+                                     fontSize: 16,
+                                     fontWeight: FontWeight.w600,
+                                     fontFamily: 'Avenir', // Match your app's font
+                                   ),
+                                   
+                                 ),
+                                 child: const Text(
+                                   'Mark as Completed',
+                                   style: TextStyle(
+                                     color: primaryColor, // Matches textColor: Colors.white
+                                   ),
+                                 ),
+                                 ),
+                             ),
                 Container(
                   height: 37,
                   width: Get.width,
