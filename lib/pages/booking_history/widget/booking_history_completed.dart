@@ -15,26 +15,27 @@ class BookingHistoryCompleted extends StatelessWidget {
   final BookingModel bookingModel;
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('listings')
-          .doc(bookingModel.propertyID)
-          // .where('propertyID', isEqualTo: bookingModel.propertyID)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox();
-        }
-        if (snapshot.hasError) {
-          print(snapshot.error.toString());
-          print('error');
-        }
-        if (!snapshot.data!.exists) {
-          return Padding(
-            padding: EdgeInsets.only(top: Get.height / 3.5),
-            child: const Center(
-                child: SizedBox(
-                    child: Text(
+    return FutureBuilder<DocumentSnapshot>(
+  future: FirebaseFirestore.instance
+      .collection('listings')
+      .doc(bookingModel.propertyID)
+      .get(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const SizedBox();
+    }
+    if (snapshot.hasError) {
+      print(snapshot.error.toString());
+      print('error');
+      // Optionally, return a widget to display the error to the user
+      return const Center(child: Text('An error occurred. Please try again.'));
+    }
+    if (!snapshot.hasData || !snapshot.data!.exists) {
+      return Padding(
+        padding: EdgeInsets.only(top: Get.height / 3.5),
+        child: const Center(
+          child: SizedBox(
+            child: Text(
               'No ongoing bookings yet.',
               style: TextStyle(
                 fontWeight: FontWeight.w500,
@@ -42,12 +43,14 @@ class BookingHistoryCompleted extends StatelessWidget {
                 fontSize: 14,
                 fontFamily: 'Avenir',
               ),
-            ))),
-          );
-        }
+            ),
+          ),
+        ),
+      );
+    }
 
-        AddListingModel listingsModel = AddListingModel.fromDocumentSnapshot(
-            snapshot.data as DocumentSnapshot<Map<String, dynamic>>);
+    AddListingModel listingsModel = AddListingModel.fromDocumentSnapshot(
+        snapshot.data as DocumentSnapshot<Map<String, dynamic>>);
         return GestureDetector(
           onTap: () {
             customDialog(
