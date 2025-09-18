@@ -20,35 +20,89 @@ class HomeController extends GetxController {
     super.onInit();
     print(highRatings.length);
     fetchHighRatings();
+    
   }
+Future<void> addSearches() async {
+  try {
+    final searchText = filterSearchCtrl.text.trim();
+    if (searchText.isEmpty) {
+      Get.snackbar('Error', 'Search query cannot be empty.');
+      return;
+    }
 
-  Future<void> addSearches(
-      // required propertyID,
-      ) async {
-    // rcModel.propertyID=propertyID;
-    rcModel.search = filterSearchCtrl.text.toString();
+    rcModel.search = searchText;
+    rcModel.userID = auth.currentUser!.uid; // Ensure userID is set
     var data = await rcModel.toMap();
+
     var searchQuery = await FirebaseFirestore.instance
         .collection('recentSearches')
         .where('userID', isEqualTo: auth.currentUser!.uid)
-        .where('search', isEqualTo: filterSearchCtrl.text.toString())
+        .where('search', isEqualTo: searchText)
         .get();
 
     if (searchQuery.docs.isEmpty) {
       await FirebaseFirestore.instance
           .collection('recentSearches')
           .add(data)
-          .then((value2) async {
-        // Get.back();
-        print('done');
+          .then((value) {
+        print('Search added successfully');
       }).onError((error, stackTrace) {
-        print(error.toString());
-        print('6==============error');
+        print('Error adding search: $error');
+        Get.snackbar('Error', 'Failed to save search.');
       });
     } else {
       print('Search already exists');
     }
+
+    // Trigger filter to fetch results and update UI
+    await fetchFilteredResults();
+  } catch (e) {
+    print('Error in addSearches: $e');
+    Get.snackbar('Error', 'Something went wrong.');
   }
+}
+final filteredListings = <Map<String, dynamic>>[].obs;
+
+Future<void> fetchFilteredResults() async {
+  try {
+    final querySnapshot = await filter();
+    filteredListings.assignAll(
+      querySnapshot.docs.map((doc) => doc.data()).toList(),
+    );
+    print('Fetched ${filteredListings.length} filtered listings');
+  } catch (e) {
+    print('Error fetching filtered listings: $e');
+    Get.snackbar('Error', 'Failed to load filtered listings.');
+  }
+}
+  // Future<void> addSearches(
+  //     // required propertyID,
+  //     ) async {
+  //   // rcModel.propertyID=propertyID;
+  //   rcModel.search = filterSearchCtrl.text.toString();
+  //   var data = await rcModel.toMap();
+  //   var searchQuery = await FirebaseFirestore.instance
+  //       .collection('recentSearches')
+  //       .where('userID', isEqualTo: auth.currentUser!.uid)
+  //       .where('search', isEqualTo: filterSearchCtrl.text.toString())
+  //       .get();
+
+  //   if (searchQuery.docs.isEmpty) {
+  //     await FirebaseFirestore.instance
+  //         .collection('recentSearches')
+  //         .add(data)
+  //         .then((value2) async {
+  //       // Get.back();
+  //       print('done');
+  //     }).onError((error, stackTrace) {
+  //       print(error.toString());
+  //       print('6==============error');
+  //     });
+  //   } else {
+  //     print('Search already exists');
+  //   }
+    
+  // }
  
  
  Future<void> fetchHighRatings() async {
