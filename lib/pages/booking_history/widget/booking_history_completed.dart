@@ -6,6 +6,7 @@ import 'package:property_rental_app/constants/app_colors.dart';
 import 'package:property_rental_app/universal_models/add_listing_model.dart';
 import 'package:property_rental_app/universal_models/booking_model.dart';
 import 'package:property_rental_app/utils/custom_dialog.dart';
+import 'package:property_rental_app/utils/cuustom_complete_booking.dart';
 
 class BookingHistoryCompleted extends StatelessWidget {
   const BookingHistoryCompleted({
@@ -54,7 +55,7 @@ class BookingHistoryCompleted extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             customDialog(
-                bookingModel: bookingModel, listingModel: listingsModel);
+                bookingModel: bookingModel, listingModel: listingsModel,docId: '');
           },
           child: Container(
             decoration: BoxDecoration(
@@ -98,48 +99,61 @@ class BookingHistoryCompleted extends StatelessWidget {
                           backgroundColor: whiteColor,
                           width: 176,
                           onPressed: () {
-                            customDialog(
+                            customCompleteBookingDialog(
                                 bookingModel: bookingModel,
-                                listingModel: listingsModel);
+                                listingModel: listingsModel,
+                                docId: '',
+                                showReview: true,
+                                );
                           }),
                       const SizedBox(height: 16),
                     ],
                   ),
                 ),
-                Container(
-                  height: 37,
-                  width: Get.width,
-                  decoration: BoxDecoration(
-                    color: primaryColor.withOpacity(0.1),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(6),
-                      bottomRight: Radius.circular(6),
-                    ),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(),
-                      // const Text(
-                      //   '#272',
-                      //   style: TextStyle(
-                      //     fontWeight: FontWeight.w600,
-                      //     color: blackColor3B,
-                      //     fontSize: 12,
-                      //     fontFamily: 'Avenir',
-                      //   ),
-                      // ),
-                      Text(
-                        bookingModel.orderDate,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: blackColor3B,
-                          fontSize: 12,
-                          fontFamily: 'Avenir',
-                        ),
+                GestureDetector(
+                  onTap: () {
+                     customCompleteBookingDialog(
+                                bookingModel: bookingModel,
+                                listingModel: listingsModel,
+                                docId: '',
+                                showReview: true,
+                                );
+                  },
+                  child: Container(
+                    height: 37,
+                    width: Get.width,
+                    decoration: BoxDecoration(
+                      color: primaryColor.withOpacity(0.1),
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(6),
+                        bottomRight: Radius.circular(6),
                       ),
-                    ],
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(),
+                        // const Text(
+                        //   '#272',
+                        //   style: TextStyle(
+                        //     fontWeight: FontWeight.w600,
+                        //     color: blackColor3B,
+                        //     fontSize: 12,
+                        //     fontFamily: 'Avenir',
+                        //   ),
+                        // )
+                        Text(
+                          bookingModel.orderDate,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: blackColor3B,
+                            fontSize: 12,
+                            fontFamily: 'Avenir',
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],

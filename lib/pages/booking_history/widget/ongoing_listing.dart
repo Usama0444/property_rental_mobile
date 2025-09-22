@@ -167,10 +167,9 @@ class OngoingListing extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  print('cdj');
 
                   customDialog(
-                      bookingModel: bookingModel, listingModel: listingsModel);
+                      bookingModel: bookingModel, listingModel: listingsModel,docId: '');
                 },
                 child: Container(
                   height: 37,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,13 +17,42 @@ class HomeController extends GetxController {
 
   ViewedPropertyModel vpModel = ViewedPropertyModel.initialize();
   RecentSearchesModel rcModel = RecentSearchesModel.initialize();
+  final RxString searchQuery = ''.obs; // Reactive search query
+  Timer? _debounce; // For debouncing search input
+
+ 
+  void updateSearchQuery(String query) {
+    searchQuery.value = query.trim();
+  }
     @override
   void onInit() {
     super.onInit();
+    searchQuery.listen((query) {
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+      _debounce = Timer(const Duration(milliseconds: 500), () {
+        update(); // Trigger UI update after debounce
+      });
+    });
     print(highRatings.length);
     fetchHighRatings();
     
   }
+    Future<QuerySnapshot> getRecommendedListings() {
+    Query query = FirebaseFirestore.instance
+        .collection('listings')
+        .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+        .where('isActive', isEqualTo: true)
+        .where('isRecommended', isEqualTo: true);
+
+    // Apply search filter if searchQuery is not empty
+    if (searchQuery.value.isNotEmpty) {
+      String searchLower = searchQuery.value.toLowerCase();
+      query = query.where('searchKeywords', arrayContains: searchLower);
+    }
+
+    return query.get();
+  }
+
 Future<void> addSearches() async {
   try {
     final searchText = filterSearchCtrl.text.trim();
@@ -211,6 +242,7 @@ Future<QuerySnapshot<Map<String, dynamic>>> filter() {
       print(filterSearchCtrl.text);
       print('hsedvk');
       baseQuery = baseQuery.where(Filter.or(
+         Filter('propertyName', isEqualTo: filterSearchCtrl.text),
         Filter('countryName', isEqualTo: filterSearchCtrl.text),
         Filter('street', isEqualTo: filterSearchCtrl.text),
         Filter('town', isEqualTo: filterSearchCtrl.text),

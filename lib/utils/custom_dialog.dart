@@ -4,16 +4,101 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:property_rental_app/common_widgets/custom_button.dart';
+import 'package:property_rental_app/common_widgets/custom_text_field.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
 import 'package:property_rental_app/main.dart';
+import 'package:property_rental_app/pages/apartment_details/controller/apartment_details_controller.dart';
 import 'package:property_rental_app/universal_models/add_listing_model.dart';
 import 'package:property_rental_app/universal_models/booking_model.dart';
-import 'package:property_rental_app/universal_models/feedback_model.dart';
 
 void customDialog(
     {bool showReview = false,
     required BookingModel bookingModel,
-    required AddListingModel listingModel}) {
+    required AddListingModel listingModel,
+    required String docId}) {
+        void _showFeedbackDialog(BuildContext context) {
+    final feedbackController = Get.put(ApartmentDetailsController());
+    final formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          backgroundColor: whiteColor,
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  spreadRadius: 3,
+                  blurRadius: 10,
+                ),
+              ],
+              borderRadius: BorderRadius.circular(5),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Post a feedback for this property',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: blackColor3B,
+                      fontSize: 16,
+                      fontFamily: 'Avenir',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  CustomTextField(
+                    hintText: 'Enter your feedback',
+                    maxLines: 5,
+                    borderRadius: 8,
+                    controller: feedbackController.feedbackModel.feedback,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter feedback.';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  CustomButton(
+                    text: 'Post',
+                    height: 44,
+                    width: Get.width,
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        feedbackController.addFeedback(bookingModel.sellerID, bookingModel.propertyID);
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  CustomButton(
+                    text: 'Cancel',
+                    height: 44,
+                    width: Get.width,
+                    backgroundColor: greyBorderColor,
+                    textColor: blackColor3B,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+ 
   showDialog(
     barrierDismissible: true,
     context: Get.context!,
@@ -253,7 +338,14 @@ void customDialog(
                                child: TextButton(
                                                            
                                 onPressed: () {
-                                 
+                                         FirebaseFirestore.instance
+                              .collection('bookings')
+                              .doc(docId)
+                              .update({
+                            'orderStatus': 'Completed',
+                          }).then((_) {
+                            _showFeedbackDialog(context);
+                          });
                                },
                                  style: TextButton.styleFrom(
                                    minimumSize: const Size(200, 45), // Matches width: 200, height: 45

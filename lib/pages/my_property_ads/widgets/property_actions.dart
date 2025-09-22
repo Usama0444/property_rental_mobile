@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:property_rental_app/common_widgets/custom_button.dart';
@@ -16,7 +17,47 @@ required this.listing,
     required this.listingId,
     this.onActionComplete,
   }) : super(key: key);
+  Future<void> _deleteListing() async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) {
+        Get.snackbar('Error', 'No authenticated user found',
+            snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
 
+      // Delete the listing
+      await FirebaseFirestore.instance
+          .collection('listings')
+          .doc(listingId)
+          .delete();
+      print('Listing deleted: $listingId');
+
+      // Check if the user has other listings
+      final remainingListings = await FirebaseFirestore.instance
+          .collection('listings')
+          .where('sellerID', isEqualTo: userId)
+          .get();
+
+      // If no other listings remain, update isListingUser to false
+      if (remainingListings.docs.isEmpty) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .update({'isListingUser': false});
+        print('isListingUser updated to false for user: $userId');
+      } else {
+        print('User still has ${remainingListings.docs.length} listings, isListingUser not updated');
+      }
+
+      // Trigger UI refresh
+      onActionComplete?.call();
+    } catch (e) {
+      print('Error deleting listing or updating isListingUser: $e');
+      Get.snackbar('Error', 'Failed to delete listing: $e',
+          snackPosition: SnackPosition.BOTTOM);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -104,11 +145,7 @@ required this.listing,
                     );
 
                     // Delete listing from Firestore
-                    await FirebaseFirestore.instance
-                        .collection('listings')
-                        .doc(listingId)
-                        .delete();
-
+  await _deleteListing();
                     // Close loading and confirmation dialogs
                     Get.back(); // Close loading dialog
                     Get.back();

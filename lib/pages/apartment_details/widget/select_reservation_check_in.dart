@@ -294,6 +294,13 @@ markedDateCustomTextStyle: const TextStyle(
                                         button: true);
                                     return;
                                   }
+                                  // Check if the date is marked as booked
+  if (markedDatesMap.getEvents(date).isNotEmpty) {
+    loadingDialog(
+        message: 'The selected check-in date is already booked.',
+        button: true);
+    return;
+  }
                                   int selectedDateMillis =
                                       date.millisecondsSinceEpoch;
                                   bool isBookable = await checkBookingAvailability(
@@ -425,6 +432,13 @@ markedDatesMap: markedDatesMap, // Add marked dates
   if (date.isBefore(DateTime(now.year, now.month, now.day))) {
     loadingDialog(
         message: 'Cannot select a past date for check-out.',
+        button: true);
+    return;
+  }
+  // Check if the date is marked as booked
+  if (markedDatesMap.getEvents(date).isNotEmpty) {
+    loadingDialog(
+        message: 'The selected check-in date is already booked.',
         button: true);
     return;
   }

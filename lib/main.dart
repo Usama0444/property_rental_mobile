@@ -86,13 +86,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Property Rental',
-      // home: LandingPage(),
-      // home:
-      //     currentUser != null ? BottomNavBar() : LandingPage(),
-      home: SplashScreen(),
+    return SafeArea(
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Property Rental',
+        // home: LandingPage(),
+        // home:
+        //     currentUser != null ? BottomNavBar() : LandingPage(),
+        home: SplashScreen(),
+      ),
     );
   }
 }

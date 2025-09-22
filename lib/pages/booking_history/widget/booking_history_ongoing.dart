@@ -250,7 +250,7 @@ final endDate = DateTime.fromMillisecondsSinceEpoch(int.parse(bookingModel.check
               GestureDetector(
                 onTap: () {
                   customDialog(
-                      bookingModel: bookingModel, listingModel: listingsModel);
+                      bookingModel: bookingModel, listingModel: listingsModel,docId: docID);
                 },
                 child: Container(
                   height: 37,

@@ -20,7 +20,7 @@ class MakeItStandOut extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
+    
           CustomAppBar(
             title: '',
             isSuffixIcon: true,
@@ -43,7 +43,7 @@ class MakeItStandOut extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
+    
                   const SizedBox(height: 40),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -55,9 +55,9 @@ class MakeItStandOut extends StatelessWidget {
                       ),
                     ),
                   ),
-
+    
                   const SizedBox(height: 40),
-
+    
                   const Text(
                     'Step 2',
                     textAlign: TextAlign.start,

@@ -15,6 +15,7 @@ class UserModel {
   RxBool isRecentViewed;
   RxBool isEmailRecommendation;
   RxBool isNotifications;
+  RxBool isListingUser; // New boolean field
   DateTime createdAt;
 
   //constructor
@@ -29,6 +30,7 @@ class UserModel {
     required this.isEmailRecommendation,
     required this.isNotifications,
     required this.isRecentViewed,
+    required this.isListingUser, // Added to constructor
     required this.createdAt,
   });
 
@@ -46,6 +48,7 @@ class UserModel {
       isRecentViewed: true.obs,
       countryCode: 'KE',
       createdAt: DateTime.now(),
+      isListingUser: false.obs, // Changed to false as per clarification
     );
   }
 
@@ -66,6 +69,7 @@ class UserModel {
       'isNotifications': isNotifications.value,
       'token': token,
       'countryCode': countryCode,
+      'isListingUser': isListingUser.value,
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }
@@ -90,6 +94,7 @@ class UserModel {
       countryCode: snapshot.data()!['countryCode'],
       isEmailRecommendation: RxBool(snapshot.data()!['isEmailRecommendation']),
       token: snapshot.data()!['token'] ?? '',
+      isListingUser: RxBool(snapshot.data()!['isListingUser'] ?? false), // Defaults to false
       isRecentViewed: RxBool(snapshot.data()!['isRecentViewed']),
       isNotifications: RxBool(snapshot.data()!['isNotifications']),
       createdAt: (snapshot.data()!['createdAt'] as Timestamp).toDate(),
