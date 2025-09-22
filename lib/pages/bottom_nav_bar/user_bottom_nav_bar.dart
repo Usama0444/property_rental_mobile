@@ -16,12 +16,12 @@ class BottomNavBar extends StatelessWidget {
     return Scaffold(
       backgroundColor: primaryColor,
       resizeToAvoidBottomInset: true,
-
+    
       body: Obx(
         () => BottomNavController.widgetsOption
             .elementAt(controller.tabIndex.value),
       ),
-
+    
       /// NavBar Custom
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),

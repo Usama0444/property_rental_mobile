@@ -387,32 +387,205 @@ class EnterPropertyDetails extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
-                          const PropertyTitleRow(
-                            title: 'Daily Payment/Cost',
+                            const Text(
+                    'Listing your property as',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: blackColor3B,
+                      fontSize: 18,
+                      fontFamily: 'Avenir',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: List.generate(
+                      controller.propertyList.length,
+                      (index) => GestureDetector(
+                        onTap: () {
+                          listingModel!.listingRole.value =
+                              controller.propertyList[index]['title'];
+                        },
+                        child: Obx(
+                          () => Container(
+                            height: 98,
+                            width: 100,
+                            margin: const EdgeInsets.only(right: 20),
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: controller.isListingAs.value != index
+                                        ? greyBorderColor
+                                        : Colors.transparent,
+                                    width: 1),
+                                color: listingModel!.listingRole.value ==
+                                        controller.propertyList[index]['title']
+                                    // color: controller.isListingAs.value == index
+                                    ? primaryColor.withOpacity(0.2)
+                                    : whiteColor,
+                                borderRadius: BorderRadius.circular(6)),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  controller.propertyList[index]['icon'],
+                                  height: 44,
+                                  width: 44,
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  controller.propertyList[index]['title'],
+                                  textAlign: TextAlign.start,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    color: blackColor3B,
+                                    fontSize: 12,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 6),
-                          CustomTextField(
-                              hintText: '',
-                              errorfontSize: 10,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Please enter Cost.';
-                                }
-                                RegExp regex = RegExp(r'[0-9]+$');
-                                if (!regex.hasMatch(value)) {
-                                  return 'Please enter valid Cost (only numbers allowed).';
-                                }
-                                return null;
-                              },
-                              borderRadius: 8,
-                              keyboardType: TextInputType.number,
-                              controller: listingModel.payment),
-                          const SizedBox(height: 2),
+                        ),
+                      ),
+                    ),
+                  ),
+                Obx(() {
+  if (listingModel.listingRole.value == "Rent") {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        const PropertyTitleRow(title: 'Select Rent Type'),
+
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Expanded(
+              child: RadioListTile<String>(
+                title: const Text("Daily"),
+                value: "Daily",
+                groupValue: listingModel.rentType.value,
+                onChanged: (val) => listingModel.rentType.value = val!,
+              ),
+            ),
+            Expanded(
+              child: RadioListTile<String>(
+                title: const Text("Monthly"),
+                value: "Monthly",
+                groupValue: listingModel.rentType.value,
+                onChanged: (val) => listingModel.rentType.value = val!,
+              ),
+            ),
+          ],
+        ),
+
+        // Show Daily cost field
+        if (listingModel.rentType.value == "Daily") ...[
+          const SizedBox(height: 16),
+          const PropertyTitleRow(title: 'Daily Payment/Cost'),
+          const SizedBox(height: 6),
+          CustomTextField(
+            hintText: '',
+            errorfontSize: 10,
+            validator: (value) {
+              if (value!.isEmpty) return 'Please enter Cost.';
+              RegExp regex = RegExp(r'^[0-9]+$');
+              if (!regex.hasMatch(value)) {
+                return 'Please enter valid Cost (only numbers allowed).';
+              }
+              return null;
+            },
+            borderRadius: 8,
+            keyboardType: TextInputType.number,
+            controller: listingModel.payment,
+          ),
+          const SizedBox(height: 2),
+          const Padding(
+            padding: EdgeInsets.only(left: 16),
+            child: Text(
+              'Total Amount payable on rent',
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: textColor,
+                fontSize: 12,
+                fontFamily: 'Avenir',
+              ),
+            ),
+          ),
+        ],
+
+        // Show Monthly cost field
+        if (listingModel.rentType.value == "Monthly") ...[
+          const SizedBox(height: 16),
+          const PropertyTitleRow(title: 'Monthly Payment/Cost'),
+          const SizedBox(height: 6),
+          CustomTextField(
+            hintText: '',
+            errorfontSize: 10,
+            validator: (value) {
+              if (value!.isEmpty) return 'Please enter Cost.';
+              RegExp regex = RegExp(r'^[0-9]+$');
+              if (!regex.hasMatch(value)) {
+                return 'Please enter valid Cost (only numbers allowed).';
+              }
+              return null;
+            },
+            borderRadius: 8,
+            keyboardType: TextInputType.number,
+            controller: listingModel.monthlyCost,
+          ),
+          const SizedBox(height: 2),
+          const Padding(
+            padding: EdgeInsets.only(left: 16),
+            child: Text(
+              'Total Amount payable on rent',
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: textColor,
+                fontSize: 12,
+                fontFamily: 'Avenir',
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+  return const SizedBox.shrink();
+}),
+
+// ---------------- Sale Fields ----------------
+Obx(() {
+  if (listingModel.listingRole.value == "For Sale") {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        const PropertyTitleRow(title: 'Total Sales Cost'),
+        const SizedBox(height: 6),
+        CustomTextField(
+          hintText: '',
+          errorfontSize: 10,
+          validator: (value) {
+            if (value!.isEmpty) return 'Please enter Cost.';
+            RegExp regex = RegExp(r'[0-9]+$');
+            if (!regex.hasMatch(value)) {
+              return 'Please enter valid Cost (only numbers allowed).';
+            }
+            return null;
+          },
+          borderRadius: 8,
+          keyboardType: TextInputType.number,
+          controller: listingModel.totalSaleCost,
+        ),
+ const SizedBox(height: 2),
                           const Padding(
                             padding: EdgeInsets.only(left: 16),
                             child: Text(
-                              'Total Amount payable on rent/purchase',
+                              'Total Amount payable on Sales',
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
@@ -422,6 +595,12 @@ class EnterPropertyDetails extends StatelessWidget {
                               ),
                             ),
                           ),
+      ],
+    );
+  }
+  return const SizedBox.shrink();
+}),
+                         
                           const SizedBox(height: 16),
                           const PropertyTitleRow(
                             title: 'Any Extra Payment? indicate',

@@ -115,10 +115,11 @@ class SavedAds extends StatelessWidget {
           //     },
           //   ),
           // )
-      Expanded(
+   Expanded(
   child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
     future: FirebaseFirestore.instance
         .collection('favourites')
+        .where('likes', arrayContains: auth.currentUser!.uid)
         .withConverter<Map<String, dynamic>>(
           fromFirestore: (snapshot, _) => snapshot.data()!,
           toFirestore: (data, _) => data,
@@ -126,92 +127,109 @@ class SavedAds extends StatelessWidget {
         .get(),
     builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return const SizedBox();
+        print('Waiting for favourites data...');
+        return const Center(child: CircularProgressIndicator());
       }
       if (snapshot.hasError) {
-        print(snapshot.error.toString());
-        return Text('Error: ${snapshot.error}');
+        print('Error fetching favourites: ${snapshot.error}');
+        return Center(child: Text('Error: ${snapshot.error}'));
       }
-
-      bool currentUserLikedAnyProperty = false;
-
-      for (var doc in snapshot.data!.docs) {
-        FavouriteModel favModel = FavouriteModel.fromDocumentSnapshot(doc);
-        if (favModel.likes.contains(auth.currentUser!.uid)) {
-          print('yes');
-          currentUserLikedAnyProperty = true;
-          break;
-        }
-      }
-      print(currentUserLikedAnyProperty);
-
-      if (currentUserLikedAnyProperty == true) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: ListView.builder(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) {
-              FavouriteModel favModel = FavouriteModel.fromDocumentSnapshot(snapshot.data!.docs[index]);
-              print(favModel.likes);
-              if (favModel.likes.contains(auth.currentUser!.uid)) {
-                return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                  future: FirebaseFirestore.instance
-                      .collection('listings')
-                      .doc(snapshot.data!.docs[index].id)
-                      .withConverter<Map<String, dynamic>>(
-                        fromFirestore: (snapshot, _) => snapshot.data()!,
-                        toFirestore: (data, _) => data,
-                      )
-                      .get(),
-                  builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> listingSnapshot) {
-                    if (listingSnapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox();
-                    }
-                    if (listingSnapshot.hasError) {
-                      print(listingSnapshot.error.toString());
-                      return Text('Error: ${listingSnapshot.error}');
-                    }
-                    if (!listingSnapshot.hasData || !listingSnapshot.data!.exists) {
-                      return const SizedBox();
-                    }
-                    AddListingModel listingModel = AddListingModel.fromDocumentSnapshot(listingSnapshot.data!);
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: SearchPropertyWidget(
-                        searchModel: listingModel,
-                        listingId: listingSnapshot.data!.id,
-                      ),
-                    );
-                  },
-                );
-              }
-              return const SizedBox();
-            },
-          ),
-        );
-      } else {
-        print('mine');
-        print(currentUserLikedAnyProperty);
+      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+        print('No favourites data or empty collection');
         return const Center(
-          child: SizedBox(
-            child: Text(
-              'No saved Ads yet.',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: textColor,
-                fontSize: 14,
-                fontFamily: 'Avenir',
-              ),
+          child: Text(
+            'No saved Ads yet.',
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: textColor,
+              fontSize: 14,
+              fontFamily: 'Avenir',
             ),
           ),
         );
       }
+
+      // Pre-fetch listings to check if any valid ones exist
+      return FutureBuilder<List<DocumentSnapshot<Map<String, dynamic>>>>(
+        future: Future.wait(
+          snapshot.data!.docs.map((doc) => FirebaseFirestore.instance
+              .collection('listings')
+              .doc(doc.id)
+              .withConverter<Map<String, dynamic>>(
+                fromFirestore: (snapshot, _) => snapshot.data()!,
+                toFirestore: (data, _) => data,
+              )
+              .get()),
+        ),
+        builder: (context, AsyncSnapshot<List<DocumentSnapshot<Map<String, dynamic>>>> listingsSnapshot) {
+          if (listingsSnapshot.connectionState == ConnectionState.waiting) {
+            print('Waiting for listings data...');
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (listingsSnapshot.hasError) {
+            print('Error fetching listings: ${listingsSnapshot.error}');
+            return Center(child: Text('Error: ${listingsSnapshot.error}'));
+          }
+
+          // Check for valid listings
+          List<Widget> validListingWidgets = [];
+          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+            var doc = snapshot.data!.docs[i];
+            var listingDoc = listingsSnapshot.data![i];
+            String docId = doc.id;
+            print('Processing doc $docId');
+
+            if (listingDoc.exists) {
+              try {
+                AddListingModel listingModel = AddListingModel.fromDocumentSnapshot(listingDoc);
+                print('Valid listing found for $docId: ${listingDoc.data()}');
+                validListingWidgets.add(
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: SearchPropertyWidget(
+                      searchModel: listingModel,
+                      listingId: docId,
+                    ),
+                  ),
+                );
+              } catch (e) {
+                print('Error creating AddListingModel for $docId: $e');
+              }
+            } else {
+              print('Listing does not exist for: $docId');
+            }
+          }
+
+          // If no valid listings, show "No saved Ads yet."
+          if (validListingWidgets.isEmpty) {
+            print('No valid listings found');
+            return const Center(
+              child: Text(
+                'No saved Ads yet.',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: textColor,
+                  fontSize: 14,
+                  fontFamily: 'Avenir',
+                ),
+              ),
+            );
+          }
+
+          // Render valid listings
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              children: validListingWidgets,
+            ),
+          );
+        },
+      );
     },
   ),
-)  ],
-      ),
+), ] ),
     );
   }
 }

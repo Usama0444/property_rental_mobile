@@ -4,8 +4,9 @@ import 'package:get/get.dart';
 import 'package:property_rental_app/common_widgets/custom_text_field.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
 import 'package:property_rental_app/main.dart';
-import 'package:property_rental_app/pages/bottom_nav_bar/controller/bottom_bar_controller.dart';
-import 'package:property_rental_app/pages/bottom_nav_bar/user_bottom_nav_bar.dart';
+import 'package:property_rental_app/pages/home/all_featured_listings.dart';
+import 'package:property_rental_app/pages/home/all_new_listings.dart';
+import 'package:property_rental_app/pages/home/all_recommended_listings.dart';
 import 'package:property_rental_app/pages/home/controller/home_controller.dart';
 import 'package:property_rental_app/pages/home/widget/filter_bottomsheet.dart';
 import 'package:property_rental_app/universal_models/add_listing_model.dart';
@@ -15,7 +16,6 @@ import 'widget/browse_property.dart';
 import 'widget/buy_rent_widget.dart';
 import 'widget/fab_button.dart';
 import 'widget/rentbuy_button.dart';
-import 'widget/sell_your_property.dart';
 
 class Home extends StatelessWidget {
   Home({super.key});
@@ -153,7 +153,7 @@ class Home extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Promoted by MSL Homes',
+                              'Recommended Listings',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w800,
@@ -163,9 +163,10 @@ class Home extends StatelessWidget {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Get.find<BottomNavController>().tabIndex.value =
-                                    1;
-                                Get.to(() => BottomNavBar());
+                                Get.to(()=> AllRecommendedListings());
+                                // Get.find<BottomNavController>().tabIndex.value =
+                                //     1;
+                                // Get.to(() => BottomNavBar());
                               },
                               child: Row(
                                 children: [
@@ -227,6 +228,7 @@ class Home extends StatelessWidget {
           .collection('listings')
           .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
           .where('isActive', isEqualTo: true)
+          .where('isRecommended', isEqualTo: true)
           .get(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -280,7 +282,7 @@ class Home extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Recommended Bedsitters',
+                              'Featured Listings',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w800,
@@ -290,9 +292,10 @@ class Home extends StatelessWidget {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Get.find<BottomNavController>().tabIndex.value =
-                                    1;
-                                Get.to(() => BottomNavBar());
+                                 Get.to(()=> AllFeaturedListings());
+                                // Get.find<BottomNavController>().tabIndex.value =
+                                //     1;
+                                // Get.to(() => BottomNavBar());
                               },
                               child: Row(
                                 children: [
@@ -320,7 +323,7 @@ class Home extends StatelessWidget {
       .collection('listings')
       .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
       .where('isActive', isEqualTo: true)
-      .where('propertyType', isEqualTo: 'Bedsitters')
+      .where('isFeatured', isEqualTo: true)
       .get(),
   builder: (context, snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -356,7 +359,7 @@ class Home extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              'Recommended 1,2,3 Bedrooms',
+                              'New Listings',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -366,9 +369,10 @@ class Home extends StatelessWidget {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Get.find<BottomNavController>().tabIndex.value =
-                                    1;
-                                Get.to(() => BottomNavBar());
+                                 Get.to(() => AllNewListings());
+                                // Get.find<BottomNavController>().tabIndex.value =
+                                //     1;
+                                // Get.to(() => BottomNavBar());
                               },
                               child: Row(
                                 children: [
@@ -400,20 +404,29 @@ class Home extends StatelessWidget {
                      FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
   future: FirebaseFirestore.instance
       .collection('listings')
-      .where(Filter.and(
-          Filter('sellerID', isNotEqualTo: auth.currentUser!.uid),
-          Filter('selectedBedroom', arrayContainsAny: [
-            "Studio",
-            '0',
-            '1',
-            '2',
-            '3'
-          ])))
-      .where('isActive', isEqualTo: true)
-      .withConverter<Map<String, dynamic>>(
-        fromFirestore: (snapshot, _) => snapshot.data()!,
-        toFirestore: (data, _) => data,
-      )
+        .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+      .where('isActive', isEqualTo: true).where('createdAt',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(
+              DateTime.now().subtract(const Duration(days: 2)), 
+            ))
+        .withConverter<Map<String, dynamic>>(
+          fromFirestore: (snapshot, _) => snapshot.data()!,
+          toFirestore: (data, _) => data,
+        )
+      // .where(Filter.and(
+      //     Filter('sellerID', isNotEqualTo: auth.currentUser!.uid),
+      //     Filter('selectedBedroom', arrayContainsAny: [
+      //       "Studio",
+      //       '0',
+      //       '1',
+      //       '2',
+      //       '3'
+      //     ])))
+      // .where('isActive', isEqualTo: true)
+      // .withConverter<Map<String, dynamic>>(
+      //   fromFirestore: (snapshot, _) => snapshot.data()!,
+      //   toFirestore: (data, _) => data,
+      // )
       .get(),
   builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {

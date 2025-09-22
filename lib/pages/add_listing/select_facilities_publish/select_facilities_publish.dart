@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:property_rental_app/common_widgets/custom_appbar.dart';
@@ -43,70 +45,72 @@ class SelectFacilitiesPublish extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Listing your property as',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: blackColor3B,
-                      fontSize: 18,
-                      fontFamily: 'Avenir',
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: List.generate(
-                      controller.propertyList.length,
-                      (index) => GestureDetector(
-                        onTap: () {
-                          listingModel!.listingRole.value =
-                              controller.propertyList[index]['title'];
-                        },
-                        child: Obx(
-                          () => Container(
-                            height: 98,
-                            width: 100,
-                            margin: const EdgeInsets.only(right: 20),
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: controller.isListingAs.value != index
-                                        ? greyBorderColor
-                                        : Colors.transparent,
-                                    width: 1),
-                                color: listingModel!.listingRole.value ==
-                                        controller.propertyList[index]['title']
-                                    // color: controller.isListingAs.value == index
-                                    ? primaryColor.withOpacity(0.2)
-                                    : whiteColor,
-                                borderRadius: BorderRadius.circular(6)),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 12),
-                            child: Column(
-                              children: [
-                                Image.asset(
-                                  controller.propertyList[index]['icon'],
-                                  height: 44,
-                                  width: 44,
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  controller.propertyList[index]['title'],
-                                  textAlign: TextAlign.start,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    color: blackColor3B,
-                                    fontSize: 12,
-                                    fontFamily: 'Avenir',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 42),
+                  // const Text(
+                  //   'Listing your property as',
+                  //   textAlign: TextAlign.start,
+                  //   style: TextStyle(
+                  //     fontWeight: FontWeight.w700,
+                  //     color: blackColor3B,
+                  //     fontSize: 18,
+                  //     fontFamily: 'Avenir',
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 20),
+                  // Row(
+                  //   children: List.generate(
+                  //     controller.propertyList.length,
+                  //     (index) => GestureDetector(
+                  //       onTap: () {
+                  //         listingModel!.listingRole.value =
+                  //             controller.propertyList[index]['title'];
+                  //       },
+                  //       child: Obx(
+                  //         () => Container(
+                  //           height: 98,
+                  //           width: 100,
+                  //           margin: const EdgeInsets.only(right: 20),
+                  //           decoration: BoxDecoration(
+                  //               border: Border.all(
+                  //                   color: controller.isListingAs.value != index
+                  //                       ? greyBorderColor
+                  //                       : Colors.transparent,
+                  //                   width: 1),
+                  //               color: listingModel!.listingRole.value ==
+                  //                       controller.propertyList[index]['title']
+                  //                   // color: controller.isListingAs.value == index
+                  //                   ? primaryColor.withOpacity(0.2)
+                  //                   : whiteColor,
+                  //               borderRadius: BorderRadius.circular(6)),
+                  //           padding: const EdgeInsets.symmetric(
+                  //               horizontal: 12, vertical: 12),
+                  //           child: Column(
+                  //             children: [
+                  //               Image.asset(
+                  //                 controller.propertyList[index]['icon'],
+                  //                 height: 44,
+                  //                 width: 44,
+                  //               ),
+                  //               const SizedBox(height: 6),
+                  //               Text(
+                  //                 controller.propertyList[index]['title'],
+                  //                 textAlign: TextAlign.start,
+                  //                 style: const TextStyle(
+                  //                   fontWeight: FontWeight.w700,
+                  //                   color: blackColor3B,
+                  //                   fontSize: 12,
+                  //                   fontFamily: 'Avenir',
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  
+                  // const SizedBox(height: 42),
+                 
                   const Text(
                     'Select facilities in your property',
                     textAlign: TextAlign.start,
@@ -215,15 +219,36 @@ class SelectFacilitiesPublish extends StatelessWidget {
               text: 'Finish And Publish',
               height: 44,
               width: Get.width,
-              onPressed: () {
+             onPressed: () async {
                 print(listingId);
                 print('////////');
-                if (listingId == '' || listingId == null) {
-                  controller.publishListing(listingModel!);
-                } else {
-                  print('update');
-                  controller.updateListing(listingModel, listingId);
+                try {
+                  // Update isListingUser to true only for new listings
+                  if (listingId == '' || listingId == null) {
+                    final userId = FirebaseAuth.instance.currentUser?.uid;
+                    if (userId != null) {
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(userId)
+                          .update({'isListingUser': true});
+                      print('isListingUser updated to true for user: $userId');
+                    } else {
+                      print('Error: No authenticated user found');
+                      Get.snackbar('Error', 'No authenticated user found',
+                          snackPosition: SnackPosition.BOTTOM);
+                      return;
+                    }
+                    await controller.publishListing(listingModel!);
+                  } else {
+                    print('Updating existing listing');
+                    await controller.updateListing(listingModel, listingId);
+                  }
+                } catch (e) {
+                  print('Error updating isListingUser or publishing listing: $e');
+                  Get.snackbar('Error', 'Failed to publish listing: $e',
+                      snackPosition: SnackPosition.BOTTOM);
                 }
+              
               },
             ),
           )

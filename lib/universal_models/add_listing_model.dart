@@ -22,6 +22,8 @@ class AddListingModel {
   TextEditingController description;
   TextEditingController extraPay;
   TextEditingController payment;
+  TextEditingController monthlyCost;
+  TextEditingController totalSaleCost;
   String sellerID;
   double latitude;
   double longitude;
@@ -30,6 +32,7 @@ class AddListingModel {
   RxList<Rx<Uint8List>> listingImageMemories;
   RxList<IndicatePayListModel> indicatePayList;
   bool isRecommended;
+  RxString rentType;
   bool isVerified;
   bool isFeatured;
   bool isPending;
@@ -49,6 +52,8 @@ class AddListingModel {
     required this.countryName,
     required this.phoneNo,
     required this.payment,
+      required this.monthlyCost,
+    required this.totalSaleCost,
     required this.propertyType,
     required this.town,
     required this.listingRole,
@@ -66,6 +71,7 @@ class AddListingModel {
         required this.isActive,
     required this.isApproved,
     required this.createdAt,
+    required this.rentType,
    
   });
 
@@ -89,6 +95,9 @@ class AddListingModel {
         extraPay: TextEditingController(),
         phoneNo: TextEditingController(),
         payment: TextEditingController(),
+              monthlyCost: TextEditingController(),
+      totalSaleCost: TextEditingController(),
+rentType: 'Daily'.obs,
         listingRole: 'Rent'.obs,
         facilities: <String>[].obs,
         selectedBedroom: <String>[].obs,
@@ -129,11 +138,14 @@ class AddListingModel {
       'propertyName': propertyName.text,
       'countryName': countryName.value,
       'town': town.text,
+      'rentType': rentType.value,
       'extraPay': extraPay.text,
       'sellerID': sellerID,
       'phoneNo': phoneNo.text,
       'description': description.text,
       'payment': payment.text,
+        'monthlyCost': monthlyCost.text,
+      'totalSaleCost': totalSaleCost.text,
       'cost': cost.text,
       'street': street.text,
       'listingRole': listingRole.value,
@@ -190,6 +202,7 @@ class AddListingModel {
           .data()!['indicatePayList']
           .map((e) => IndicatePayListModel.fromMap(e))),*/
           docId: snapshot.id,
+           rentType: RxString(snapshot.data()?['rentType'] ?? 'Daily'),
       listingImages: listingImages,
       listingImageMemories: RxList<Rx<Uint8List>>(imageMemories),
       latitude: snapshot.data()!['latitude'] ?? 33.602018,
@@ -204,6 +217,10 @@ class AddListingModel {
       payment: TextEditingController(
         text: snapshot.data()!['payment'],
       ),
+        monthlyCost: TextEditingController(
+          text: snapshot.data()!['monthlyCost']?.toString() ?? ''),
+      totalSaleCost: TextEditingController(
+          text: snapshot.data()!['totalSaleCost']?.toString() ?? ''),
       street: TextEditingController(
         text: snapshot.data()!['street'],
       ),

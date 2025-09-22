@@ -25,7 +25,7 @@ class SearchScreen extends StatelessWidget {
   final String role;
   @override
   Widget build(BuildContext context) {
-    // print(controller.propertyStatus.value + '   ===============hadbvkih');
+    print('${controller.propertyStatus.value}-----------');
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Column(

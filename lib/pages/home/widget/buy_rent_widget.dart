@@ -123,7 +123,7 @@ class BuyRentWidget extends StatelessWidget {
                                       print(buySaleRentMap.toString() + '1111');
                                       if (buySaleRentMap['buttonTitle'] ==
                                           'Browse Properties') {
-                                        print('123344');
+                                       
 
                                         controller.propertyStatus.value =
                                             'For Sale';
@@ -132,8 +132,8 @@ class BuyRentWidget extends StatelessWidget {
                                             .tabIndex
                                             .value = 1;
 
-                                        print(controller.propertyStatus.value +
-                                            'valie---------------');
+                                        // print(controller.propertyStatus.value +
+                                        //     'valie---------------');
                                       } else if (buySaleRentMap[
                                               'buttonTitle'] ==
                                           'Add Details') {
