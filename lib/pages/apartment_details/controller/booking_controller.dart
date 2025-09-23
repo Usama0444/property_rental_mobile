@@ -115,6 +115,7 @@ class BookingsController extends GetxController {
   final selectedIndex = 0.obs;
   final selectedDateIndex = 0.obs;
   Rx<DateTime> selectedDate = Rx<DateTime>(DateTime.now());
+  
 
   // BookingModel bookingModel = BookingModel.initialize();
 

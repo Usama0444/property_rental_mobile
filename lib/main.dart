@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:property_rental_app/main_controller.dart';
+import 'package:property_rental_app/pages/home/controller/home_controller.dart';
 import 'package:property_rental_app/universal_models/user_model.dart';
 import 'pages/splash/splash_screen.dart';
 
@@ -31,6 +32,7 @@ RemoteMessage? message; //message to handle notification
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp().then((value) => Get.put(MainController()));
   currentUser = await checkUserData();
   runApp(const MyApp());
@@ -87,6 +89,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return SafeArea(
+      top: false,
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Property Rental',

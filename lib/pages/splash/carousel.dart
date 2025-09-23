@@ -197,7 +197,7 @@ class CaroselSlider extends StatelessWidget {
                 ),
               ),
               const SizedBox(
-                height: 24,
+                height: 20,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),

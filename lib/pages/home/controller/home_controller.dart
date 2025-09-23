@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:property_rental_app/common_widgets/no_internet_dialog.dart';
 import 'package:property_rental_app/pages/home/model/home_model.dart';
+import 'package:property_rental_app/universal_models/add_listing_model.dart';
 import 'package:property_rental_app/universal_models/rating_model.dart';
 import 'package:property_rental_app/universal_models/recent_searches_model.dart';
 import 'package:property_rental_app/universal_models/viewed_property_model.dart';
@@ -13,18 +14,22 @@ import 'package:property_rental_app/universal_models/viewed_property_model.dart'
 import '../../../main.dart';
 
 class HomeController extends GetxController {
-    final highRatings = <RatingModel>[].obs;
+  final highRatings = <RatingModel>[].obs;
 
   ViewedPropertyModel vpModel = ViewedPropertyModel.initialize();
   RecentSearchesModel rcModel = RecentSearchesModel.initialize();
   final RxString searchQuery = ''.obs; // Reactive search query
   Timer? _debounce; // For debouncing search input
+  final availableListings = <AddListingModel>[].obs;
+  final featuredListings = <AddListingModel>[].obs;
+  final recentListings = <AddListingModel>[].obs;
+  final categoryListings = <AddListingModel>[].obs; 
 
- 
   void updateSearchQuery(String query) {
     searchQuery.value = query.trim();
   }
-    @override
+
+  @override
   void onInit() {
     super.onInit();
     searchQuery.listen((query) {
@@ -35,9 +40,113 @@ class HomeController extends GetxController {
     });
     print(highRatings.length);
     fetchHighRatings();
-    
+    fetchAvailableListings();
+    fetchFeaturedListings();
+    fetchRecentListings();
   }
-    Future<QuerySnapshot> getRecommendedListings() {
+
+  Future<void> fetchAvailableListings() async {
+    try {
+      // Fetch bookings where orderStatus is not 'Completed'
+      final bookingSnapshot = await FirebaseFirestore.instance
+          .collection('bookings')
+          .where('orderStatus', isNotEqualTo: 'Completed')
+          .get();
+
+      final currentDate = DateTime.now().millisecondsSinceEpoch;
+      final bookedProperties = bookingSnapshot.docs
+          .where((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            final checkOut = int.parse(data['checkOut'].toString());
+            return currentDate <= (checkOut + 86400000);
+          })
+          .map((doc) => {
+                'propertyID': doc['propertyID'] as String,
+                'buyerID': doc['buyerID'] as String,
+              })
+          .toList();
+
+      // Fetch listings
+      final listingsSnapshot = await FirebaseFirestore.instance
+          .collection('listings')
+          .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+          .where('isActive', isEqualTo: true)
+          .where('isRecommended', isEqualTo: true)
+          .get();
+
+      final listings = listingsSnapshot.docs
+          .where((doc) {
+            final bookingForProperty = bookedProperties.firstWhere(
+              (booking) => booking['propertyID'] == doc.id,
+              orElse: () => {},
+            );
+            return bookingForProperty.isEmpty ||
+                bookingForProperty['buyerID'] == auth.currentUser!.uid;
+          })
+          .map((doc) => AddListingModel.fromDocumentSnapshot(doc))
+          .toList();
+
+      availableListings.assignAll(listings); // Update observable list
+      print('Fetched ${availableListings.length} available listings');
+    } catch (e) {
+      print('Error fetching available listings: $e');
+      Get.snackbar('Error', 'Failed to load available listings.');
+      availableListings.clear(); // Clear list on error
+    }
+  }
+
+  Future<void> fetchFeaturedListings() async {
+    try {
+      final listingsSnapshot = await FirebaseFirestore.instance
+          .collection('listings')
+          .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+          .where('isActive', isEqualTo: true)
+          .where('isFeatured', isEqualTo: true)
+          .get();
+
+      final listings = listingsSnapshot.docs
+          .map((doc) => AddListingModel.fromDocumentSnapshot(doc))
+          .toList();
+
+      featuredListings.assignAll(listings); // Update observable list
+      print('Fetched ${featuredListings.length} featured listings');
+    } catch (e) {
+      print('Error fetching featured listings: $e');
+      Get.snackbar('Error', 'Failed to load featured listings.');
+      featuredListings.clear(); // Clear list on error
+    }
+  }
+
+  Future<void> fetchRecentListings() async {
+    try {
+      final listingsSnapshot = await FirebaseFirestore.instance
+          .collection('listings')
+          .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+          .where('isActive', isEqualTo: true)
+          .where('createdAt',
+              isGreaterThanOrEqualTo: Timestamp.fromDate(
+                  DateTime.now().subtract(const Duration(days: 2))))
+          .withConverter<Map<String, dynamic>>(
+            fromFirestore: (snapshot, _) => snapshot.data()!,
+            toFirestore: (data, _) => data,
+          )
+          .get();
+
+      final listings = listingsSnapshot.docs
+          .map((doc) => AddListingModel.fromDocumentSnapshot(doc))
+          .toList();
+
+      recentListings.assignAll(listings); // Update observable list
+      print('Fetched ${recentListings.length} recent listings');
+    } catch (e) {
+      print('Error fetching recent listings: $e');
+      Get.snackbar('Error', 'Failed to load recent listings.');
+      recentListings.clear(); // Clear list on error
+    }
+  }
+
+
+  Future<QuerySnapshot> getRecommendedListings() {
     Query query = FirebaseFirestore.instance
         .collection('listings')
         .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
@@ -53,110 +162,83 @@ class HomeController extends GetxController {
     return query.get();
   }
 
-Future<void> addSearches() async {
-  try {
-    final searchText = filterSearchCtrl.text.trim();
-    if (searchText.isEmpty) {
-      Get.snackbar('Error', 'Search query cannot be empty.');
-      return;
-    }
+  Future<void> addSearches() async {
+    try {
+      final searchText = filterSearchCtrl.text.trim();
+      if (searchText.isEmpty) {
+        Get.snackbar('Error', 'Search query cannot be empty.');
+        return;
+      }
 
-    rcModel.search = searchText;
-    rcModel.userID = auth.currentUser!.uid; // Ensure userID is set
-    var data = await rcModel.toMap();
+      rcModel.search = searchText;
+      rcModel.userID = auth.currentUser!.uid; // Ensure userID is set
+      var data = await rcModel.toMap();
 
-    var searchQuery = await FirebaseFirestore.instance
-        .collection('recentSearches')
-        .where('userID', isEqualTo: auth.currentUser!.uid)
-        .where('search', isEqualTo: searchText)
-        .get();
-
-    if (searchQuery.docs.isEmpty) {
-      await FirebaseFirestore.instance
+      var searchQuery = await FirebaseFirestore.instance
           .collection('recentSearches')
-          .add(data)
-          .then((value) {
-        print('Search added successfully');
-      }).onError((error, stackTrace) {
-        print('Error adding search: $error');
-        Get.snackbar('Error', 'Failed to save search.');
-      });
-    } else {
-      print('Search already exists');
+          .where('userID', isEqualTo: auth.currentUser!.uid)
+          .where('search', isEqualTo: searchText)
+          .get();
+
+      if (searchQuery.docs.isEmpty) {
+        await FirebaseFirestore.instance
+            .collection('recentSearches')
+            .add(data)
+            .then((value) {
+          print('Search added successfully');
+        }).onError((error, stackTrace) {
+          print('Error adding search: $error');
+          Get.snackbar('Error', 'Failed to save search.');
+        });
+      } else {
+        print('Search already exists');
+      }
+
+      // Trigger filter to fetch results and update UI
+      await fetchFilteredResults();
+    } catch (e) {
+      print('Error in addSearches: $e');
+      Get.snackbar('Error', 'Something went wrong.');
     }
-
-    // Trigger filter to fetch results and update UI
-    await fetchFilteredResults();
-  } catch (e) {
-    print('Error in addSearches: $e');
-    Get.snackbar('Error', 'Something went wrong.');
   }
-}
-final filteredListings = <Map<String, dynamic>>[].obs;
 
-Future<void> fetchFilteredResults() async {
-  try {
-    final querySnapshot = await filter();
-    filteredListings.assignAll(
-      querySnapshot.docs.map((doc) => doc.data()).toList(),
-    );
-    print('Fetched ${filteredListings.length} filtered listings');
-  } catch (e) {
-    print('Error fetching filtered listings: $e');
-    Get.snackbar('Error', 'Failed to load filtered listings.');
-  }
-}
-  // Future<void> addSearches(
-  //     // required propertyID,
-  //     ) async {
-  //   // rcModel.propertyID=propertyID;
-  //   rcModel.search = filterSearchCtrl.text.toString();
-  //   var data = await rcModel.toMap();
-  //   var searchQuery = await FirebaseFirestore.instance
-  //       .collection('recentSearches')
-  //       .where('userID', isEqualTo: auth.currentUser!.uid)
-  //       .where('search', isEqualTo: filterSearchCtrl.text.toString())
-  //       .get();
+  final filteredListings = <Map<String, dynamic>>[].obs;
 
-  //   if (searchQuery.docs.isEmpty) {
-  //     await FirebaseFirestore.instance
-  //         .collection('recentSearches')
-  //         .add(data)
-  //         .then((value2) async {
-  //       // Get.back();
-  //       print('done');
-  //     }).onError((error, stackTrace) {
-  //       print(error.toString());
-  //       print('6==============error');
-  //     });
-  //   } else {
-  //     print('Search already exists');
-  //   }
-    
-  // }
- 
- 
- Future<void> fetchHighRatings() async {
-  try {
-    final querySnapshot = await FirebaseFirestore.instance
-        .collection('ratings')
-        .where('starRating', isGreaterThanOrEqualTo: 4)
-        .where('starRating', isLessThanOrEqualTo: 5)
-        .orderBy('timestamp', descending: true)
-        .get();
-    print('Fetched ${querySnapshot.docs.length} documents');
-    highRatings.assignAll(
-      querySnapshot.docs.map((doc) {
-        print('Document data: ${doc.data()}');
-        return RatingModel.fromFirestore(doc);
-      }).toList(),
-    );
-    print('highRatings length: ${highRatings.length}');
-  } catch (e) {
-    print('Error fetching high ratings: $e');
-    Get.snackbar('Error', 'Failed to load ratings.');
+  Future<void> fetchFilteredResults() async {
+    try {
+      final querySnapshot = await filter();
+      filteredListings.assignAll(
+        querySnapshot.docs.map((doc) => doc.data()).toList(),
+      );
+      print('Fetched ${filteredListings.length} filtered listings');
+    } catch (e) {
+      print('Error fetching filtered listings: $e');
+      Get.snackbar('Error', 'Failed to load filtered listings.');
+    }
   }
-}
+
+  Future<void> fetchHighRatings() async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('ratings')
+          .where('starRating', isGreaterThanOrEqualTo: 4)
+          .where('starRating', isLessThanOrEqualTo: 5)
+          .orderBy('timestamp', descending: true)
+          .get();
+      print('Fetched ${querySnapshot.docs.length} documents');
+      highRatings.assignAll(
+        querySnapshot.docs.map((doc) {
+          print('Document data: ${doc.data()}');
+          return RatingModel.fromFirestore(doc);
+        }).toList(),
+      );
+      print('highRatings length: ${highRatings.length}');
+    } catch (e) {
+      print('Error fetching high ratings: $e');
+      Get.snackbar('Error', 'Failed to load ratings.');
+    }
+  }
+
   Future<void> addViewProperty({
     required propertyID,
     /* required token*/
@@ -223,13 +305,15 @@ Future<void> fetchFilteredResults() async {
 
   var minValue = 1000.0.obs;
   var maxValue = 1040000.0.obs;
-Future<QuerySnapshot<Map<String, dynamic>>> filter() {
-        print('Filter Parameters:');
-      print('Search Text: ${filterSearchCtrl.text}');
-      print('Buy/Rent: ${buyRentValue.value} (isBuyRent: ${isBuyRent.value})');
-      print('Property Type: ${propertyTypeValue.value} (propertyType: ${propertyType.value})');
-      print('Bedroom: ${bedroomCount.value} (selectedBedroom: ${selectedBedroom.value})');
-      print('Price Range: ${minValue.value} to ${maxValue.value}');
+  Future<QuerySnapshot<Map<String, dynamic>>> filter() {
+    print('Filter Parameters:');
+    print('Search Text: ${filterSearchCtrl.text}');
+    print('Buy/Rent: ${buyRentValue.value} (isBuyRent: ${isBuyRent.value})');
+    print(
+        'Property Type: ${propertyTypeValue.value} (propertyType: ${propertyType.value})');
+    print(
+        'Bedroom: ${bedroomCount.value} (selectedBedroom: ${selectedBedroom.value})');
+    print('Price Range: ${minValue.value} to ${maxValue.value}');
     print('filter working');
 
     // Start with a base query
@@ -242,7 +326,7 @@ Future<QuerySnapshot<Map<String, dynamic>>> filter() {
       print(filterSearchCtrl.text);
       print('hsedvk');
       baseQuery = baseQuery.where(Filter.or(
-         Filter('propertyName', isEqualTo: filterSearchCtrl.text),
+        Filter('propertyName', isEqualTo: filterSearchCtrl.text),
         Filter('countryName', isEqualTo: filterSearchCtrl.text),
         Filter('street', isEqualTo: filterSearchCtrl.text),
         Filter('town', isEqualTo: filterSearchCtrl.text),
@@ -271,10 +355,10 @@ Future<QuerySnapshot<Map<String, dynamic>>> filter() {
     // double maxCost = double.parse(maxValue.value.toString());
 
     // if (minCost >= 1000.0 && maxCost <= 104000.0) {
-    
+
     //   print(minCost.toString());
     //   print(maxCost.toString());
-    
+
     //   baseQuery = baseQuery.where(Filter.and(
     //       Filter('cost', isGreaterThanOrEqualTo: num.parse(minCost.toString())),
     //       Filter('cost', isLessThanOrEqualTo: num.parse(maxCost.toString()))));
@@ -295,43 +379,6 @@ Future<QuerySnapshot<Map<String, dynamic>>> filter() {
     return baseQuery.get();
   }
 
-  // Stream<QuerySnapshot> filterr() {
-  //   print('filter working)');
-  //
-  //   print(buyRentValue.value);
-  //   print(propertyTypeValue.value);
-  //   print(bedroomCount.value);
-  //   ///all
-  //   return filterSearchCtrl.text != '' &&
-  //           isBuyRent.value != 10 &&
-  //           propertyType.value != 10 &&
-  //           selectedBedroom.value != 10
-  //       ? FirebaseFirestore.instance
-  //           .collection('listings')
-  //           .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
-  //           .where('listingRole', isEqualTo: buyRentValue.value)
-  //           .where('propertyType', isEqualTo: propertyTypeValue.value)
-  //          /* .where('selectedBedroom', arrayContains: [bedroomCount.value])*/.snapshots()
-  //       : FirebaseFirestore.instance
-  //           .collection('listings')
-  //           .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
-  //           .snapshots();
-  // }
-
-  // Stream<QuerySnapshot> filterr(){
-  //   ///all
-  //   return .value != '' &&
-  //   sizeFilter.value != '' &&
-  //   categoryDropdownValue.value != ''
-  //   ? FirebaseFirestore.instance
-  //       .collection("products")
-  //       .orderBy('product_price',
-  //   descending: sizeFilter.value == 'Low to high')
-  //       .where('product_size', isEqualTo: sizeFilter.value)
-  //       .where('product_category', isEqualTo: categoryDropdownValue.value)
-  //   .snapshots()
-  // }
-
   var isSelectedIndex = 0.obs;
   var selectedName = 'Apartment'.obs;
   var initialPage = 0.obs;
@@ -349,41 +396,6 @@ Future<QuerySnapshot<Map<String, dynamic>>> filter() {
     {'icon': 'assets/icons/single_room.png', 'title': 'Single room'},
     {'icon': 'assets/icons/bedrooms.png', 'title': '1,2,3+ Bedrooms'},
     {'icon': 'assets/icons/for_sale.png', 'title': 'For Sale'},
-  ];
-  // 'Apartment',
-  // 'Villa',
-  // 'Duplex',
-  // 'Pent House',
-  // 'Compound',
-  // 'Town House',
-  // 'Full Floor',
-  // 'Half Floor',
-  // 'Second Floor',
-  final List<Map<String, dynamic>> propertiesList = [
-    {
-      "image": 'assets/images/apartment_1.png',
-      "title": 'Treeline apartment',
-      "price": 'KSH 27,000',
-      "location": 'Nairobi,GITARU, OFF NAIROBI-N..',
-      "bedrooms": 2,
-      "available": 1,
-    },
-    {
-      "image": 'assets/images/apartment_2.png',
-      "title": 'Treeline apartment',
-      "price": 'KSH 27,000',
-      "location": 'Nairobi,GITARU, OFF NAIROBI-N..',
-      "bedrooms": 2,
-      "available": 1,
-    },
-    {
-      "image": 'assets/images/apartment_1.png',
-      "title": 'Treeline apartment',
-      "price": 'KSH 27,000',
-      "location": 'Nairobi,GITARU, OFF NAIROBI-N..',
-      "bedrooms": 2,
-      "available": 1,
-    },
   ];
 
   final List<Map<String, dynamic>> buySaleRentList = [
@@ -430,30 +442,6 @@ Future<QuerySnapshot<Map<String, dynamic>>> filter() {
     '6',
     '7',
     '7+',
-  ];
-
-  final List<HomeModel> bedsittersList = [
-    HomeModel(
-      image: 'assets/images/bedroom.png',
-      title: 'Lake view apartments',
-      price: 150000,
-      noBedroom: 2,
-      available: 1,
-    ),
-    HomeModel(
-      image: 'assets/images/bedroom_1.png',
-      title: 'Lake view apartments',
-      price: 150000,
-      noBedroom: 2,
-      available: 1,
-    ),
-    HomeModel(
-      image: 'assets/images/bedroom_2.png',
-      title: 'Lake view apartments',
-      price: 150000,
-      noBedroom: 2,
-      available: 1,
-    ),
   ];
 
   final List<AgentProfileModel> agentsProfileList = [
