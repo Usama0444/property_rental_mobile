@@ -14,7 +14,7 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryColor,
+      // backgroundColor: primaryColor,
       resizeToAvoidBottomInset: true,
     
       body: Obx(

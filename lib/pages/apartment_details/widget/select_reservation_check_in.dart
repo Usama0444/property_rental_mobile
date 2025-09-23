@@ -175,6 +175,7 @@ Future<void> reservationCheckInBottomSheet({
                           //           ),
                           //           ),
                           //           const SizedBox(height: 12),
+                          
                           const Text(
                             'Check-In',
                             style: TextStyle(

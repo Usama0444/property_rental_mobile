@@ -620,6 +620,86 @@ class ApartmentDetails extends StatelessWidget {
                                 fontFamily: 'Avenir',
                               ),
                             ),
+                            SizedBox(height: 30),
+                      listingModel.listingRole != 'Rent'
+    ? Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            ' Total Sales Cost',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: blackColor3B,
+              fontSize: 16,
+              fontFamily: 'Avenir',
+            ),
+          ),
+          Text(
+            listingModel.totalSaleCost.text,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: textColor.withOpacity(0.7),
+              fontSize: 14,
+              fontFamily: 'Avenir',
+            ),
+          ),
+        ],
+      )
+    : const SizedBox(),
+SizedBox(height: 20),
+  listingModel.listingRole == 'Rent'?Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                const Text(
+                                  'Monthly Cost',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: blackColor3B,
+                                    fontSize: 16,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+                                
+                                Text(
+                                  listingModel.monthlyCost.text,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: textColor.withOpacity(0.7),
+                                    fontSize: 14,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+                                ],),
+                                 SizedBox(height: 10),
+                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                            const Text(
+                              'Daily Cost',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: blackColor3B,
+                                fontSize: 16,
+                                fontFamily: 'Avenir',
+                              ),
+                            ),
+                            
+                            Text(
+                              listingModel.payment.text,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: textColor.withOpacity(0.7),
+                                fontSize: 14,
+                                fontFamily: 'Avenir',
+                              ),
+                            ),
+                            ],),
+                              ],
+                            ):SizedBox(),
+
+                           
                             const SizedBox(height: 32),
                             const Text(
                               'Where will you be',
@@ -712,9 +792,17 @@ class ApartmentDetails extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                                 showModalBottomSheet(
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                             CustomButton(
+                                              text:
+                                                  'Feedbacks',
+                                              height: 44,
+                                              width: 133,
+                                              onPressed: () {
+                                                    showModalBottomSheet(
           context: context,
           isScrollControlled: true, // Allows dynamic height
           shape: const RoundedRectangleBorder(
@@ -746,7 +834,7 @@ class ApartmentDetails extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            'Property Reviews',
+                            'Feedbacks',
                             style: TextStyle(
                               fontFamily: 'Avenir',
                               fontWeight: FontWeight.w800,
@@ -949,80 +1037,77 @@ class ApartmentDetails extends StatelessWidget {
           },
         );
      
-                                          },
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                listingModel.listingRole != 'Rent'
-                                                    ? 'KSH ${listingModel.payment.text}'
-                                                    : 'KSH ${listingModel.payment.text}/Night',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w700,
-                                                  color: blackColor3B,
-                                                  fontSize: 16,
-                                                  fontFamily: 'Avenir',
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 6,
-                                              ),
-                                              // listingModel.listingRole == 'Rent'
-                                              //     ?
-                                              FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-  future: FirebaseFirestore.instance
-      .collection('feedbacks')
-      .where('propertyID', isEqualTo: listingId!)
-      .withConverter<Map<String, dynamic>>(
-        fromFirestore: (snapshot, _) => snapshot.data()!,
-        toFirestore: (data, _) => data,
-      )
-      .get(),
-  builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot2) {
-    if (snapshot2.connectionState == ConnectionState.waiting) {
-      return const SizedBox();
-    }
-    if (snapshot2.hasError) {
-      print(snapshot2.error.toString());
-      return const Center(
-        child: Text(
-          'Error loading feedback',
-          style: TextStyle(
-            fontFamily: 'Avenir',
-            fontSize: 14,
-            color: Colors.redAccent,
-          ),
-        ),
-      );
-    }
-                                                    // if (snapshot2.data!.docs.isEmpty) {
-                                                    //   return SizedBox();
-                                                    // }
-                                                    return Text(
-                                                      '${snapshot2.data!.docs.length == 0 ? 0 : snapshot2.data!.docs.length} Reviews',
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        color: blackColor3B,
-                                                        fontSize: 12,
-                                                        fontFamily: 'Avenir',
-                                                      ),
-                                                    );
-                                                  })
-                                              // : Text(
-                                              //     isForSale == true
-                                              //         ? 'Click to add tour details'
-                                              //         : '13+ Reviews',
-                                              //     style: const TextStyle(
-                                              //       fontWeight: FontWeight.w700,
-                                              //       color: blackColor3B,
-                                              //       fontSize: 12,
-                                              //       fontFamily: 'Avenir',
-                                              //     ),
-                                              //   ),
-                                            ],
-                                          ),
+                                              })
+                                          //                                             Text(
+                                          //                                               listingModel.listingRole != 'Rent'
+                                          //                                                   ? 'KSH ${listingModel.totalSaleCost.text}'
+                                          //                                                   : 'KSH ${listingModel.payment.text}/Night',
+                                          //                                               style: const TextStyle(
+                                          //                                                 fontWeight: FontWeight.w700,
+                                          //                                                 color: blackColor3B,
+                                          //                                                 fontSize: 16,
+                                          //                                                 fontFamily: 'Avenir',
+                                          //                                               ),
+                                          //                                             ),
+                                          //                                             const SizedBox(
+                                          //                                               height: 6,
+                                          //                                             ),
+                                          //                                             // listingModel.listingRole == 'Rent'
+                                          //                                             //     ?
+                                          //                                             FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                                          // future: FirebaseFirestore.instance
+                                          //     .collection('feedbacks')
+                                          //     .where('propertyID', isEqualTo: listingId!)
+                                          //     .withConverter<Map<String, dynamic>>(
+                                          //       fromFirestore: (snapshot, _) => snapshot.data()!,
+                                          //       toFirestore: (data, _) => data,
+                                          //     )
+                                          //     .get(),
+                                          // builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot2) {
+                                          //   if (snapshot2.connectionState == ConnectionState.waiting) {
+                                          //     return const SizedBox();
+                                          //   }
+                                          //   if (snapshot2.hasError) {
+                                          //     print(snapshot2.error.toString());
+                                          //     return const Center(
+                                          //       child: Text(
+                                          //         'Error loading feedback',
+                                          //         style: TextStyle(
+                                          //           fontFamily: 'Avenir',
+                                          //           fontSize: 14,
+                                          //           color: Colors.redAccent,
+                                          //         ),
+                                          //       ),
+                                          //     );
+                                          //   }
+                                          //                                                   // if (snapshot2.data!.docs.isEmpty) {
+                                          //                                                   //   return SizedBox();
+                                          //                                                   // }
+                                          //                                                   return Text(
+                                          //                                                     '${snapshot2.data!.docs.length == 0 ? 0 : snapshot2.data!.docs.length} Reviews',
+                                          //                                                     style: const TextStyle(
+                                          //                                                       fontWeight:
+                                          //                                                           FontWeight.w700,
+                                          //                                                       color: blackColor3B,
+                                          //                                                       fontSize: 12,
+                                          //                                                       fontFamily: 'Avenir',
+                                          //                                                     ),
+                                          //                                                   );
+                                          //                                                 })
+                                           
+                                           
+                                            // : Text(
+                                            //     isForSale == true
+                                            //         ? 'Click to add tour details'
+                                            //         : '13+ Reviews',
+                                            //     style: const TextStyle(
+                                            //       fontWeight: FontWeight.w700,
+                                            //       color: blackColor3B,
+                                            //       fontSize: 12,
+                                            //       fontFamily: 'Avenir',
+                                            //     ),
+                                            //   ),
+                                          ],
                                         ),
                                         comingFromMyAdd == false
                                             ? CustomButton(
