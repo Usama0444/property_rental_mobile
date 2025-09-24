@@ -35,7 +35,7 @@ class BookingsController extends GetxController {
 
   ///publish listing function
   Future<void> rentBooking(
-      AddListingModel listingModel, sellerID, listingID, subTotal, commission, total) async {
+      AddListingModel listingModel, sellerID, listingID, subTotal, commission, total, bookingMode) async {
     loadingDialog(message: 'Please wait !!', loading: true);
     currentUser = await checkUserData();
     print(sellerID);
@@ -51,6 +51,7 @@ class BookingsController extends GetxController {
     print(currentUserDataModel!.value.userName);
     print('-------------');
     bookingMdl.checkIn = checkInDate.value.millisecondsSinceEpoch;
+    bookingMdl.bookingMode = bookingMode;
     bookingMdl.checkOut = checkOutDate.value.millisecondsSinceEpoch;
     bookingMdl.buyerID = auth.currentUser!.uid;
     bookingMdl.sellerID = sellerID;
