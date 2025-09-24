@@ -23,6 +23,7 @@ class PaymentScreen extends StatelessWidget {
         required this.listingID,
         required this.commission,
         required this.subTotal,
+        required this.bookingMode, 
       });
   final controller = Get.put(BookingsController());
   final AddListingModel listingModel;
@@ -33,6 +34,7 @@ class PaymentScreen extends StatelessWidget {
   final int days;
   final String commission;
   final String subTotal;
+  final String bookingMode; // Added bookingMode
 
   @override
   Widget build(BuildContext context) {
@@ -213,6 +215,7 @@ class PaymentScreen extends StatelessWidget {
                                       subTotal,
                                     commission,
                                     totalAmount,
+                                    bookingMode
                                   );
                                   // Get.to(() =>  BookingStatus(listingModel:listingModel));
                                   // Get.find<BottomNavController>().tabIndex.value = 0;

@@ -18,6 +18,7 @@ class BookingModel {
   String bookingType; //rent or sold
   String pendingPayment;
   String totalPayment;
+  String bookingMode;
   String commission;
   bool isPaymentDone;
   String orderDate;
@@ -39,6 +40,7 @@ class BookingModel {
     required this.orderStatus,
     required this.bookingType,
     required this.totalPayment,
+    required this.bookingMode,
     required this.isPaymentDone,
     required this.orderDate,
     required this.pendingPayment,
@@ -59,6 +61,7 @@ class BookingModel {
       buyerPhoneNo: TextEditingController(),
       isPaymentDone: false,
       orderStatus: 'Pending',
+      bookingMode: 'Daily',
       sellerName: '',
       sellerPhoneNo: '',
       pendingPayment: '0',
@@ -88,6 +91,7 @@ class BookingModel {
       'orderDate': orderDate,
       'selectedBedroom': selectedBedroom,
       'pendingPayment': pendingPayment,
+      'bookingMode': bookingMode,
       'buyerPhoneNo': buyerPhoneNo.text,
       'checkIn': checkIn,
       'checkOut': checkOut,
@@ -111,6 +115,7 @@ class BookingModel {
       isPaymentDone: snapshot.data()!['isPaymentDone'],
       orderDate: snapshot.data()!['orderDate'],
       pendingPayment: snapshot.data()!['pendingPayment'],
+      bookingMode: snapshot.data()!['bookingMode'] ?? 'Daily',
       selectedBedroom: RxList<String>.from(
           snapshot.data()!['selectedBedroom'].map((e) => e.toString())),
       buyerPhoneNo:
