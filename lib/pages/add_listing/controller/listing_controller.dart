@@ -123,18 +123,20 @@ class EnterPropertyDetailsController extends GetxController {
 
   RxString typeDropdownValue = "Apartment".obs;
   final propertyTypeList = [
+    "Single Room",
+    "Studio",
     "Apartment",
     "Villa",
     "Town House",
     "Pent House",
-    "Compound",
-    "Duplex",
-    "Full Floor",
-    "Half Floor",
+    "Bungalow",
+    "Mansion ",
     "Bedsitters"
   ];
 
   final List<String> bedroomsList = [
+    'Single Room',
+    'Bedsitter',
     'Studio',
     '1',
     '2',

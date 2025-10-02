@@ -323,7 +323,7 @@ final CarouselSliderController carouselController = CarouselSliderController();
                     RichText(
                       text: TextSpan(
                         text:
-                            'Bedrooms : ${searchModel!.selectedBedroom.last} ',
+                            'Bedrooms: ${searchModel!.selectedBedroom.last} ',
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
@@ -333,9 +333,9 @@ final CarouselSliderController carouselController = CarouselSliderController();
                         children: <TextSpan>[
                           TextSpan(
                             text:
-                                '(${searchModel!.selectedBedroom.last} Available)',
+                                '(${searchModel!.selectedBedroom.last}Available)',
                             style: const TextStyle(
-                              fontSize: 12,
+                              fontSize: 10,
                               fontWeight: FontWeight.w500,
                               color: blackColor,
                               fontFamily: 'Avenir',

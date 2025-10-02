@@ -260,14 +260,16 @@ class Profile extends StatelessWidget {
                     // const SizedBox(
                     //   height: 32,
                     // ),
-                    ProfileListTile(
-                      icon: 'assets/icons/ads.png',
-                      title: 'My Property Ads',
-                      trailing: 'assets/icons/right_angle.png',
-                      onTap: () {
-                        Get.to(() => MyPropertyAds());
-                      },
-                    ),
+                    Obx(() => currentUserDataModel?.value.isListingUser.value ?? false
+                        ? ProfileListTile(
+                            icon: 'assets/icons/ads.png',
+                            title: 'My Property Ads',
+                            trailing: 'assets/icons/right_angle.png',
+                            onTap: () {
+                              Get.to(() => MyPropertyAds());
+                            },
+                          )
+                        : const SizedBox.shrink()),
                     const SizedBox(
                       height: 32,
                     ),

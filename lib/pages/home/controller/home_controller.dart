@@ -393,7 +393,7 @@ class HomeController extends GetxController {
   final List<Map<String, dynamic>> propertiesCategories = [
     {'icon': 'assets/icons/hostel_icon.png', 'title': 'Apartment'},
     {'icon': 'assets/icons/bedsitters.png', 'title': 'Bedsitters'},
-    {'icon': 'assets/icons/single_room.png', 'title': 'Single room'},
+    {'icon': 'assets/icons/single_room.png', 'title': 'Single Room'},
     {'icon': 'assets/icons/bedrooms.png', 'title': '1,2,3+ Bedrooms'},
     {'icon': 'assets/icons/for_sale.png', 'title': 'For Sale'},
   ];
@@ -421,18 +421,19 @@ class HomeController extends GetxController {
 
   final List<String> propertyTypeList = [
     'Apartment',
-    'Villa',
-    'Duplex',
-    'Pent House',
-    'Compound',
-    'Town House',
-    'Full Floor',
-    'Half Floor',
-    'Second Floor',
-    'Bedsitters'
+    "Single Room",
+    "Studio",
+    "Villa",
+    "Town House",
+    "Pent House",
+    "Bungalow",
+    "Mansion ",
+    "Bedsitters"
   ];
 
   final List<String> bedroomsList = [
+    'Single Room',
+    'Bedsitter',
     'Studio',
     '1',
     '2',

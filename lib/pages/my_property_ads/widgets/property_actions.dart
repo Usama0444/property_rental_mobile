@@ -34,21 +34,21 @@ required this.listing,
       print('Listing deleted: $listingId');
 
       // Check if the user has other listings
-      final remainingListings = await FirebaseFirestore.instance
-          .collection('listings')
-          .where('sellerID', isEqualTo: userId)
-          .get();
+      // final remainingListings = await FirebaseFirestore.instance
+      //     .collection('listings')
+      //     .where('sellerID', isEqualTo: userId)
+      //     .get();
 
-      // If no other listings remain, update isListingUser to false
-      if (remainingListings.docs.isEmpty) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .update({'isListingUser': false});
-        print('isListingUser updated to false for user: $userId');
-      } else {
-        print('User still has ${remainingListings.docs.length} listings, isListingUser not updated');
-      }
+      // // If no other listings remain, update isListingUser to false
+      // if (remainingListings.docs.isEmpty) {
+      //   await FirebaseFirestore.instance
+      //       .collection('users')
+      //       .doc(userId)
+      //       .update({'isListingUser': false});
+      //   print('isListingUser updated to false for user: $userId');
+      // } else {
+      //   print('User still has ${remainingListings.docs.length} listings, isListingUser not updated');
+      // }
 
       // Trigger UI refresh
       onActionComplete?.call();

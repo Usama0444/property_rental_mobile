@@ -329,58 +329,37 @@ class EnterPropertyDetails extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          Obx(
+                         Obx(
                             () => Wrap(
                               children: List.generate(
                                 controller.bedroomsList.length,
                                 (index) => GestureDetector(
                                   onTap: () {
-                                    ///////////
                                     listingModel.selectedBedroom.clear();
-                                    for (int i = 0; i <= index; i++) {
-                                      listingModel.selectedBedroom
-                                          .add(controller.bedroomsList[i]);
-                                    }
-                                    // listingModel.selectedBedroom
-                                    //     .add(controller.bedroomsList[index]);
+                                    listingModel.selectedBedroom.add(controller.bedroomsList[index]);
                                     print(listingModel.selectedBedroom);
                                   },
                                   child: Container(
-                                    margin: const EdgeInsets.only(
-                                        right: 12, bottom: 12),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 6, horizontal: 13),
+                                    margin: const EdgeInsets.only(right: 12, bottom: 12),
+                                    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 13),
                                     decoration: BoxDecoration(
-                                      color:listingModel
-                                          .selectedBedroom.isNotEmpty
-                                          ? listingModel.selectedBedroom
-                                          .last ==
-                                          controller
-                                              .bedroomsList[index]
+                                      color: listingModel.selectedBedroom.contains(controller.bedroomsList[index])
                                           ? primaryColor
-                                          : whiteColor
                                           : whiteColor,
-                                        border: Border.all(
-                                          color: listingModel
-                                                  .selectedBedroom.isNotEmpty
-                                              ? listingModel.selectedBedroom
-                                                          .last ==
-                                                      controller
-                                                          .bedroomsList[index]
-                                                  ? primaryColor
-                                                  : greyBorderColor
-                                              : greyBorderColor,
-                                        ),
-                                        borderRadius: BorderRadius.circular(6)),
+                                      border: Border.all(
+                                        color: listingModel.selectedBedroom.contains(controller.bedroomsList[index])
+                                            ? primaryColor
+                                            : greyBorderColor,
+                                      ),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
                                     child: Text(
-                                      controller.bedroomsList[index],style: TextStyle(color: listingModel
-                                        .selectedBedroom.isNotEmpty
-                                        ? listingModel.selectedBedroom
-                                        .last ==
-                                        controller
-                                            .bedroomsList[index]  ? whiteColor
-                                        : Colors.black
-                                        : Colors.black),
+                                      controller.bedroomsList[index],
+                                      style: TextStyle(
+                                        color: listingModel.selectedBedroom.contains(controller.bedroomsList[index])
+                                            ? whiteColor
+                                            : Colors.black,
+                                      ),
                                     ),
                                   ),
                                 ),

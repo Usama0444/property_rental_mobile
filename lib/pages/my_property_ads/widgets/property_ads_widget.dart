@@ -217,9 +217,9 @@ class PropertyAdsWidget extends StatelessWidget {
                     children: <TextSpan>[
                       TextSpan(
                         text:
-                            ' (${searchModel!.selectedBedroom.last} Available)',
+                            '(${searchModel!.selectedBedroom.last} Available)',
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: blackColor,
                           fontFamily: 'Avenir',
