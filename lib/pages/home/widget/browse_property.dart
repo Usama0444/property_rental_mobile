@@ -44,14 +44,15 @@ class BrowsProperty extends StatelessWidget {
                 .where('propertyType', isEqualTo: 'Bedsitters').where('isActive', isEqualTo: true)
             as Query<Map<String, dynamic>>;
       }
-      if (controller.selectedName.value == 'Single room') {
+      if (controller.selectedName.value == 'Single Room') {
         print('sungle');
 
         query = FirebaseFirestore.instance
                 .collection('listings')
-                .where('selectedBedroom', isEqualTo: '1')
                 .where('listingRole', isEqualTo: controller.propertyType2.value)
-                .where('sellerID', isNotEqualTo: auth.currentUser!.uid).where('isActive', isEqualTo: true)
+                .where('sellerID', isNotEqualTo: auth.currentUser!.uid)
+                 .where('propertyType', isEqualTo: 'Single Room')
+                .where('isActive', isEqualTo: true)
             as Query<Map<String, dynamic>>;
       }
       if (controller.selectedName.value == '1,2,3+ Bedrooms') {
@@ -436,26 +437,26 @@ class PropertyData extends StatelessWidget {
             children: [
               Image.asset(
                 'assets/icons/bedroom_2.png',
-                height: 16,
-                width: 16,
+                height: 13,
+                width: 13,
               ),
               const SizedBox(
-                width: 4,
+                width: 2,
               ),
               RichText(
                 text: TextSpan(
                   text: 'Bedrooms : ${imageMap.selectedBedroom.last} ',
                   style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     color: blackColor,
                     fontFamily: 'Avenir',
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: '( ${imageMap.selectedBedroom.last} Available)',
+                      text: '(${imageMap.selectedBedroom.last}Available)',
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 10,
                         fontWeight: FontWeight.w500,
                         color: blackColor,
                         fontFamily: 'Avenir',

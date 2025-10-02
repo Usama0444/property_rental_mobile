@@ -221,23 +221,8 @@ class SelectFacilitiesPublish extends StatelessWidget {
               width: Get.width,
              onPressed: () async {
                 print(listingId);
-                print('////////');
                 try {
-                  // Update isListingUser to true only for new listings
                   if (listingId == '' || listingId == null) {
-                    final userId = FirebaseAuth.instance.currentUser?.uid;
-                    if (userId != null) {
-                      await FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(userId)
-                          .update({'isListingUser': true});
-                      print('isListingUser updated to true for user: $userId');
-                    } else {
-                      print('Error: No authenticated user found');
-                      Get.snackbar('Error', 'No authenticated user found',
-                          snackPosition: SnackPosition.BOTTOM);
-                      return;
-                    }
                     await controller.publishListing(listingModel!);
                   } else {
                     print('Updating existing listing');

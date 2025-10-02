@@ -25,10 +25,12 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: const SizedBox(
-        width: 145,
-        child: FabButton(),
-      ),
+      floatingActionButton: Obx(() => currentUserDataModel?.value.isListingUser.value ?? false
+          ? const SizedBox(
+              width: 145,
+              child: FabButton(),
+            )
+          : const SizedBox.shrink()),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Column(
         children: [
