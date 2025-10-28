@@ -52,60 +52,100 @@ class PropertyAdsWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             ////////////////////////////////
-            ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: searchModel!.listingImages.length != 0
-                    ? Image.network(
-                        searchModel!.listingImages.first.value,
-                        height: 200,
-                        width: Get.width,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return FutureBuilder(
-                            future: videoThumbnail(
-                                urlForThumbnail:
-                                    searchModel!.listingImages[0].value),
-                            builder: (context, snapshot) {
-                              print(snapshot.data.toString());
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return SizedBox(
-                                    height: 200,
-                                    width: Get.width,
-                                    child: const Center(
-                                        child: CircularProgressIndicator(
-                                      color: primaryColor,
-                                    )));
-                              }
-                              if (snapshot.hasError) {
-                                print(snapshot.error.toString());
-                                print('error');
-                              }
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                return SizedBox(
-                                    height: 200,
-                                    width: Get.width,
-                                    child: Image.file(
-                                      File(snapshot.data.toString()),
-                                      height: 200,
-                                      width: Get.width,
-                                      fit: BoxFit.cover,
-                                    ));
-                              } else {
-                                return SizedBox(
-                                    height: 200,
-                                    width: Get.width,
-                                    child: Center(child: SizedBox()));
-                              }
+            Stack(
+              children: [
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: searchModel!.listingImages.length != 0
+                        ? Image.network(
+                            searchModel!.listingImages.first.value,
+                            height: 200,
+                            width: Get.width,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return FutureBuilder(
+                                future: videoThumbnail(
+                                    urlForThumbnail:
+                                        searchModel!.listingImages[0].value),
+                                builder: (context, snapshot) {
+                                  print(snapshot.data.toString());
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return SizedBox(
+                                        height: 200,
+                                        width: Get.width,
+                                        child: const Center(
+                                            child: CircularProgressIndicator(
+                                          color: primaryColor,
+                                        )));
+                                  }
+                                  if (snapshot.hasError) {
+                                    print(snapshot.error.toString());
+                                    print('error');
+                                  }
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    return SizedBox(
+                                        height: 200,
+                                        width: Get.width,
+                                        child: Image.file(
+                                          File(snapshot.data.toString()),
+                                          height: 200,
+                                          width: Get.width,
+                                          fit: BoxFit.cover,
+                                        ));
+                                  } else {
+                                    return SizedBox(
+                                        height: 200,
+                                        width: Get.width,
+                                        child: Center(child: SizedBox()));
+                                  }
+                                },
+                              );
                             },
-                          );
-                        },
-                      )
-                    : Container(
-                        height: 200,
-                        width: Get.width,
-                      )),
+                          )
+                        : Container(
+                            height: 200,
+                            width: Get.width,
+                          )),
+                // Verified badge
+                if (searchModel!.isVerified)
+                  Positioned(
+                    top: 12,
+                    left: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: whiteColor,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/icons/verified_icon.png',
+                            height: 14,
+                            width: 14,
+                          ),
+                          const SizedBox(width: 4),
+                          const Text(
+                            'Verified',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: primaryColor,
+                              fontFamily: 'Avenir',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
             const SizedBox(
               height: 12,
             ),
@@ -146,7 +186,9 @@ class PropertyAdsWidget extends StatelessWidget {
               height: 6,
             ),
             Text(
-              'KSH ${searchModel!.payment.text}',
+              searchModel!.listingRole == 'Rent'
+                  ? 'KSH ${searchModel!.payment.text}'
+                  : 'KSH ${formatLargeNumber(searchModel!.totalSaleCost.text)}',
               style: const TextStyle(
                 fontWeight: FontWeight.w700,
                 color: primaryColor,

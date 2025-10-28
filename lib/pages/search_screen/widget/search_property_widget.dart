@@ -245,6 +245,42 @@ final CarouselSliderController carouselController = CarouselSliderController();
                                       ),
                                     ),
                                   ),),
+                                // Verified badge
+                                if (searchModel!.isVerified)
+                                  Positioned(
+                                    top: 12,
+                                    left: 12,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: whiteColor,
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Image.asset(
+                                            'assets/icons/verified_icon.png',
+                                            height: 14,
+                                            width: 14,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          const Text(
+                                            'Verified',
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w600,
+                                              color: primaryColor,
+                                              fontFamily: 'Avenir',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
                           )
@@ -268,7 +304,9 @@ final CarouselSliderController carouselController = CarouselSliderController();
                   height: 6,
                 ),
                 Text(
-                  "KSH ${searchModel!.payment.text.toString()}",
+                  searchModel!.listingRole == 'Rent'
+                      ? "KSH ${searchModel!.payment.text.toString()}"
+                      : "KSH ${formatLargeNumber(searchModel!.totalSaleCost.text)}",
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     color: primaryColor,

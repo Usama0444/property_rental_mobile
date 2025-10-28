@@ -266,6 +266,42 @@ class ApartmentDetails extends StatelessWidget {
                               ],
                             );
                           }),
+                      // Verified badge on top
+                      if (listingModel.isVerified)
+                        Positioned(
+                          top: 16,
+                          left: 16,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: whiteColor,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  'assets/icons/verified_icon.png',
+                                  height: 14,
+                                  width: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  'Verified',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: primaryColor,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       Positioned(
                           bottom: 0,
                           child: Container(
@@ -635,7 +671,7 @@ class ApartmentDetails extends StatelessWidget {
             ),
           ),
           Text(
-            listingModel.totalSaleCost.text,
+            'KSH ${formatLargeNumber(listingModel.totalSaleCost.text)}',
             style: TextStyle(
               fontWeight: FontWeight.w600,
               color: textColor.withOpacity(0.7),
@@ -1038,6 +1074,8 @@ SizedBox(height: 20),
         );
      
                                               })
+                                        
+                                        
                                           //                                             Text(
                                           //                                               listingModel.listingRole != 'Rent'
                                           //                                                   ? 'KSH ${listingModel.totalSaleCost.text}'

@@ -325,49 +325,89 @@ class PropertyData extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(
-            imageMap.listingImages[0].value,
-            height: 139,
-            width: 241,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return FutureBuilder(
-                future: videoThumbnail(
-                    urlForThumbnail: imageMap.listingImages[0].value),
-                builder: (context, snapshot) {
-                  print(snapshot.data.toString());
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return SizedBox(
-                        height: 139,
-                        width: 241,
-                        child: const Center(
-                            child: CircularProgressIndicator(
-                          color: primaryColor,
-                        )));
-                  }
-                  if (snapshot.hasError) {
-                    print(snapshot.error.toString());
-                    print('error');
-                  }
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return SizedBox(
-                        height: 139,
-                        width: 241,
-                        child: Image.file(
-                          File(snapshot.data.toString()),
-                          width: Get.width,
-                          height: 246,
-                          fit: BoxFit.cover,
-                        ));
-                  } else {
-                    return const SizedBox(
-                        width: 80,
-                        height: 55,
-                        child: Center(child: SizedBox()));
-                  }
+          Stack(
+            children: [
+              Image.network(
+                imageMap.listingImages[0].value,
+                height: 139,
+                width: 241,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return FutureBuilder(
+                    future: videoThumbnail(
+                        urlForThumbnail: imageMap.listingImages[0].value),
+                    builder: (context, snapshot) {
+                      print(snapshot.data.toString());
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return SizedBox(
+                            height: 139,
+                            width: 241,
+                            child: const Center(
+                                child: CircularProgressIndicator(
+                              color: primaryColor,
+                            )));
+                      }
+                      if (snapshot.hasError) {
+                        print(snapshot.error.toString());
+                        print('error');
+                      }
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return SizedBox(
+                            height: 139,
+                            width: 241,
+                            child: Image.file(
+                              File(snapshot.data.toString()),
+                              width: Get.width,
+                              height: 246,
+                              fit: BoxFit.cover,
+                            ));
+                      } else {
+                        return const SizedBox(
+                            width: 80,
+                            height: 55,
+                            child: Center(child: SizedBox()));
+                      }
+                    },
+                  );
                 },
-              );
-            },
+              ),
+              // Verified badge
+              if (imageMap.isVerified)
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          'assets/icons/verified_icon.png',
+                          height: 14,
+                          width: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        const Text(
+                          'Verified',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: primaryColor,
+                            fontFamily: 'Avenir',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           ),
           // SizedBox(
           //   height: 139,
@@ -392,7 +432,9 @@ class PropertyData extends StatelessWidget {
             height: 6,
           ),
           Text(
-            'KSH  ${imageMap.payment.text}',
+            imageMap.listingRole == 'Rent'
+                ? 'KSH  ${imageMap.payment.text}'
+                : 'KSH  ${formatLargeNumber(imageMap.totalSaleCost.text)}',
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,

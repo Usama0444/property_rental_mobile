@@ -107,7 +107,9 @@ class ViewedActivity extends StatelessWidget {
             height: 6,
           ),
           Text(
-            'KSH ${listingModel!.payment.text}',
+            listingModel.listingRole == 'Rent'
+                ? 'KSH ${listingModel!.payment.text}'
+                : 'KSH ${formatLargeNumber(listingModel!.totalSaleCost.text)}',
             style: TextStyle(
               decoration: TextDecoration.underline,
               fontWeight: FontWeight.w700,

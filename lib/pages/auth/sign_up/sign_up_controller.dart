@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:property_rental_app/common_widgets/loading_dialog.dart';
 import 'package:property_rental_app/main.dart';
-
 import '../../../common_widgets/global_functions.dart';
 import '../../../universal_models/user_model.dart';
 import '../../bottom_nav_bar/controller/bottom_bar_controller.dart';

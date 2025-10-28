@@ -43,63 +43,103 @@ class BedsittersWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: listingModel!.listingImages.length != 0
-                    ? Image.network(
-                        listingModel!.listingImages.first.value,
-                        height: 80,
-                        width: 126,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return FutureBuilder(
-                            future: videoThumbnail(
-                                urlForThumbnail:
-                                listingModel
-                                    .listingImages[0].value
-                                   ),
-                            builder: (context, snapshot) {
-                              print(snapshot.data.toString());
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return SizedBox(
-                                    height: 80,
-                                    width: 126,
-                                    child: const Center(
-                                        child:
-                                        CircularProgressIndicator(
-                                          color: primaryColor,
-                                        )));
-                              }
-                              if (snapshot.hasError) {
-                                print(snapshot.error.toString());
-                                print('error');
-                              }
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                return SizedBox(
-                                    height: 80,
-                                    width: 126,
-                                    child: Image.file(
-                                      File(snapshot.data.toString()),
-                                      height: 80,
-                                      width: 126,
-                                      fit: BoxFit.cover,
-                                    ));
-                              } else {
-                                return const SizedBox(
-                                    width: 80,
-                                    height: 55,
-                                    child: Center(child: SizedBox()));
-                              }
+            Stack(
+              children: [
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: listingModel!.listingImages.length != 0
+                        ? Image.network(
+                            listingModel!.listingImages.first.value,
+                            height: 80,
+                            width: 126,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return FutureBuilder(
+                                future: videoThumbnail(
+                                    urlForThumbnail:
+                                    listingModel
+                                        .listingImages[0].value
+                                       ),
+                                builder: (context, snapshot) {
+                                  print(snapshot.data.toString());
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return SizedBox(
+                                        height: 80,
+                                        width: 126,
+                                        child: const Center(
+                                            child:
+                                            CircularProgressIndicator(
+                                              color: primaryColor,
+                                            )));
+                                  }
+                                  if (snapshot.hasError) {
+                                    print(snapshot.error.toString());
+                                    print('error');
+                                  }
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {
+                                    return SizedBox(
+                                        height: 80,
+                                        width: 126,
+                                        child: Image.file(
+                                          File(snapshot.data.toString()),
+                                          height: 80,
+                                          width: 126,
+                                          fit: BoxFit.cover,
+                                        ));
+                                  } else {
+                                    return const SizedBox(
+                                        width: 80,
+                                        height: 55,
+                                        child: Center(child: SizedBox()));
+                                  }
+                                },
+                              );
                             },
-                          );
-                        },
-                      )
-                    : Container(
-                        height: 200,
-                        width: Get.width,
-                      )),
+                          )
+                        : Container(
+                            height: 200,
+                            width: Get.width,
+                          )),
+                // Verified badge
+                if (listingModel.isVerified)
+                  Positioned(
+                    top: 4,
+                    left: 4,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: whiteColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/icons/verified_icon.png',
+                            height: 10,
+                            width: 10,
+                          ),
+                          const SizedBox(width: 3),
+                          const Text(
+                            'Verified',
+                            style: TextStyle(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w600,
+                              color: primaryColor,
+                              fontFamily: 'Avenir',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
             const SizedBox(width: 8),
             Padding(
               padding: const EdgeInsets.only(top: 3, bottom: 2),
@@ -117,7 +157,9 @@ class BedsittersWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'KSH ${listingModel.payment.text}',
+                    listingModel.listingRole == 'Rent'
+                        ? 'KSH ${listingModel.payment.text}'
+                        : 'KSH ${formatLargeNumber(listingModel.totalSaleCost.text)}',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
