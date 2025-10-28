@@ -386,6 +386,43 @@ Future<String?> videoThumbnail({required String urlForThumbnail}) async {
   }
 }
 
+/// Format large numbers for display (e.g., 40,000,000 -> 40 M)
+String formatLargeNumber(String numberString) {
+  try {
+    // Remove commas and parse
+    String cleanNumber = numberString.replaceAll(',', '').trim();
+    double number = double.parse(cleanNumber);
+    
+    if (number >= 1000000000) {
+      // Billions
+      double billions = number / 1000000000;
+      return billions % 1 == 0 
+          ? '${billions.toInt()} B'
+          : '${billions.toStringAsFixed(1)} B';
+    } else if (number >= 1000000) {
+      // Millions
+      double millions = number / 1000000;
+      return millions % 1 == 0 
+          ? '${millions.toInt()} M'
+          : '${millions.toStringAsFixed(1)} M';
+    } else if (number >= 1000) {
+      // Thousands
+      double thousands = number / 1000;
+      return thousands % 1 == 0 
+          ? '${thousands.toInt()} K'
+          : '${thousands.toStringAsFixed(1)} K';
+    } else {
+      // Less than 1000, return as is
+      return number % 1 == 0 
+          ? number.toInt().toString()
+          : number.toString();
+    }
+  } catch (e) {
+    // If parsing fails, return original string
+    return numberString;
+  }
+}
+
 Future<bool> checkBookingAvailability(
     int checkInDateMillis, int checkOutDateMillis) async {
   // Query Firestore to fetch bookings within the specified time frame
