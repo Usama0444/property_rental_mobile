@@ -196,88 +196,136 @@ class ContactUs extends StatelessWidget {
                           }},
                       ),
                       const SizedBox(height: 32),
-                      Container(
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: primaryColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 32, horizontal: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "Let's Talk About Everything!",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
+                      Obx(() {
+                        if (controller.isLoading.value) {
+                          return Container(
+                            width: Get.width,
+                            decoration: BoxDecoration(
+                              color: primaryColor,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 32, horizontal: 20),
+                            child: const Center(
+                              child: CircularProgressIndicator(
                                 color: whiteColor,
-                                fontFamily: 'Avenir',
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              "Hello there! If you'd like to ask us something, you can get in touch with us here! We'd love to address any and all concerns you may have.",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: whiteColor,
-                                fontFamily: 'Avenir',
+                          );
+                        }
+                        
+                        return Container(
+                          width: Get.width,
+                          decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 32, horizontal: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Let's Talk About Everything!",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: whiteColor,
+                                  fontFamily: 'Avenir',
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 24),
-                            Image.asset(
-                              'assets/icons/call_2.png',
-                              height: 24,
-                              width: 24,
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              "+0715277471",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: whiteColor,
-                                fontFamily: 'Avenir',
+                              const SizedBox(height: 8),
+                              const Text(
+                                "Hello there! If you'd like to ask us something, you can get in touch with us here! We'd love to address any and all concerns you may have.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: whiteColor,
+                                  fontFamily: 'Avenir',
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 24),
-                            Image.asset(
-                              'assets/icons/mail.png',
-                              height: 24,
-                              width: 24,
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              "info@mslhomes.co.ke",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: whiteColor,
-                                fontFamily: 'Avenir',
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            Image.asset(
-                              'assets/icons/pin.png',
-                              height: 24,
-                              width: 24,
-                            ),
-                            const SizedBox(height: 8),
-                            const Text(
-                              "Nairobi, Kenya",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: whiteColor,
-                                fontFamily: 'Avenir',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                              if (controller.availability.value.isNotEmpty) ...[
+                                const SizedBox(height: 24),
+                                const Text(
+                                  "Availability",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: whiteColor,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  controller.availability.value,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: whiteColor,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+                              ],
+                              if (controller.contactNumber.value.isNotEmpty) ...[
+                                const SizedBox(height: 24),
+                                Image.asset(
+                                  'assets/icons/call_2.png',
+                                  height: 24,
+                                  width: 24,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  controller.contactNumber.value,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: whiteColor,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+                              ],
+                              if (controller.supportEmail.value.isNotEmpty) ...[
+                                const SizedBox(height: 24),
+                                Image.asset(
+                                  'assets/icons/mail.png',
+                                  height: 24,
+                                  width: 24,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  controller.supportEmail.value,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: whiteColor,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+                              ],
+                              if (controller.address.value.isNotEmpty) ...[
+                                const SizedBox(height: 24),
+                                Image.asset(
+                                  'assets/icons/pin.png',
+                                  height: 24,
+                                  width: 24,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  controller.address.value,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: whiteColor,
+                                    fontFamily: 'Avenir',
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        );
+                      }),
                       const SizedBox(height: 34),
                     ],
                   ),

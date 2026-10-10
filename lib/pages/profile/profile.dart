@@ -307,7 +307,7 @@ class Profile extends StatelessWidget {
                       title: 'About Us',
                       trailing: 'assets/icons/right_angle.png',
                       onTap: () {
-                        Get.to(() => const AboutUs());
+                        Get.to(() =>  AboutUs());
                       },
                     ),
                     const SizedBox(
@@ -318,7 +318,7 @@ class Profile extends StatelessWidget {
                       title: 'Terms of Service',
                       trailing: 'assets/icons/about_right.png',
                       onTap: () {
-                        Get.to(() => const TermsOfService());
+                        Get.to(() =>  TermsOfService());
                       },
                     ),
                     const SizedBox(
@@ -329,7 +329,7 @@ class Profile extends StatelessWidget {
                       title: 'Privacy Policy',
                       trailing: 'assets/icons/about_right.png',
                       onTap: () {
-                        Get.to(() => const PrivacyPolicy());
+                        Get.to(() =>  PrivacyPolicy());
                       },
                     ),
                     const SizedBox(

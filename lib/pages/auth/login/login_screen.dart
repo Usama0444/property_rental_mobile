@@ -351,7 +351,7 @@ class LoginScreen extends StatelessWidget {
                           children: <TextSpan>[
                             TextSpan(
                               recognizer: TapGestureRecognizer()
-                                ..onTap = () => Get.to(const TermsOfService()),
+                                ..onTap = () => Get.to( TermsOfService()),
                               text: 'terms and conditions',
                               style: const TextStyle(
                                 decoration: TextDecoration.underline,

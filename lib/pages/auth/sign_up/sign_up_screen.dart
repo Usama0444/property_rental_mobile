@@ -345,7 +345,7 @@ class SignUp extends StatelessWidget {
                           children: <TextSpan>[
                             TextSpan(
                               recognizer: TapGestureRecognizer()
-                                ..onTap = () => Get.to(const TermsOfService()),
+                                ..onTap = () => Get.to( TermsOfService()),
                               text: 'terms and conditions policy',
                               style: const TextStyle(
                                 decoration: TextDecoration.underline,

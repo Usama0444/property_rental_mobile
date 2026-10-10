@@ -1,37 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:property_rental_app/common_widgets/custom_appbar.dart';
 import 'package:property_rental_app/constants/app_colors.dart';
+import 'package:property_rental_app/pages/profile/about_us/controller/about_us_controller.dart';
 
 class AboutUs extends StatelessWidget {
-  const AboutUs({super.key});
+  AboutUs({super.key});
+
+  final controller = Get.put(AboutUsController());
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: backgroundColor,
       body: Column(
         children: [
-          CustomAppBar(title: 'About Us', isBackButton: true),
+          const CustomAppBar(title: 'About Us', isBackButton: true),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: primaryColor,
+                  ),
+                );
+              }
+
+              if (controller.aboutDetail.value.isEmpty) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(20.0),
                     child: Text(
-                      "Lörem ipsum mikrotas dement till krosesavis, paralig. Konfas jura. Biodona äll satement, spelyvun. Palyck podinera.Poskade keduläska är tehant om supras för begon. Tralig bevis ofor. Osk dopehet. Kans dedigisk manyna om påprest. Possa dovura plus kada för att hunik. Tilingar dotulogi infragon preras. Vas hell. Telegun oskade falig kör.Pseudonar twerka twerka och gigasa utan plande. Befotedade ålyskap lyposs, nypregisk. Sobens varas fiskpedikyr maligt parar. Fagt manypän.Stenoliga mikrotris. Anaren besoll. Ora bede antelubel eftersom trena. Pappafeminist difer suning nygisk, att plangen.Profel regnbågsbarn och post. Prel krohes inte krosesm antipinade miser. Doska örade trekvartspudel. Teleköledes kön, betingen telell.Hybridkrig mun emedan snurrmästare homosibengen. Tet donade i dihera. Fäjatenat tiv att åset bloppis. Hemityktig kaheten, supragant.Trevis duse. Prehurat stenor ser. Tugon ål sedan antilig ett stadsutglesning. Trabena intrassade. Du kan vara drabbad.Soldusch fobed spår autost: suprass. Lar tar. Ase dopoling kadurtad plar. Ohus adat.Respejunera tade. Sen dör tuvis på passivhus och kängen. Plana turistkorridor, förutom kontrarade. Siråna fans, ölur mist.Profel regnbågsbarn och post. Prel krohes inte krosesm antipinade miser. Doska örade trekvartspudel. Teleköledes kön, betingen telell. ",
-                      textAlign: TextAlign.justify,
+                      "No information available at the moment.",
+                      textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                         color: blackColor3B,
-                        fontSize: 14,
+                        fontSize: 16,
                         fontFamily: 'Avenir',
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
+                );
+              }
+
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      child: Text(
+                        controller.aboutDetail.value,
+                        textAlign: TextAlign.justify,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: blackColor3B,
+                          fontSize: 14,
+                          fontFamily: 'Avenir',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
           ),
         ],
       ),
